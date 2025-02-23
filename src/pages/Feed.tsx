@@ -1,39 +1,43 @@
-import AvtrBlock from "@/components/AvtrBlock";
-import { CheckCircle2 } from "lucide-react";
+import Post from "@/components/Post";
+import { avtrDets, imageUrl, poll, postText1, postText2 } from "@/constants";
+import { MoreVertical } from "lucide-react";
 
 const Feed = () => {
   return (
-    <main className="p-4">
-      <h1>Feed</h1>
-      <div className="flex flex-col p-4 rounded-lg shadow-md">
-        <div className="w-full border-b py-3">
-          <AvtrBlock />
-        </div>
-        <div className="pt-3 space-y-3">
-          <p className="text-sm">
-            which drink do you think is the better summer drink, and why?
-            <span className="text-rgtpink">#quickquestion #plsanswer</span>
-          </p>
-          <div className="border p-2 rounded-lg border-slate-200 space-y-2">
-            <div className="flex items-center gap-1 w-[55%] bg-purpleaccent2 rounded-md p-2">
-              <p>
-                <span className="font-semibold">55%</span> Lemonade
-              </p>
-              <CheckCircle2 fill="#EA5E9C" stroke="white" />
-            </div>
+    <main className="p-4 flex flex-col md:flex-row">
+      <section className="space-y-5 md:w-1/2">
+        <Post poll={poll} avtrDets={avtrDets} text={postText2} />
+        <Post image={imageUrl} avtrDets={avtrDets} text={postText1} />
+      </section>
 
-            <div className="flex items-center gap-1 w-[25%] bg-[#F1F5F9] rounded-md p-2">
-              <p>
-                <span className="font-semibold">25%</span> Energy Drink
-              </p>
+      <section className="m">
+        <div className="flex items-center bg-white p-2 rounded-lg space-x-2">
+          <img src="/recognitionIconsvg.svg" alt="recognition" />
+          <p className="text-[#706D8A] font-[600]">Recognition</p>
+        </div>
+
+        <div>
+          <p className="text-[#706D8A] font-[600]">Upcoming Events</p>
+        </div>
+
+        <div >
+          <p className="text-[#706D8A] font-[600]">Announcements</p>
+          <div className="flex h-12">
+            <div className="h-full  border-2 border-rgtpink rounded-full" />
+            <div className="bg-purpleaccent2 flex justify-between items-center p-4 rounded-sm">
+              <div className="w-full">
+                <p className="font-medium text-rgtgray text-lg">
+                  RGT University
+                </p>
+                <p className="text-[12px] text-[#706D8A] font-medium">
+                  July 27th 2025, 1PM
+                </p>
+              </div>
+              <MoreVertical />
             </div>
           </div>
-
-          <div>
-            <p className="text-rgtgray text-[12px]">Jun 25, 2029 --12,157 votes total</p>
-          </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 };
