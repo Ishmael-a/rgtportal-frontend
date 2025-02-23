@@ -8,6 +8,8 @@
 
 body {
   font-family: "Inter", serif;
+  background-color: #F0F4F8;
+  color: #1E293B;
 }
 
 :root {
@@ -92,17 +94,16 @@ body {
   --color-avocado-600: oklch(0.53 0.12 118.34);
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
-  --color-rgtpink: #452667;
+  --color-rgtpink: #EA5E9C;
   --color-rgtyellow: #f9b500;
   --color-rgtpurple: #452667;
   --color-rgtblue: #5259a3;
   --color-pinkaccent2: #FFA6CD;
   --color-purpleaccent2: #EFE7FF;
-  --color-rgtred : #EB2E31
+  --color-rgtred : #EB2E31;
+  --color-rgtgray: #475569;
   /* ... */
 }
-
-
 
 @theme inline {
   --color-background: var(--background);
