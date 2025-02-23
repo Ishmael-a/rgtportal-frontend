@@ -12,7 +12,6 @@ const EventList: React.FC<IEventList> = ({ event, date, title }) => {
 
   const handleRingBell = () => {
     setRingBell(!ringBell);
-    console.log("ring...");
   };
 
   return (
