@@ -1,3 +1,6 @@
+import { IEventList } from "./components/EventList";
+import { IAnnouncementCard } from "./types";
+
 export const avtrDets = {
   name: "Annette Black",
   role: "President Of Americas",
@@ -40,5 +43,61 @@ export const poll = [
     pollOption: "Energy Drink",
     percentage: 25,
     totalVotes: 1418,
+  },
+];
+
+export const eventList: IEventList[] = [
+  {
+    event: "holiday",
+    date: "Mar 06, 2025",
+    title: "Independence Day",
+  },
+  {
+    event: "meeting",
+    date: "Apr 25, 2025",
+    title: "Group Meetup",
+  },
+  {
+    event: "birthday",
+    date: "Jun 25, 2025",
+    title: "Fatimah's Birthday",
+  },
+];
+
+export const announcements: IAnnouncementCard[] = [
+  {
+    title: "RGT University",
+    date: "Jun 25, 2025",
+  },
+  {
+    title: "New Policy Update",
+    date: "Jun 25, 2025",
+  },
+];
+
+export const recognees = [
+  {
+    name: "Bernard Parry",
+    project: "Lauder",
+  },
+  {
+    name: "Yusif Ishmael",
+    project: "RGT Portal",
+  },
+  {
+    name: "Simon Boateng",
+    project: "MediBoard",
+  },
+  {
+    name: "Bernard Parry",
+    project: "Lauder",
+  },
+  {
+    name: "Yusif Ishmael",
+    project: "RGT Portal",
+  },
+  {
+    name: "Simon Boateng",
+    project: "MediBoard",
   },
 ];
