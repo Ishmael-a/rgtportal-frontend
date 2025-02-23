@@ -36,7 +36,12 @@ const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
         <FeedActions />
       </section>
 
-      <CommentBlck />
+      <div className="hidden sm:block">
+        <CommentBlck />
+      </div>
+      <div className="sm:hidden pt-2 border-t">
+        <p className="text-sm font-medium text-rgtpink">Reply Post</p>
+      </div>
     </div>
   );
 };
