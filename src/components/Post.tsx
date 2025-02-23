@@ -5,8 +5,6 @@ import CommentBlck from "./CommentBlck";
 import { IPost } from "@/types";
 import PollUI from "./PollUI";
 
-// "https://images.unsplash.com/photo-1517825738774-7de9363ef735?q=80&w=1110&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-
 const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
   const formatText = (text: string) => {
     return text.split(" ").map((word, index) => {
@@ -22,7 +20,7 @@ const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
   };
 
   return (
-    <div className="flex flex-col p-4 rounded-lg shadow-md max-w-[800px]">
+    <div className="flex flex-col p-4 rounded-lg shadow-md max-w-[800px] bg-white">
       <section className="w-full border-b py-3">
         <AvtrBlock avtDets={avtrDets} />
       </section>

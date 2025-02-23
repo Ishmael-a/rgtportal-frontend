@@ -24,3 +24,8 @@ export interface IPost {
   poll?: IPollUI[];
   image?: IImage;
 }
+
+export interface IAnnouncementCard {
+  title: string;
+  date: string;
+}

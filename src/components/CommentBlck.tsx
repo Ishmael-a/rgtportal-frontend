@@ -14,7 +14,7 @@ const CommentBlck = () => {
         placeholder="Write your comment..."
       />
 
-      <div className="flex  min-w-[200px] justify-center space-x-2">
+      <div className="flex  min-w-[200px] justify-center space-x-">
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
           <img
             src="/Attachment.svg"
