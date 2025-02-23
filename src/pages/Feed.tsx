@@ -38,7 +38,7 @@ const Feed = () => {
             </div>
             <img
               src="/Down 2.svg"
-              className={`hover:bg-slate-200 rounded-full transition-all duration-300 ease-in ${
+              className={`hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
                 showRecognition ? "rotate-180" : ""
               }`}
               onClick={() => setShowRecognition(!showRecognition)}
@@ -46,7 +46,20 @@ const Feed = () => {
           </div>
 
           {/* Recognition List */}
-          <div className="flex flex-col space-y-3 overflow-y-scroll h-36">
+          <div
+            className="flex flex-col space-y-3 overflow-y-scroll h-36"
+            style={{
+              scrollbarWidth: "none" /* Firefox */,
+              msOverflowStyle: "none" /* IE and Edge */,
+            }}
+          >
+            <style>
+              {`
+                .hide-scrollbar::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and Opera */
+                 }
+              `}
+            </style>
             {recognees.map((recognee, index) => (
               <div
                 className="flex justify-between items-center bg-slate-100 p-2 rounded-md text-sm font-medium"

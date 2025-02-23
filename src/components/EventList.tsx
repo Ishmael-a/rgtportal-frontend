@@ -1,3 +1,6 @@
+import { Bell } from "lucide-react";
+import { useState } from "react";
+
 export interface IEventList {
   event: "holiday" | "birthday" | "meeting";
   date: string;
@@ -5,7 +8,13 @@ export interface IEventList {
 }
 
 const EventList: React.FC<IEventList> = ({ event, date, title }) => {
-  
+  const [ringBell, setRingBell] = useState(false);
+
+  const handleRingBell = () => {
+    setRingBell(!ringBell);
+    console.log("ring...");
+  };
+
   return (
     <div className="flex items-center justify-between border-b pb-4">
       <div className="flex items-center space-x-2">
@@ -25,7 +34,13 @@ const EventList: React.FC<IEventList> = ({ event, date, title }) => {
           <p className="text-rgtgray text-xs font-medium">{date}</p>
         </div>
       </div>
-      <img src="/Notification 3.svg" alt="notification" className="cursor-pointer" />
+
+      <Bell
+        onClick={handleRingBell}
+        className={`cursor-pointer text-rgtgray ${
+          ringBell ? "fill-rgtpurple stroke-0" : ""
+        }`}
+      />
     </div>
   );
 };
