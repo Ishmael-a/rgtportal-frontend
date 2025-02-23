@@ -10,6 +10,7 @@ body {
   font-family: "Inter", serif;
   background-color: #F0F4F8;
   color: #1E293B;
+   border-radius: 25px;
 }
 
 :root {
