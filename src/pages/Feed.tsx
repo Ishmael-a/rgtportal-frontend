@@ -27,7 +27,7 @@ const Feed = () => {
         <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
       </section>
 
-      <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-3  h-fit">
+      <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-22  h-fit">
         {/* Recognition section */}
         <div
           className={`flex flex-col bg-white p-4 rounded-lg space-y-3 transition-all duration-300 ease-in ${

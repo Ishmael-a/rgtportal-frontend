@@ -12,7 +12,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/feed" element={<Feed />} />
 
         <Route element={<EmpLayout />}>
           <Route
@@ -27,6 +26,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+            <Route path="/feed" element={<Feed />} />
           <Route path="/events-calendar" element={<EventsCalendar />} />
         </Route>
 
