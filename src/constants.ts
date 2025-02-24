@@ -1,12 +1,28 @@
 import { IEventList } from "./components/EventList";
-import { IAnnouncementCard } from "./types";
+import { IAnnouncementCard, IAvtrDets } from "./types";
 
-export const avtrDets = {
-  name: "Annette Black",
-  role: "President Of Americas",
-  avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-  fallBack: "AB",
-};
+
+
+export const avtrDets:IAvtrDets[] = [
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
+    fallBack: "AB",
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
+    fallBack: "AB",
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
+    fallBack: "AB",
+  },
+];
 
 export const postText1 =
   "Lorem ipsum dolor sit amet, #consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui. Nulla nec purus feugiat, molestie #ipsum et, consequat nibh. Etiam non #elit dui.";

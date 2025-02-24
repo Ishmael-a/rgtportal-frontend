@@ -23,8 +23,8 @@ const Feed = () => {
       {/* Posts section */}
       <section className="space-y-5">
         <CreatePost />
-        <Post poll={poll} avtrDets={avtrDets} text={postText2} />
-        <Post image={imageUrl} avtrDets={avtrDets} text={postText1} />
+        <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
+        <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
       </section>
 
       <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-3  h-fit">
@@ -63,6 +63,7 @@ const Feed = () => {
                  }
               `}
             </style>
+
             {recognees.map((recognee, index) => (
               <div
                 className="flex justify-between items-center bg-slate-100 p-2 rounded-md text-sm font-medium"

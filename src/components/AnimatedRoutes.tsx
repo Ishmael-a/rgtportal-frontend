@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Feed from "@/pages/Feed";
 import EventsCalendar from "@/pages/EventsCalendar";
 import Login from "@/pages/Login";
+import All_Teams from "@/pages/All_Teams";
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -11,12 +12,7 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Login />} />
-        <Route
-          path="/feed"
-          element={
-            <Feed />
-          }
-        />
+        <Route path="/feed" element={<Feed />} />
         <Route
           path="/events-calendar"
           element={
@@ -31,6 +27,7 @@ const AnimatedRoutes = () => {
             </motion.div>
           }
         />
+        <Route path="/all-teams" element={<All_Teams />} />
       </Routes>
     </AnimatePresence>
   );

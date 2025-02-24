@@ -6,8 +6,8 @@ const CommentBlck = () => {
   return (
     <section className="border-t px-2 pt-4 flex items-center space-x-2">
       <Avatar>
-        <AvatarImage src={avtrDets.avatarUrl} alt={avtrDets.name} />
-        <AvatarFallback>{avtrDets.fallBack}</AvatarFallback>
+        <AvatarImage src={avtrDets[0].avatarUrl} alt={avtrDets[0].name} />
+        <AvatarFallback>{avtrDets[0].fallBack}</AvatarFallback>
       </Avatar>
       <Input
         className="rounded-full p-6 max-w-[500px]"
@@ -16,10 +16,10 @@ const CommentBlck = () => {
 
       <div className="flex  min-w-[200px] justify-center space-x-">
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
-          <img
-            src="/Attachment.svg"
-            className=" border-2 p-[2px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
-          />
+            <img
+              src="/Attachment.svg"
+              className=" border-2 p-[2px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
+            />
         </div>
 
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">

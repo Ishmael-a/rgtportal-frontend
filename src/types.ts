@@ -1,3 +1,5 @@
+import { ClassNameValue } from "tailwind-merge";
+
 export interface IPollUI {
   pollOption: string;
   percentage: number;
@@ -28,4 +30,18 @@ export interface IPost {
 export interface IAnnouncementCard {
   title: string;
   date: string;
+}
+
+
+export interface IAvtrDets {
+  name: string;
+  role: string;
+  avatarUrl: string;
+  fallBack: string;
+}
+
+export interface IAvtrComponent {
+  className?: ClassNameValue;
+  index: number;
+  avtr: IAvtrDets;
 }
