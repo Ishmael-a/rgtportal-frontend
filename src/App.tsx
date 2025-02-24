@@ -7,41 +7,42 @@ import { EmpLayout } from "./layouts/EmpLayout";
 import { HrLayout } from "./layouts/HrLayout";
 
 function App() {
-
   return (
     <BrowserRouter>
-    <Routes>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/feed" element={<Feed />} />
 
-      <Route path="/login" element={<Login/>} />
-      <Route path="/feed" element={<Feed/>} />
+        <Route path="/emp" element={<EmpLayout />}>
+          <Route
+            index
+            element={
+              <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+                <div className="font-inter">
+                  This is the Employee Homepage
+                  <Button>Add Homepage</Button>
+                </div>
+              </ProtectedRoute>
+            }
+          />
+        </Route>
 
-
-      <Route path="/emp" element={<EmpLayout />}>
-        <Route index element={
-          <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
-            <div className='font-inter'>
-                This is the Employee Homepage
+        <Route path="/hr" element={<HrLayout />}>
+          <Route
+            index
+            element={
+              <div className="font-inter">
+                This is the HR Homepage
                 <Button>Add Homepage</Button>
-            </div>
-          </ProtectedRoute>
-        } />
-      </Route>
+              </div>
+            }
+          />
+        </Route>
 
-
-      <Route path="/hr" element={<HrLayout />}>
-        <Route index element={
-          <div className='font-inter'>
-            This is the HR Homepage
-            <Button>Add Homepage</Button>
-        </div>
-        } />
-      </Route>
-
-
-
-    </Routes>
+       
+      </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;
