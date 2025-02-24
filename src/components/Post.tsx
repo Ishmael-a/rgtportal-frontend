@@ -4,6 +4,7 @@ import FeedActions from "./feedActions";
 import CommentBlck from "./CommentBlck";
 import { IPost } from "@/types";
 import PollUI from "./PollUI";
+import { MoreVertical } from "lucide-react";
 
 const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
   const formatText = (text: string) => {
@@ -21,8 +22,9 @@ const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
 
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md max-w-[800px] bg-white">
-      <section className="w-full border-b py-3">
+      <section className="w-full border-b py-3 flex justify-between">
         <AvtrBlock avtDets={avtrDets} />
+        <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
       </section>
 
       <section className="pt-3 space-y-3">

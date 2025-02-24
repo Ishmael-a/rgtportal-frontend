@@ -1,28 +1,22 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from "./pages/Login"
-import { Button } from "./components/ui/button";
-import Feed from "./pages/Feed";
-
+import { BrowserRouter } from "react-router-dom";
+import AnimatedRoutes from "./components/AnimatedRoutes";
 
 function App() {
-
   return (
     <BrowserRouter>
-    <Routes>
-
-      <Route path="/feed" element={<Feed/>} />
-      <Route path="/login" element={<Login/>} />
-      <Route path="/" element={
-        <div className='font-inter'>
-          This is the Homepage
-          <Button>Add Homepage</Button>
-        </div>
-      } />
-
-
-    </Routes>
+      <AnimatedRoutes />
     </BrowserRouter>
-  )
+  );
 }
+// <Routes>
+//   {/* <Route path="/feed" element={<Feed />} />
+//   <Route path="/login" element={<Login />} /> */}
+//   {/* <Route path="/" element={
+//   <div className='font-inter'>
+//     This is the Homepage
+//     <Button>Add Homepage</Button>
+//   </div>
+// } /> */}
+// </Routes>
 
-export default App
+export default App;

@@ -1,4 +1,5 @@
 import AnnouncementCard from "@/components/AnnouncementCard";
+import CreatePost from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
 import {
@@ -12,6 +13,7 @@ import {
   recognees,
 } from "@/constants";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Feed = () => {
   const [showRecognition, setShowRecognition] = useState(false);
@@ -20,6 +22,7 @@ const Feed = () => {
     <main className="p-4 flex flex-col-reverse md:flex-row md:justify-end sm:gap-6 relative">
       {/* Posts section */}
       <section className="space-y-5">
+        <CreatePost />
         <Post poll={poll} avtrDets={avtrDets} text={postText2} />
         <Post image={imageUrl} avtrDets={avtrDets} text={postText1} />
       </section>
@@ -77,10 +80,12 @@ const Feed = () => {
           {/* Upcoming Events */}
           <div className="flex items-center justify-between">
             <p className="text-[#706D8A] font-[600]">Upcoming Events</p>
-            <img
-              src="/Down 2.svg"
-              className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
-            />
+            <Link to="/events-calendar">
+              <img
+                src="/Down 2.svg"
+                className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
+              />
+            </Link>
           </div>
 
           {/* Events List */}
