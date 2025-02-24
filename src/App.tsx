@@ -1,10 +1,11 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from "./pages/Login"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
 import { Button } from "./components/ui/button";
 import Feed from "./pages/Feed";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { EmpLayout } from "./layouts/EmpLayout";
 import { HrLayout } from "./layouts/HrLayout";
+import EventsCalendar from "./pages/EventsCalendar";
 
 function App() {
   return (
@@ -13,9 +14,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/feed" element={<Feed />} />
 
-        <Route path="/emp" element={<EmpLayout />}>
+        <Route element={<EmpLayout />}>
           <Route
             index
+            path="/emp"
             element={
               <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
                 <div className="font-inter">
@@ -25,6 +27,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/events-calendar" element={<EventsCalendar />} />
         </Route>
 
         <Route path="/hr" element={<HrLayout />}>
@@ -38,8 +41,6 @@ function App() {
             }
           />
         </Route>
-
-       
       </Routes>
     </BrowserRouter>
   );
