@@ -11,7 +11,12 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Login />} />
-        <Route path="/feed" element={<Feed />} />
+        <Route
+          path="/feed"
+          element={
+            <Feed />
+          }
+        />
         <Route
           path="/events-calendar"
           element={

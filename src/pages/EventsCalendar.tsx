@@ -19,26 +19,24 @@ const EventsCalendar = () => {
       </header>
 
       <section className="overflow-x-scroll bg-white rounded-md p-2 flex flex-col space-y-4">
-        <div className="grid grid-cols-7 w-full">
+        <div className="grid grid-cols-7 gap-4 min-w-[1000px]">
           {days.map((item, index) => (
-            <p
-              key={index}
-              className="text-[#A5A5A5] text-sm bg-red-200 text-center"
-            >
+            <p key={index} className="text-[#A5A5A5] text-sm text-center">
               {item}
             </p>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-4 w-full">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item, index) => (
-            <div
-              className="border-[2px] p-3 border-[#F6EEFF] bg-[#F5F5F5] rounded-sm min-h-32 "
-              key={index}
-            >
-              <p className="font-bold text-2xl">{item}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-7 gap-4 min-w-[1000px]">
+            {[...Array(31).keys()].map((item) => (
+              <div
+              className="border-[2px] p-3 border-[#F6EEFF] bg-[#F5F5F5] rounded-sm min-h-32"
+              key={item}
+              >
+              <p className="font-bold text-2xl">{item + 1}</p>
+              </div>
+            )
+            )}
         </div>
       </section>
     </main>
