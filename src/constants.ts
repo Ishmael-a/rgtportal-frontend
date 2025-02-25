@@ -83,12 +83,28 @@ export const eventList: IEventList[] = [
 export const announcements: IAnnouncementCard[] = [
   {
     title: "RGT University",
-    date: "Jun 25, 2025",
+    time: "1 PM",
   },
   {
     title: "New Policy Update",
-    date: "Jun 25, 2025",
+    time: "1 PM",
   },
+  {
+    title: "RGT University",
+    time: "1 PM",
+  },
+  // {
+  //   title: "New Policy Update",
+  //   time: "1 PM",
+  // },
+  // {
+  //   title: "RGT University",
+  //   time: "1 PM",
+  // },
+  // {
+  //   title: "New Policy Update",
+  //   time: "1 PM",
+  // },
 ];
 
 export const recognees = [

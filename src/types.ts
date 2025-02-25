@@ -29,7 +29,7 @@ export interface IPost {
 
 export interface IAnnouncementCard {
   title: string;
-  date: string;
+  time: string;
 }
 
 

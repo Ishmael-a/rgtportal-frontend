@@ -18,7 +18,7 @@ export const SideBar = () => {
       icon: Users, label: 'Teams', path: '/teams', 
       items: [
         { label: 'Settings', path: '/settings' },
-        { label: 'Help', path: '/help' }
+        { label: 'All Projects', path: '/all-projects' }
       ] 
     },
     { icon: MessageCircle, label: 'Messages', path: '/messages' },

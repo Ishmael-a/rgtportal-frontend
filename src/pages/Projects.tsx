@@ -2,10 +2,12 @@ import Avtr from "@/components/Avtr";
 import defaultBG from "../assets/images/defaultBG.png";
 import { avtrDets } from "@/constants";
 
-const All_Teams = () => {
+const Projects = () => {
   return (
     <main className="p-4">
-      <header className="text-[#706D8A] font-semibold text-3xl">Teams</header>
+      <header className="text-[#706D8A] font-semibold text-3xl">
+        All Projects
+      </header>
 
       <section className="pt-6 flex flex-wrap ">
         <div className="flex flex-col space-y-2 bg-white rounded-md p-2 min-w-12 shadow-md cursor-pointer hover:scale-[] transition-all duration-300 ease-in">
@@ -42,4 +44,4 @@ const All_Teams = () => {
   );
 };
 
-export default All_Teams;
+export default Projects;

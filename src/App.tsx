@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import { EmpLayout } from "./layouts/EmpLayout";
 import { HrLayout } from "./layouts/HrLayout";
 import EventsCalendar from "./pages/EventsCalendar";
+import Projects from "./pages/Projects";
 
 function App() {
   return (
@@ -26,8 +27,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-            <Route path="/feed" element={<Feed />} />
+          <Route path="/feed" element={<Feed />} />
           <Route path="/events-calendar" element={<EventsCalendar />} />
+          <Route path="/all-projects" element={<Projects />} />
         </Route>
 
         <Route path="/hr" element={<HrLayout />}>
