@@ -18,7 +18,10 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
   return (
     <div>
-      <header className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b">
+      <header
+        className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b"
+        style={{ zIndex: "999" }}
+      >
         {/* Left section with logo */}
         <div className="flex items-center gap-40 ">
           <div className=" ">
@@ -69,12 +72,13 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
         </div>
       </header>
 
-      <div className="flex mt-5">
+      {/* className="min-h-screen flex" */}
+      <div className="flex mt-5 min-h-screen">
         <div className="fixed translate-x-[30px] text-center ">
           <SideBar />
         </div>
 
-        <div className="ml-68">
+        <div className="ml-68 flex-grow">
           {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
           <Outlet />
           {/* </AnimationWrapper> */}

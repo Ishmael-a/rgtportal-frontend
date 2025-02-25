@@ -1,26 +1,50 @@
 import { IEventList } from "./components/EventList";
-import { IAnnouncementCard, IAvtrDets } from "./types";
+import {
+  IAnnouncementCard,
+  IProjectCard,
+  IProjectMembers,
+} from "./types/employee";
 
-
-
-export const avtrDets:IAvtrDets[] = [
+export const avtrDets: Partial<IProjectMembers>[] = [
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
 ];
 
@@ -131,5 +155,130 @@ export const recognees = [
   {
     name: "Simon Boateng",
     project: "MediBoard",
+  },
+];
+
+const membersArray = [
+  {
+    id: 1,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "Design",
+    role: "UI/UX",
+  },
+  {
+    id: 2,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "FullStack",
+    role: "FE",
+  },
+  {
+    id: 3,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "DevOps",
+    role: "AWS",
+  },
+  {
+    id: 4,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "AI",
+    role: "LLM",
+  },
+  {
+    id: 5,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "AI",
+    role: "Data Analysis",
+  },
+  {
+    id: 6,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "FullStack",
+    role: "BE",
+  },
+  {
+    id: 7,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "QA",
+    role: "QA",
+  },
+];
+
+// for all project page
+export const projectCards: IProjectCard[] = [
+  {
+    id: 0,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 1,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 2,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 3,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 4,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 5,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 6,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 7,
+    projectName: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
   },
 ];

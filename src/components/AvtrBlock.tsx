@@ -1,4 +1,4 @@
-import { IAvtrBlock } from "@/types";
+import { IAvtrBlock } from "@/types/employee";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const AvtrBlock: React.FC<{ avtDets: IAvtrBlock }> = ({ avtDets }) => {

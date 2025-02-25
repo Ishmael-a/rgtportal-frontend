@@ -1,4 +1,4 @@
-import { IAnnouncementCard } from "@/types";
+import { IAnnouncementCard } from "@/types/employee";
 
 const AnnouncementCard: React.FC<IAnnouncementCard> = ({ title, time }) => {
   const images = [
@@ -6,6 +6,7 @@ const AnnouncementCard: React.FC<IAnnouncementCard> = ({ title, time }) => {
     { url: "/bellYellow.svg", color: "yellow" }, // bg: "#FFEBCC"
     { url: "/BellPurple.svg", color: "purple" }, // bg: "#F6EEFF"
   ];
+
 
   const randomIndex = Math.floor(Math.random() * images.length);
   const randomImage = images[randomIndex];

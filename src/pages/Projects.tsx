@@ -1,6 +1,8 @@
-import Avtr from "@/components/Avtr";
-import defaultBG from "../assets/images/defaultBG.png";
-import { avtrDets } from "@/constants";
+import ProjectCard from "@/components/ProjectCard";
+import { projectCards } from "@/constants";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useState } from "react";
 
 const Projects = () => {
   return (
@@ -9,39 +11,106 @@ const Projects = () => {
         All Projects
       </header>
 
-      <section className="pt-6 flex flex-wrap ">
-        <div className="flex flex-col space-y-2 bg-white rounded-md p-2 min-w-12 shadow-md cursor-pointer hover:scale-[] transition-all duration-300 ease-in">
-          <p className="font-medium p-[3px] bg-rgtpink w-fit text-white rounded-md text-xs">
-            Mediboard
-          </p>
-          <img
-            src={defaultBG}
-            alt="default background"
-            className="rounded-lg aspect-video w-full "
-          />
-          <p className="text-[#475569] font-medium text-sm">
-            Project lead - Ishmael Abu Yusif
-          </p>
-          <div className="flex justify-between items-center">
-            <div className="relative w-[80px] h-10">
-              {avtrDets.map((avtr, index) => (
-                <Avtr
-                  key={index}
-                  index={index}
-                  avtr={avtr}
-                  className="w-5 h-5 rounded-full"
-                />
-              ))}
-            </div>
-            <div className="flex space-x-1 text-[#768396] font-bold">
-              <img src="/Check.svg" />
-              <p className="text-sm text-nowrap">3/2300 completed</p>
-            </div>
-          </div>
-        </div>
+      <section className="pt-6 flex flex-wrap gap-4 ">
+        {projectCards.map((item, index) => (
+          <ProjectCard {...item} key={index} />
+        ))}
+      </section>
+
+      <section className=" mt-5 flex justify-center items-center">
+        <StepProgress />
       </section>
     </main>
   );
 };
 
 export default Projects;
+
+const StepProgress = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const handleNext = () => {
+    if (currentStep < totalSteps) setCurrentStep(currentStep + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const totalSteps = 10; // will use total number of pages from backend
+
+  // Function to generate step numbers with ellipses
+  const getDisplayedSteps = () => {
+    if (totalSteps <= 5) {
+      return Array.from({ length: totalSteps }, (_, i) => i + 1);
+    }
+    if (currentStep <= 3) {
+      return [1, 2, 3, 4, 5, "...", totalSteps];
+    }
+    if (currentStep >= totalSteps - 2) {
+      return [
+        1,
+        "...",
+        totalSteps - 4,
+        totalSteps - 3,
+        totalSteps - 2,
+        totalSteps - 1,
+        totalSteps,
+      ];
+    }
+    return [
+      1,
+      "...",
+      currentStep - 1,
+      currentStep,
+      currentStep + 1,
+      "...",
+      totalSteps,
+    ];
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-4 p-4 ">
+      {/* Left Arrow */}
+      <button
+        onClick={handlePrev}
+        disabled={currentStep === 1}
+        className="rounded-md text-rgtpurpleaccent2 font-bold cursor-pointer"
+      >
+        <ChevronLeft />
+      </button>
+
+      {/* Step Indicators */}
+      <div className="flex items-center gap-4">
+        {getDisplayedSteps().map((step, index) => (
+          <div key={index} className="flex items-center">
+            {step === "..." ? (
+              <span className="text-gray-500 mx-2">...</span>
+            ) : (
+              <button
+                onClick={() => setCurrentStep(step as number)}
+                className={`w-8 h-8 flex items-center justify-center rounded-md transition-all 
+                  ${
+                    currentStep === step
+                      ? "bg-rgtpurpleaccent2 text-white font-bold"
+                      : "text-gray-700"
+                  }`}
+              >
+                {step}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Right Arrow */}
+      <button
+        onClick={handleNext}
+        disabled={currentStep === totalSteps}
+        className="text-rgtpurpleaccent2 font-bold cursor-pointer"
+      >
+        <ChevronRight />
+      </button>
+    </div>
+  );
+};

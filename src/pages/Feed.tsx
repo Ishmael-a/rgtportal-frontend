@@ -10,18 +10,31 @@ import {
   poll,
   postText1,
   postText2,
+  projectCards,
 } from "@/constants";
 import { Link } from "react-router-dom";
 import confetti2 from "../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
+import cool from "../assets/images/coolEmoji.png";
 
 const Feed = () => {
+  const colors = [
+    { color: "#FFCFF2", name: "pink" }, // bg: "#FFCFF2"
+    { color: "#FFEBCC", name: "yellow" }, // bg: "#FFEBCC"
+    { color: "#F6EEFF", name: "purple" }, // bg: "#F6EEFF"
+  ];
+
+  const getRandomColor = () => {
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
+  };
+
   return (
     <main className="p-4 flex flex-col-reverse md:flex-row md:justify-end sm:gap-6 relative">
-      <div>
+      <div className="space-y-10">
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44"
+          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 max-w-[800px]"
           style={{
             backgroundImage: `url(${confetti2})`,
             backgroundSize: "contain",
@@ -37,18 +50,59 @@ const Feed = () => {
             </p>
           </header>
 
-          <div>
-            <div className="border-3 rounded-full p-2 flex w-fit items-center justify-center">
-              <Avtr avtr={avtrDets[0]} className= "" />
-            </div>
+          <div
+            className="w-full flex justify-center gap-4 p-2 items-center overflow-x-scroll"
+            style={{
+              scrollbarWidth: "none" /* Firefox */,
+              msOverflowStyle: "none" /* IE and Edge */,
+            }}
+          >
+            <style>
+              {`
+                .hide-scrollbar::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and Opera */
+              }
+              `}
+              //{" "}
+            </style>
+            {projectCards[0].members.map((item, index) => {
+              const randomColor = getRandomColor();
+              return (
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`border-3 rounded-full p-1 flex w-fit items-center justify-center relative ${
+                      randomColor.name === "pink"
+                        ? "border-[#EA5E9C]"
+                        : randomColor.name === "yellow"
+                        ? "border-[#F9B500]"
+                        : "border-[#C0AFFF]"
+                    }`}
+                    key={index}
+                  >
+                    <Avtr
+                      url={item.avtr.url}
+                      name={item.avtr.fallBack}
+                      className={`w-[76.94px] h-[76.94px]`}
+                    />
+                    <img src={cool} className="absolute bottom-0 right-0" />
+                  </div>
+                  <p className="font-semibold text-sm">Name</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {/* Posts section */}
-        <section className="space-y-5">
+        <section className="space-y-7">
           <CreatePost />
-          <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
-          <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
+          <div className="space-y-3">
+            <header className="font-semibold text-lg text-[#706D8A]">
+              For you
+            </header>
+            <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
+            <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
+          </div>
         </section>
       </div>
 
@@ -100,55 +154,5 @@ const Feed = () => {
     </main>
   );
 };
-
-// {
-//   /* Recognition section */
-// }
-// <div
-//   className={`flex flex-col bg-white p-4 rounded-lg space-y-3 transition-all duration-300 ease-in ${
-//     showRecognition ? "max-h-[500px]" : "max-h-16 overflow-hidden"
-//   }`}
-// >
-//   <div className="flex items-center justify-between ">
-//     <div className="flex items-center space-x-2">
-//       <img src="/recognitionIconsvg.svg" alt="recognition" />
-//       <p className="text-[#706D8A] font-[600]">Recognition</p>
-//     </div>
-//     <img
-//       src="/Down 2.svg"
-//       className={`hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
-//         showRecognition ? "rotate-180" : ""
-//       }`}
-//       onClick={() => setShowRecognition(!showRecognition)}
-//     />
-//   </div>
-
-//   {/* Recognition List */}
-//   <div
-//     className="flex flex-col space-y-3 overflow-y-scroll h-36"
-//     style={{
-//       scrollbarWidth: "none" /* Firefox */,
-//       msOverflowStyle: "none" /* IE and Edge */,
-//     }}
-//   >
-//     <style>
-//       {`
-//         .hide-scrollbar::-webkit-scrollbar {
-//         display: none; /* Chrome, Safari, and Opera */
-//          }
-//       `}
-//     </style>
-
-//     {recognees.map((recognee, index) => (
-//       <div
-//         className="flex justify-between items-center bg-slate-100 p-2 rounded-md text-sm font-medium"
-//         key={index}
-//       >
-//         <p className="text-rgtpurple"> {recognee.name} </p>
-//         <p>{recognee.project}</p>
-//       </div>
-//     ))}
-//   </div>
-// </div>;
 
 export default Feed;
