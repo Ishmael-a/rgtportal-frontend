@@ -1,13 +1,14 @@
 import { IAvtrComponent } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-
-
 const Avtr: React.FC<IAvtrComponent> = ({ className, index, avtr }) => {
   return (
     <Avatar
-      className={`absolute border-2 border-white ${className}`}
-      style={{ left: `${index * 20}px`, zIndex: `${10 - index}` }} // Adjust stacking
+      className={`border-2 border-white ${className}`}
+      style={{
+        left: `${index ? index * 20 : 0}px`,
+        zIndex: `${index ? 10 - index : 0}`,
+      }} // Adjust stacking
     >
       <AvatarImage
         src={avtr.avatarUrl}

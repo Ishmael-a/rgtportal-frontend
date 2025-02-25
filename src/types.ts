@@ -42,6 +42,6 @@ export interface IAvtrDets {
 
 export interface IAvtrComponent {
   className?: ClassNameValue;
-  index: number;
+  index?: number;
   avtr: IAvtrDets;
 }

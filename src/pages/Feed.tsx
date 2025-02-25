@@ -12,18 +12,47 @@ import {
   postText2,
 } from "@/constants";
 import { Link } from "react-router-dom";
+import confetti2 from "../assets/images/confetti2.png";
+import Avtr from "@/components/Avtr";
 
 const Feed = () => {
   return (
     <main className="p-4 flex flex-col-reverse md:flex-row md:justify-end sm:gap-6 relative">
-      {/* Posts section */}
-      <section className="space-y-5">
-        <CreatePost />
-        <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
-        <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
-      </section>
+      <div>
+        {/* Recognition Section */}
+        <section
+          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44"
+          style={{
+            backgroundImage: `url(${confetti2})`,
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+          }}
+        >
+          <header className="">
+            <p className="font-semibold text-[32px] text-center">
+              Employees of the Week!!
+            </p>
+            <p className="font-semibold text-sm text-center">
+              Them of the week: Dedication... Let's Lock in
+            </p>
+          </header>
 
-      <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-22  h-fit">
+          <div>
+            <div className="border-3 rounded-full p-2 flex w-fit items-center justify-center">
+              <Avtr avtr={avtrDets[0]} className= "" />
+            </div>
+          </div>
+        </section>
+
+        {/* Posts section */}
+        <section className="space-y-5">
+          <CreatePost />
+          <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
+          <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
+        </section>
+      </div>
+
+      <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-22  h-fit order-2">
         {/* Upcoming Events and Announcements */}
         <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
           {/* Upcoming Events */}
