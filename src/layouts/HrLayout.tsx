@@ -24,7 +24,7 @@ export const HrLayout = ({ userName = "Adjoa"}: HrLayoutProps) => {
 
     return (
         <div>
-            <header className="sticky top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
+            <header className="sticky z-10 top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
             {/* Left section with logo */}
             <div className="flex items-center gap-28 ">
                 <div className=" ">

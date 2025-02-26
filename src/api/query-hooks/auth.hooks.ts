@@ -1,5 +1,5 @@
 import { authService } from '../services/auth.service';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 
 export const useGoogleAuth = () => {
 return useMutation({
@@ -13,3 +13,13 @@ return useMutation({
     },
 });
 };
+
+
+
+export const useCurrentUser = () => {
+
+    return useQuery({
+        queryFn: authService.getCurrentUser,
+        queryKey: ["user"]
+    })
+}

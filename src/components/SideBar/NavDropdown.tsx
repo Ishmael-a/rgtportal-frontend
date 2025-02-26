@@ -37,8 +37,8 @@ export const NavDropdown = ({
       {/* Dropdown button */}
       <button
         onClick={toggleDropdown}
-        className={`inline-flex justify-between items-center w-full px-4 py-2 text-sm font-medium
-          bg-white border rounded-md hover:bg-gray-50 border-none outline-none ${className}`}
+        className={`inline-flex justify-between items-center w-full px-4 py-2.5 text-sm font-medium
+          bg-white border  hover:bg-gray-50 border-none outline-none ${className}`}
       >
         <div className="flex gap-3 items-center">
           <img src={iconPath} className={iconClassName}/>

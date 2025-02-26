@@ -2,18 +2,12 @@
 import React from 'react';
 import {NavDropdown} from "./NavDropdown";
 import { NavLink } from 'react-router-dom';
-import { 
-  Home,
-  Users,
-  MessageCircle,
-  Clock,
-  User
-} from 'lucide-react';
+
 
 export const HrSideBar = () => {
 
   const navItems = [
-    { icon: "/Feed.svg", label: 'Feed', path: '/feed' },
+    { icon: "/Feed.svg", label: 'Feed', path: 'feed' },
     { 
       icon: "/Employees.svg", label: 'Employees', path: '/employees', 
       items: [
@@ -39,24 +33,38 @@ export const HrSideBar = () => {
   ];
 
     return (
-      <nav className="w-64 rounded-4xl h-full text-center bg-white pb-4  flex flex-col ">
-        <NavLink to={"/hrdashboard"} className="group flex items-center justify-center text-center  font-medium text-sm rounded-t-4xl py-4 mb-4 w-full hover:bg-rgtviolet hover:text-white transition-colors ease-in-out duration-400" >
-            HR Dashboard 
-            <div className="relative ml-2 w-6 h-6">
-                {/* Default Image */}
+      <nav className="w-64 rounded-4xl h-full text-center bg-white pb-8  flex flex-col ">
+        <NavLink 
+          to="/hr/dashboard"
+          end={true}
+          className={({ isActive }) => `
+            group flex items-center justify-center text-center font-medium text-sm 
+            rounded-t-4xl py-4 mb-4 w-full transition-colors ease-in-out duration-400
+            ${isActive 
+              ? 'bg-rgtviolet text-white' // Active state styles
+              : 'hover:bg-rgtviolet hover:text-white' // Base + hover state
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <span>HR Dashboard</span>
+              <div className="relative ml-2 w-6 h-6">
                 <img
-                src="/Dashboard3.svg"
-                className="absolute inset-0 w-full h-full transition-opacity duration-300 ease-in-out group-hover:opacity-0"
+                  src="/Dashboard3.svg"
+                  className={`absolute inset-0 w-full h-full transition-opacity duration-300 
+                    ${isActive ? 'opacity-0' : 'opacity-100'}`}
                 />
-
-                {/* Hover Image */}
                 <img
-                src="/DashboardWhite.svg"
-                className="absolute inset-0 text-white w-full h-full opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100"
+                  src="/DashboardWhite.svg"
+                  className={`absolute inset-0 w-full h-full transition-opacity duration-300
+                    ${isActive ? 'opacity-100' : 'opacity-0'}`}
                 />
-            </div>
+              </div>
+            </>
+          )}
         </NavLink>
-        <div className="px-4 w-full text-center flex flex-col gap-6">
+        <div className=" w-full text-center flex flex-col gap-6">
       {navItems.map((item) => (
           item.items ?  
           <NavDropdown 
@@ -72,16 +80,25 @@ export const HrSideBar = () => {
           key={item.path}
           to={item.path}
           className={({ isActive }) => `
-            flex items-center gap-3 px-4 py-2.5 rounded-lg
-            transition-colors duration-200 font-medium 
+            relative flex items-center gap-3 px-4 py-2.5 
+            transition-colors duration-200 
             ${isActive 
-                ? 'bg-gray-100 text-pink-500' 
+                ? 'bg-gray-100 text-purple-600 font-bold' 
                 : ' hover:bg-gray-50'
             }
             `}
-            >
-            <img src={item.icon} className="h-6 w-6 mr-4"/>
-            <span className="text-sm font-medium">{item.label}</span>
+          >
+            {({ isActive }) => (
+                <>
+                  {/* Left accent bar */}
+                  <span
+                    className={`absolute left-0 top-0 h-full w-[5px] rounded-r-xl transition-all
+                    ${isActive ? "bg-purple-600" : "bg-transparent"}`}
+                  />
+                  <img src={item.icon} className="h-6 w-6 mr-4"/>
+                  <span className="text-sm font-medium">{item.label}</span>
+                </>
+              )}
           </NavLink>
         
     ))}

@@ -4,6 +4,7 @@ import rgtIcon from "../assets/logos/RGT TRANSPARENT 1.svg"
 import { Search, Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {SideBar} from "../components/SideBar/SideBar"
 import { Outlet } from 'react-router-dom';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -17,7 +18,7 @@ export const EmpLayout = ({ userName = "Layla Odam"}: EmpLayoutProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
-      };
+    };
 
 
     return (

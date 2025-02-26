@@ -19,23 +19,24 @@ function App() {
 
 
         {/* Common routes with base layout */}
-        <Route element={<EmpLayout />}>
-          {/* <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "HR", "SUPER_ADMIN"]} />}> */}
-            <Route path="/feed" element={<Feed />} />
+        {/* <Route element={<EmpLayout />}> */}
+          {/* <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "HR", "ADMIN"]} />}> */}
+            {/* <Route path="/feed" element={<Feed />} /> */}
           {/* </Route> */}
-        </Route>
+        {/* </Route> */}
 
 
         {/* Employee routes */}
         <Route path="/emp" element={<EmpLayout />}>
-          {/* <Route element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]} />}> */}
-            <Route index element={
+          {/* <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}> */}
+            <Route index path="dashboard" element={
               <div className="font-inter">
                 This is the Employee Homepage
                 <Button>Add Homepage</Button>
               </div>
               }
             />
+            <Route path="feed" element={<Feed />} />
           {/* </Route> */}
         </Route>
 
@@ -43,6 +44,7 @@ function App() {
         <Route path="/hr" element={<HrLayout />}>
           <Route
             index
+            path="dashboard"
             element={
               <div className="font-inter">
                 This is the HR Homepage
@@ -50,6 +52,8 @@ function App() {
               </div>
             }
           />
+          
+          <Route path="feed" element={<Feed />} />
         </Route>
 
 

@@ -33,8 +33,9 @@ export const authService = {
       return response.data;
     },
     
-    getCurrentUser: async (): Promise<ApiResponse<User>> => {
-      const response = await axiosInstance.get<ApiResponse<User>>('/user');
+    getCurrentUser: async (): Promise<User> => {
+      const response = await axiosInstance.get('/user');
+      console.log("User data",response.data)
       return response.data;
     },
 };

@@ -13,7 +13,7 @@ import {
 export const SideBar = () => {
 
   const navItems = [
-    { icon: "/Feed.svg", label: 'Feed', path: '/feed' },
+    { icon: "/Feed.svg", label: 'Feed', path: 'feed' },
     { 
       icon: "/Teams.svg", label: 'Teams', path: '/teams', 
       items: [
@@ -32,34 +32,32 @@ export const SideBar = () => {
   ];
 
     return (
-      <nav className="w-48 rounded-xl  h-auto bg-white p-4 flex flex-col gap-7">
+      <nav className="w-55 rounded-xl  h-auto bg-white p-4 flex flex-col gap-7">
       {navItems.map((item) => (
         item.items ?  
           <NavDropdown 
             items={item.items}
             label={item.label}
             iconPath = {item.icon}
-            className="w-48"
+            className="w-48 "
+            iconClassName = "mr-4"
+            itemlabelClassName='ml-4 text-sm'
           />
           :
           <NavLink
-          key={item.path}
-          to={item.path}
-          className={({ isActive }) => `
-            flex items-center gap-3 px-4 py-2.5 rounded-lg
-            transition-colors duration-200 font-medium 
-            ${isActive 
-              ? 'bg-gray-100 text-pink-500' 
-              : ' hover:bg-gray-50'
-            }
-          `}
-        >
-          <img src={item.icon} className="h-6 w-6 mr-4"/>
-
-          {/* <item.icon 
-            className={`h-6 w-6 `} 
-          /> */}
-          <span className="text-sm font-medium">{item.label}</span>
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) => `
+              flex items-center gap-3 px-4 py-2.5 rounded-lg
+              transition-colors duration-200 font-medium 
+              ${isActive 
+                  ? 'bg-gray-100 text-pink-500' 
+                  : ' hover:bg-gray-50'
+              }
+              `}
+            >
+            <img src={item.icon} className="h-6 w-6 mr-4"/>
+            <span className="text-sm font-medium">{item.label}</span>
           </NavLink>
         
       ))}
