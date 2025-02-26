@@ -22,20 +22,22 @@ export const EmpLayout = ({ userName = "Layla Odam"}: EmpLayoutProps) => {
 
     return (
         <div>
-            <header className="sticky flex items-center justify-between px-16 py-5 bg-white border-b">
+            <header className="sticky top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
             {/* Left section with logo */}
-            <div className="flex items-center gap-40 ">
+            <div className="flex items-center gap-16 ">
                 <div className=" ">
-                    <img src={rgtIcon} className="w-10 h-10"/>
+                    <img src="/RgtPortalLogo.svg" className="w-40 h-15"/>
                 </div>
                 
                 {/* Greeting section */}
                 <div className="flex items-center gap-2" onClick={toggleDropdown}>
-                {isOpen ? (
-                    <ChevronUp className="ml-2 h-4 w-4 transition-all ease-in-out duration-200" />
-                ) : (
-                    <ChevronDown className="ml-2 h-4 w-4 transition-all ease-in-out duration-200" />
-                )}
+                <img
+                    src="/Down 2.svg"
+                    className={`ml-2 h-4 w-4  hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
+                        isOpen ? "rotate-180" : ""
+                    }`}
+                    onClick={toggleDropdown}
+                />
                 <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
                     <AvatarImage src="https://github.com/shadcn.png" />
@@ -78,10 +80,10 @@ export const EmpLayout = ({ userName = "Layla Odam"}: EmpLayoutProps) => {
                 </div>
 
                 <div className="ml-68">
-                    <AnimationWrapper key="childrenOfEmpLayout">
+                    {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
                     {/* {children} */}
                     <Outlet/>
-                    </AnimationWrapper>
+                    {/* </AnimationWrapper> */}
                 </div>
             </div>
         </div>

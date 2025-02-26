@@ -13,22 +13,22 @@ import {
 export const SideBar = () => {
 
   const navItems = [
-    { icon: Home, label: 'Feed', path: '/feed' },
+    { icon: "/Feed.svg", label: 'Feed', path: '/feed' },
     { 
-      icon: Users, label: 'Teams', path: '/teams', 
+      icon: "/Teams.svg", label: 'Teams', path: '/teams', 
       items: [
         { label: 'Settings', path: '/settings' },
         { label: 'Help', path: '/help' }
       ] 
     },
-    { icon: MessageCircle, label: 'Messages', path: '/messages' },
-    { icon: Clock, label: 'Time Off', path: '/time-off',
+    { icon: "/Message28.svg", label: 'Messages', path: '/messages' },
+    { icon: "/Time.svg", label: 'Time Off', path: '/time-off',
       items: [
         { label: 'Settings', path: '/settings' },
         { label: 'Help', path: '/help' }
       ] 
     },
-    { icon: User, label: 'Profile', path: '/profile' }
+    { icon: "/User.svg", label: 'Profile', path: '/profile' }
   ];
 
     return (
@@ -38,7 +38,7 @@ export const SideBar = () => {
           <NavDropdown 
             items={item.items}
             label={item.label}
-            icon = {item.icon}
+            iconPath = {item.icon}
             className="w-48"
           />
           :
@@ -54,9 +54,11 @@ export const SideBar = () => {
             }
           `}
         >
-          <item.icon 
+          <img src={item.icon} className="h-6 w-6 mr-4"/>
+
+          {/* <item.icon 
             className={`h-6 w-6 `} 
-          />
+          /> */}
           <span className="text-sm font-medium">{item.label}</span>
           </NavLink>
         
