@@ -1,13 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import { Button } from "./components/ui/button";
-import Feed from "./pages/Feed";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { EmpLayout } from "./layouts/EmpLayout";
 import { HrLayout } from "./layouts/HrLayout";
-import EventsCalendar from "./pages/EventsCalendar";
-import Projects from "./pages/Projects";
-import ProjectDetails from "./pages/ProjectDetails";
+import Feed from "./pages/Employee/Feed";
+import EventsCalendar from "./pages/Employee/EventsCalendar";
+import Projects from "./pages/Employee/Projects";
+import ProjectDetails from "./pages/Employee/ProjectDetails";
+import TimeOff from "./pages/Employee/TimeOff";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/events-calendar" element={<EventsCalendar />} />
           <Route path="/all-projects" element={<Projects />} />
           <Route path="/all-projects/:id" element={<ProjectDetails />} />
+          <Route path="/time-off" element={<TimeOff />} />
         </Route>
 
         <Route path="/hr" element={<HrLayout />}>

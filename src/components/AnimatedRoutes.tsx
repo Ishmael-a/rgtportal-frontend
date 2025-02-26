@@ -1,9 +1,9 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import Feed from "@/pages/Feed";
-import EventsCalendar from "@/pages/EventsCalendar";
+import Feed from "@/pages/Employee/Feed";
+import EventsCalendar from "@/pages/Employee/EventsCalendar";
 import Login from "@/pages/Login";
-import All_Teams from "@/pages/Projects";
+import All_Teams from "@/pages/Employee/Projects";
 
 const AnimatedRoutes = () => {
   const location = useLocation();

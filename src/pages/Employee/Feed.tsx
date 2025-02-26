@@ -13,9 +13,9 @@ import {
   projectCards,
 } from "@/constants";
 import { Link } from "react-router-dom";
-import confetti2 from "../assets/images/confetti2.png";
+import confetti from '../../assets/images/confetti2.png'
 import Avtr from "@/components/Avtr";
-import cool from "../assets/images/coolEmoji.png";
+import cool from "../../assets/images/coolEmoji.png";
 
 const Feed = () => {
   const colors = [
@@ -36,7 +36,7 @@ const Feed = () => {
         <section
           className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 max-w-[800px]"
           style={{
-            backgroundImage: `url(${confetti2})`,
+            backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
             backgroundPosition: "center",
           }}
