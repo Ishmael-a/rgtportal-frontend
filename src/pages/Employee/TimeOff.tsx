@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
+import DatePicker from "@/components/common/DatePicker";
+import CustomSelect from "@/components/common/Select";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export interface Column {
   key: string;
@@ -99,8 +102,8 @@ const data = [
   },
 ];
 
-export default function GroupsPage() {
-  console.log("column1:", columns);
+export default function TimeOff() {
+  const [showRequest, setShowRequest] = useState(false)
   return (
     <div className="p-4">
       <header className="flex justify-between items-center">
@@ -112,9 +115,12 @@ export default function GroupsPage() {
           Add New Request
         </Button>
       </header>
-      <p className="text-sm text-gray-600 mb-4">
-        01 Jan 2023 - 10 Mar 2023 | All Type
-      </p>
+
+      <div className="flex gap-3 h-[50px] items-center my-8">
+        <DatePicker />
+        <CustomSelect data={["plnt"]} />
+        <CustomSelect data={["plnt"]} />
+      </div>
 
       {/* Table with custom cell styles */}
       <DataTable columns={columns} data={data} dividers={false} />

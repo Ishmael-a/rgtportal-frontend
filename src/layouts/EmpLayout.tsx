@@ -74,7 +74,10 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
       {/* className="min-h-screen flex" */}
       <div className="flex mt-5 min-h-screen">
-        <div className="fixed translate-x-[30px] text-center ">
+        <div
+          className="fixed translate-x-[30px] text-center"
+          style={{ zIndex: 999 }}
+        >
           <SideBar />
         </div>
 
