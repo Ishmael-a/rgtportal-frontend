@@ -1,9 +1,8 @@
-import { createContext, useContext, PropsWithChildren, useState, useEffect } from "react";
+import { createContext, PropsWithChildren, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from '../state/store';
+import { RootState } from "../state/store";
 import { useCurrentUser } from "@/api/query-hooks/auth.hooks";
-import { LOGOUT, SETCURRENTUSER } from '../state/authState/authSlice';
-import { ROLES } from "@/lib/constants/roles";
+import { LOGOUT, SETCURRENTUSER } from "../state/authState/authSlice";
 // import {useNavigate} from "react-router-dom"
 
 // Define proper types for the context
@@ -16,41 +15,36 @@ interface AuthContextType {
 }
 
 // Create context with a default value matching the type
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 type AuthProviderProps = PropsWithChildren;
 
-
 const AuthContextProvider = ({ children }: AuthProviderProps) => {
   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const { currentUser } = useSelector((state: RootState) => state.authState);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
+
   // Use React Query for fetching user data
-  const { 
-    data: fetchedUser, 
-    status, 
-    error: fetchError,
-    refetch 
-  } = useCurrentUser();
+  const { data: fetchedUser, status, error: fetchError } = useCurrentUser();
 
   // Handle logout
   const logout = async () => {
     try {
       // Call your logout API here if needed
       // await authService.logout();
-      
-      // Update Redux state
-    //   dispatch(SETCURRENTUSER({ currentUser: null }));
-      dispatch(LOGOUT());
-    //   navigate("/login", {replace: true})
 
-        
+      // Update Redux state
+      //   dispatch(SETCURRENTUSER({ currentUser: null }));
+      dispatch(LOGOUT());
+      //   navigate("/login", {replace: true})
+
       // Optionally clear any tokens from localStorage
-    //   localStorage.removeItem("token");
-      
+      //   localStorage.removeItem("token");
+
       // Invalidate queries if needed
       // queryClient.invalidateQueries(["user"]);
     } catch (error) {
@@ -61,20 +55,33 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
   // Effect to sync React Query data with Redux
   useEffect(() => {
     if (status === "success" && fetchedUser?.id) {
-      console.log(`${fetchedUser.username} is loggedIn🎉`)
-      console.log(`Fetched User is loggedIn🎉`, fetchedUser)
-      dispatch(SETCURRENTUSER({ currentUser: {...fetchedUser, role: {...fetchedUser.role, name: fetchedUser.role.name.toUpperCase()}} }));
+      console.log(`${fetchedUser.username} is loggedIn🎉`);
+      console.log(`Fetched User is loggedIn🎉`, fetchedUser);
+      dispatch(
+        SETCURRENTUSER({
+          currentUser: {
+            ...fetchedUser,
+            role: {
+              ...fetchedUser.role,
+              name: fetchedUser.role.name.toUpperCase(),
+            },
+          },
+        })
+      );
       setIsLoading(false);
     } else if (status === "error") {
-        console.error("Error fetching user:", fetchError);
-        setError(fetchError instanceof Error ? fetchError : new Error("Failed to fetch user"));
-        setIsLoading(false);
+      console.error("Error fetching user:", fetchError);
+      setError(
+        fetchError instanceof Error
+          ? fetchError
+          : new Error("Failed to fetch user")
+      );
+      setIsLoading(false);
     } else if (status === "pending") {
-        setIsLoading(true);
-    }
-    else{
-        setIsLoading(false);
-        logout();
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+      logout();
     }
   }, [status, fetchedUser, fetchError, dispatch]);
 
@@ -84,21 +91,21 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
     isLoading,
     isAuthenticated: !!currentUser,
     error,
-    logout
+    logout,
   };
 
-    // Show loading state only during initial load
-    if (isLoading && !currentUser) {
-        return <div className="flex items-center justify-center min-h-screen">Loading user information...</div>;
-    }
+  // Show loading state only during initial load
+  if (isLoading && !currentUser) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading user information...
+      </div>
+    );
+  }
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
-
-
 
 export default AuthContextProvider;
