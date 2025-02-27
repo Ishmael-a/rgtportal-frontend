@@ -109,15 +109,15 @@ export const eventList: IEventList[] = [
 export const announcements: IAnnouncementCard[] = [
   {
     title: "RGT University",
-    time: "1 PM",
+    date: new Date(),
   },
   {
     title: "New Policy Update",
-    time: "1 PM",
+    date: new Date(),
   },
   {
     title: "RGT University",
-    time: "1 PM",
+    date: new Date(),
   },
   // {
   //   title: "New Policy Update",

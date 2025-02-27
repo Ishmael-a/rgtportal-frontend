@@ -2,19 +2,19 @@ import { NavLink } from "react-router-dom";
 
 export const SideBar = () => {
   const navItems = [
-    { icon: "/Feed.svg", label: "Feed", path: "/feed" },
+    { icon: "/Feed.svg", label: "Feed", path: "emp/feed" },
     {
       icon: "/Teams.svg",
       label: "All Projects",
       path: "/all-projects",
     },
-    { icon: "/Message28.svg", label: "Messages", path: "/messages" },
+    { icon: "/Message28.svg", label: "Messages", path: "emp/messages" },
     {
       icon: "Time.svg",
       label: "Time Off",
-      path: "/time-off",
+      path: "emp/time-off",
     },
-    { icon: "/User.svg", label: "Profile", path: "/profile" },
+    { icon: "/User.svg", label: "Profile", path: "emp/profile" },
   ];
 
   return (

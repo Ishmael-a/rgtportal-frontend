@@ -18,7 +18,7 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
 
-        <Route element={<EmpLayout />}>
+        <Route path="/emp" element={<EmpLayout />}>
           {/* <Route
             index
             path="/emp"
@@ -31,12 +31,15 @@ function App() {
               </ProtectedRoute>
             }
           /> */}
-          <Route path="/feed" element={<Feed />} />
-          <Route path="/events-calendar" element={<EventsCalendar />} />
-          <Route path="/all-projects" element={<Projects />} />
-          <Route path="/all-projects/:id" element={<ProjectDetails />} />
-          <Route path="/time-off" element={<TimeOff />} />
+          <Route index path="feed" element={<Feed />} />
+          <Route path="events-calendar" element={<EventsCalendar />} />
+          <Route path="all-projects" element={<Projects />} />
+          <Route path="all-projects/:id" element={<ProjectDetails />} />
+          <Route path="time-off" element={<TimeOff />} />
         </Route>
+
+        {/* Manager routes */}
+        <Route path="/hr"></Route>
 
         {/* HR routes */}
         <Route path="/hr" element={<HrLayout />}>
