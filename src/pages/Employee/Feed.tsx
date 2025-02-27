@@ -83,6 +83,7 @@ const Feed = () => {
                       url={item.avtr.url}
                       name={item.avtr.fallBack}
                       className={`w-[76.94px] h-[76.94px]`}
+                      
                     />
                     <img src={cool} className="absolute bottom-0 right-0" />
                   </div>

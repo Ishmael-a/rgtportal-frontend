@@ -18,7 +18,7 @@ const TimeOffModal: React.FC<ITimeOffModal> = ({
   return (
     <div
       className="fixed inset-0  backdrop-blur-xs  flex items-start justify-end"
-      style={{ zIndex: 100 }}
+      style={{ zIndex: 170 }}
     >
       <div className="bg-white shadow-lg  max-w-md w-full p-6 h-screen">
         <h2 className="text-xl font-semibold mb-4 text-[#706D8A]">{title}</h2>

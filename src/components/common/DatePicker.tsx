@@ -46,7 +46,7 @@ const DatePicker: React.FC<IDatePicker> = ({ placeholder, fn }) => {
           <CalendarIcon />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" style={{ zIndex: 100 }}>
+      <PopoverContent className="w-auto p-0" style={{ zIndex: 170 }}>
         <Calendar
           mode="single"
           selected={date}
