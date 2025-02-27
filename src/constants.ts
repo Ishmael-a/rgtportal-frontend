@@ -1,26 +1,52 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IEventList } from "./components/EventList";
-import { IAnnouncementCard, IAvtrDets } from "./types";
+import {
+  IAnnouncementCard,
+  IProjectCard,
+  IProjectMembers,
+} from "./types/employee";
+import { Column } from "./types/tables";
 
-
-
-export const avtrDets:IAvtrDets[] = [
+export const avtrDets: Partial<IProjectMembers>[] = [
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
   {
     name: "Annette Black",
     role: "President Of Americas",
-    avatarUrl: "https://randomuser.me/api/portraits/med/women/75.jpg",
-    fallBack: "AB",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+  },
+  {
+    name: "Annette Black",
+    role: "President Of Americas",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
   },
 ];
 
@@ -83,12 +109,28 @@ export const eventList: IEventList[] = [
 export const announcements: IAnnouncementCard[] = [
   {
     title: "RGT University",
-    date: "Jun 25, 2025",
+    date: new Date(),
   },
   {
     title: "New Policy Update",
-    date: "Jun 25, 2025",
+    date: new Date(),
   },
+  {
+    title: "RGT University",
+    date: new Date(),
+  },
+  // {
+  //   title: "New Policy Update",
+  //   time: "1 PM",
+  // },
+  // {
+  //   title: "RGT University",
+  //   time: "1 PM",
+  // },
+  // {
+  //   title: "New Policy Update",
+  //   time: "1 PM",
+  // },
 ];
 
 export const recognees = [
@@ -115,5 +157,194 @@ export const recognees = [
   {
     name: "Simon Boateng",
     project: "MediBoard",
+  },
+];
+
+const membersArray = [
+  {
+    id: 1,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "Design",
+    role: "UI/UX",
+  },
+  {
+    id: 2,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "FullStack",
+    role: "FE",
+  },
+  {
+    id: 3,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "DevOps",
+    role: "AWS",
+  },
+  {
+    id: 4,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "AI",
+    role: "LLM",
+  },
+  {
+    id: 5,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "AI",
+    role: "Data Analysis",
+  },
+  {
+    id: 6,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "FullStack",
+    role: "BE",
+  },
+  {
+    id: 7,
+    name: "Enchill Beckham",
+    avtr: {
+      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+      fallBack: "AB",
+    },
+    department: "QA",
+    role: "QA",
+  },
+];
+
+// for all project page
+export const projectCards: IProjectCard[] = [
+  {
+    id: 0,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 1,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 2,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 3,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 4,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 5,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 6,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+  {
+    id: 7,
+    name: "Design",
+    leadName: "Razak Wasiu",
+    members: membersArray,
+  },
+];
+
+export const timeOffDummy = [
+  {
+    from: "01 Mar 2023",
+    to: "03 Mar 2023",
+    total: "3 Days",
+    reason: "Engagement",
+    status: "Pending",
+    type: "Sick Leave",
+  },
+  {
+    from: "01 Mar 2023",
+    to: "02 Mar 2023",
+    total: "1 Day",
+    reason: "Unwell",
+    status: "Approved",
+    type: "PTO",
+  },
+  {
+    from: "01 Mar 2023",
+    to: "04 Mar 2023",
+    total: "4 Days",
+    reason: "Emergency",
+    status: "Rejected",
+    type: "PTO",
+  },
+];
+
+export const timeOffTableColumns: Column[] = [
+  { key: "from", header: "From" },
+  { key: "to", header: "To" },
+  { key: "total", header: "Total" },
+  { key: "reason", header: "Reason" },
+  {
+    key: "status",
+    header: "Status",
+    cellClassName: (row: Record<string, any>) => {
+      const status = row.status; // Access the status value from the row
+      return `${
+        status === "Pending"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
+          : status === "Approved"
+          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
+          : status === "Rejected"
+          ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
+          : ""
+      }`;
+    },
+  },
+  {
+    key: "type",
+    header: "Type",
+    cellClassName: (row: Record<string, any>) => {
+      const type = row.type; // Access the type value from the row
+      return `${
+        type === "Sick Leave"
+          ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
+          : type === "PTO"
+          ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
+          : ""
+      }`;
+    },
   },
 ];

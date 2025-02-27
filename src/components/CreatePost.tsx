@@ -11,8 +11,8 @@ const CreatePost = () => {
     <main className="flex-col flex space-y-3">
       <div className="relative flex items-center">
         <Avatar>
-          <AvatarImage src={avtrDets.avatarUrl} alt="Avatar" />
-          <AvatarFallback>{avtrDets.fallBack}</AvatarFallback>
+          <AvatarImage src={avtrDets[0].avatarUrl} alt="Avatar" />
+          <AvatarFallback>{avtrDets[0].fallBack}</AvatarFallback>
         </Avatar>
         <TextareaAutosize
           value={message}
