@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Column } from "@/pages/Employee/TimeOff";
 import {
   Table,
   TableBody,
@@ -8,17 +6,68 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import StepProgress from "../StepProgress";
+import { Column, DataTableProps } from "@/types/tables";
 
-interface DataTableProps {
-  columns: Column[];
-  data: Record<string, any>[];
-  dividers?: boolean;
-}
+export function DataTable({
+  columns,
+  data,
+  dividers = false,
+  actionBool = true,
+  actionObj = [],
+}: DataTableProps) {
+  const tableColumns: Column[] = actionBool
+    ? [
+        ...columns,
+        {
+          key: "actions",
+          header: "Actions",
+          render: () => (
+            <div className="space-x-1">
+              {actionObj.map((action) => {
+                switch (action.name) {
+                  case "edit":
+                    return (
+                      <button
+                        key="edit"
+                        className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
+                        onClick={() => action.action()}
+                      >
+                        <img src="Show.svg" />
+                      </button>
+                    );
+                  case "invite":
+                    return (
+                      <button
+                        key="invite"
+                        className="bg-blue-400 text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
+                        onClick={() => action.action()}
+                      >
+                        <img src="Show.svg" alt="edit" />
+                      </button>
+                    );
+                  case "delete":
+                    return (
+                      <button
+                        key="delete"
+                        className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors"
+                        onClick={() => action.action()}
+                      >
+                        <img src="Delete.svg" alt="delete" />
+                      </button>
+                    );
+                  default:
+                    return null;
+                }
+              })}
+            </div>
+          ),
+        },
+      ]
+    : columns;
 
-export function DataTable({ columns, data, dividers = true }: DataTableProps) {
-  console.log("column:", columns);
   return (
-    <div className="max-w-72 sm:max-w-[500px] flex md:max-w-full">
+    <div className="max-w-72 sm:max-w-[500px] flex flex-col md:max-w-full">
       <Table
         className={
           dividers ? "" : "border-none bg-white rounded-md min-h-52 space-y-2  "
@@ -26,7 +75,7 @@ export function DataTable({ columns, data, dividers = true }: DataTableProps) {
       >
         <TableHeader>
           <TableRow className={`border-none`}>
-            {columns.map((column) => (
+            {tableColumns.map((column) => (
               <TableHead
                 key={column.key}
                 className={"border-none text-[#A3A7AA] text-xs p-5"}
@@ -42,7 +91,7 @@ export function DataTable({ columns, data, dividers = true }: DataTableProps) {
               key={rowIndex}
               className={` ${dividers ? "" : "border-none"}`}
             >
-              {columns.map((column) => (
+              {tableColumns.map((column) => (
                 <TableCell
                   key={column.key}
                   className={`${
@@ -67,12 +116,9 @@ export function DataTable({ columns, data, dividers = true }: DataTableProps) {
           ))}
         </TableBody>
       </Table>
+      <div className="flex w-full mt-3">
+        <StepProgress />
+      </div>
     </div>
   );
 }
-
-// ${
-//                 typeof column.cellClassName === "function"
-//                   ? column.cellClassName(row) // Call the function with row data
-//                   : column.cellClassName ?? ""
-//               }

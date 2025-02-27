@@ -20,7 +20,7 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
     <div>
       <header
         className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b"
-        style={{ zIndex: "999" }}
+        style={{ zIndex: "99" }}
       >
         {/* Left section with logo */}
         <div className="flex items-center gap-40 ">
@@ -76,7 +76,7 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
       <div className="flex mt-5 min-h-screen">
         <div
           className="fixed translate-x-[30px] text-center"
-          style={{ zIndex: 999 }}
+          style={{ zIndex:  50}}
         >
           <SideBar />
         </div>

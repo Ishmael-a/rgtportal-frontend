@@ -1,129 +1,173 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
+import TimeOffModal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { timeOffDummy, timeOffTableColumns } from "@/constants";
+import React, { useState } from "react";
 
-export interface Column {
-  key: string;
-  header: string;
-  cellClassName?: (row: Record<string, any>) => string | string;
-  render?: (row: Record<string, any>) => React.ReactNode;
-}
 
-const handleEdit = (row: Record<string, any>) => {
-  console.log("Editing row:", row);
-  // Add your edit logic here
-};
-
-const columns: Column[] = [
-  { key: "from", header: "From" },
-  { key: "to", header: "To" },
-  { key: "total", header: "Total" },
-  { key: "reason", header: "Reason" },
-  {
-    key: "status",
-    header: "Status",
-    cellClassName: (row: Record<string, any>) => {
-      const status = row.status; // Access the status value from the row
-      return `${
-        status === "Pending"
-          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
-          : status === "Approved"
-          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
-          : status === "Rejected"
-          ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
-          : ""
-      }`;
-    },
-  },
-  {
-    key: "type",
-    header: "Type",
-    cellClassName: (row: Record<string, any>) => {
-      const type = row.type; // Access the type value from the row
-      return `${
-        type === "Sick Leave"
-          ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
-          : type === "PTO"
-          ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
-          : ""
-      }`;
-    },
-  },
-  {
-    key: "action",
-    header: "Action",
-    // cellClassName: () => "text-red-600 flex-1", // Static class name
-    render: (row) => (
-      <div className="space-x-1">
-        <button
-          className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
-          onClick={() => handleEdit(row)}
-        >
-          <img src="Show.svg" />
-        </button>
-
-        <button className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors">
-          <img src="Delete.svg" />
-        </button>
-      </div>
-    ),
-  },
-];
-const data = [
-  {
-    from: "01 Mar 2023",
-    to: "03 Mar 2023",
-    total: "3 Days",
-    reason: "Engagement",
-    status: "Pending",
-    type: "Sick Leave",
-    // action: "Edit",
-  },
-  {
-    from: "01 Mar 2023",
-    to: "02 Mar 2023",
-    total: "1 Day",
-    reason: "Unwell",
-    status: "Approved",
-    type: "PTO",
-    // action: "Edit",
-  },
-  {
-    from: "01 Mar 2023",
-    to: "04 Mar 2023",
-    total: "4 Days",
-    reason: "Emergency",
-    status: "Rejected",
-    type: "PTO",
-    // action: "Edit",
-  },
-];
 
 export default function TimeOff() {
-  const [showRequest, setShowRequest] = useState(false)
-  return (
-    <div className="p-4">
-      <header className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
-          Request Time List
-        </h1>
-        <Button className="bg-rgtpink hover:bg-pink-500 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in">
-          <img src="Add.svg" alt="add" />
-          Add New Request
-        </Button>
-      </header>
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-      <div className="flex gap-3 h-[50px] items-center my-8">
-        <DatePicker />
-        <CustomSelect data={["plnt"]} />
-        <CustomSelect data={["plnt"]} />
+  const [timeOffType, setTimeOffType] = useState("PTO");
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [reason, setReason] = useState("");
+
+  console.log("Time Off Type:", timeOffType);
+  console.log("From:", fromDate);
+  console.log("To:", toDate);
+  console.log("Reason:", reason);
+
+  const handleFromDate = (val: Date | undefined) => {
+    setFromDate(val);
+  };
+
+  const handleToDate = (val: Date | undefined) => {
+    setToDate(val);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("submitting", e);
+    setIsModalOpen(false);
+  };
+
+  const handleCheckNow = () => {
+    console.log("...checking");
+    setIsSuccess(false);
+  };
+
+  return (
+    <main>
+      <div className="bg-white p-4 rounded-md">
+        <header className="flex justify-between items-center">
+          <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
+            Request Time List
+          </h1>
+          <Button
+            className="bg-rgtpink hover:bg-pink-500 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <img src="Add.svg" alt="add" />
+            Add New Request
+          </Button>
+        </header>
+
+        <div className="flex gap-3 h-[50px] items-center my-8">
+          <DatePicker />
+          <CustomSelect options={["plnt"]} />
+          <CustomSelect options={["plnt"]} />
+        </div>
+
+        {/* Table with custom cell styles */}
+        <DataTable
+          columns={timeOffTableColumns}
+          data={timeOffDummy}
+          actionBool={true}
+          actionObj={[
+            { name: "edit", action: () => console.log("edit") },
+            { name: "delete", action: () => console.log("delete") },
+          ]}
+        />
       </div>
 
-      {/* Table with custom cell styles */}
-      <DataTable columns={columns} data={data} dividers={false} />
-    </div>
+      {isModalOpen && (
+        <TimeOffModal
+          onSubmit={handleFormSubmit}
+          title="Add New Time Off"
+          buttons={[
+            { name: "Cancel", fn: () => setIsModalOpen(false) },
+            { name: "Create", fn: () => setIsSuccess(true) },
+          ]}
+          className="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
+        >
+          <section className="space-y-[25px] h-[85%]">
+            {/* Time Off Type */}
+            <div className="">
+              <label className="block pb-[10px] text-xs font-semibold text-[#7D7D81]">
+                Time Off Type
+              </label>
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setTimeOffType("PTO")}
+                  className={`px-3 py-1 rounded-md text-[11px] font-medium border-[1px] duration-300 transition-colors ease-in cursor-pointer ${
+                    timeOffType === "PTO"
+                      ? "bg-gray-200"
+                      : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  PTO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTimeOffType("Sick Leave")}
+                  className={`px-4 py-2 rounded-md border text-[11px] font-medium duration-300 transition-colors ease-in cursor-pointer ${
+                    timeOffType === "Sick Leave"
+                      ? "bg-gray-200"
+                      : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  Sick Leave
+                </button>
+              </div>
+            </div>
+
+            {/* From and To Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <DatePicker placeholder="From" fn={handleFromDate} />
+              </div>
+              <div>
+                <DatePicker placeholder="To" fn={handleToDate} />
+              </div>
+            </div>
+
+            {/* Reason */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium pb-2 text-[#737276]">
+                Reason
+              </label>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9]"
+                rows={3}
+                placeholder="Provide your reason"
+                // required
+                maxLength={50}
+              />
+            </div>
+          </section>
+        </TimeOffModal>
+      )}
+
+      {isSuccess && (
+        <section
+          className="fixed inset-0  backdrop-blur-xs  flex items-center justify-center"
+          style={{ zIndex: 100 }}
+        >
+          <div className="bg-white flex flex-col items- justify-cente border p-5 min-w-md rounded-lg space-y-6">
+            <div className="flex items-center flex-col space-y-2">
+              <img src="/successIcon.svg" />
+              <p className="font-semibold text-[#181D27] text-lg">Success!</p>
+              <p className="text-[#535862] text-sm">
+                You have successfully made a request!
+              </p>
+            </div>
+            <Button
+              className="bg-[#FFA6CD] text-rgtpink hover:bg-pink-400 transition-colors duration-300 ease-in hover:text-white cursor-pointer"
+              onClick={handleCheckNow}
+            >
+              Check now
+            </Button>
+          </div>
+        </section>
+      )}
+    </main>
   );
 }

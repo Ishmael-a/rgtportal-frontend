@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IEventList } from "./components/EventList";
 import {
   IAnnouncementCard,
   IProjectCard,
   IProjectMembers,
 } from "./types/employee";
+import { Column } from "./types/tables";
 
 export const avtrDets: Partial<IProjectMembers>[] = [
   {
@@ -280,5 +282,69 @@ export const projectCards: IProjectCard[] = [
     projectName: "Design",
     leadName: "Razak Wasiu",
     members: membersArray,
+  },
+];
+
+export const timeOffDummy = [
+  {
+    from: "01 Mar 2023",
+    to: "03 Mar 2023",
+    total: "3 Days",
+    reason: "Engagement",
+    status: "Pending",
+    type: "Sick Leave",
+  },
+  {
+    from: "01 Mar 2023",
+    to: "02 Mar 2023",
+    total: "1 Day",
+    reason: "Unwell",
+    status: "Approved",
+    type: "PTO",
+  },
+  {
+    from: "01 Mar 2023",
+    to: "04 Mar 2023",
+    total: "4 Days",
+    reason: "Emergency",
+    status: "Rejected",
+    type: "PTO",
+  },
+];
+
+export const timeOffTableColumns: Column[] = [
+  { key: "from", header: "From" },
+  { key: "to", header: "To" },
+  { key: "total", header: "Total" },
+  { key: "reason", header: "Reason" },
+  {
+    key: "status",
+    header: "Status",
+    cellClassName: (row: Record<string, any>) => {
+      const status = row.status; // Access the status value from the row
+      return `${
+        status === "Pending"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
+          : status === "Approved"
+          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
+          : status === "Rejected"
+          ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
+          : ""
+      }`;
+    },
+  },
+  {
+    key: "type",
+    header: "Type",
+    cellClassName: (row: Record<string, any>) => {
+      const type = row.type; // Access the type value from the row
+      return `${
+        type === "Sick Leave"
+          ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
+          : type === "PTO"
+          ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
+          : ""
+      }`;
+    },
   },
 ];

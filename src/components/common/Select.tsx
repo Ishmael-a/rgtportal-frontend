@@ -10,12 +10,12 @@ import {
 
 interface ICustomSelect {
   placeholder?: string;
-  data: string[];
+  options: string[];
   selectLabel?: string;
 }
 
 const CustomSelect: React.FC<ICustomSelect> = ({
-  data,
+  options,
   placeholder,
   selectLabel,
 }) => {
@@ -27,7 +27,7 @@ const CustomSelect: React.FC<ICustomSelect> = ({
       <SelectContent>
         <SelectGroup>
           {selectLabel && <SelectLabel>{selectLabel}</SelectLabel>}
-          {data.map((item, index) => (
+          {options.map((item, index) => (
             <SelectItem value={item.toLowerCase()} key={index}>
               {item}
             </SelectItem>
