@@ -32,7 +32,7 @@ export const SideBar = () => {
   ];
 
     return (
-      <nav className="w-55 rounded-xl  h-auto bg-white p-4 flex flex-col gap-7">
+      <nav className="w-64 rounded-xl  h-auto bg-white p-4 flex flex-col gap-7">
       {navItems.map((item) => (
         item.items ?  
           <NavDropdown 

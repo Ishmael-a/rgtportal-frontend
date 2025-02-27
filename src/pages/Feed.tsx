@@ -19,15 +19,16 @@ const Feed = () => {
   const [showRecognition, setShowRecognition] = useState(false);
 
   return (
-    <main className="p-4 flex flex-col-reverse md:flex-row md:justify-end sm:gap-6 relative">
+    <main className="p-4 flex flex-col-reverse md:flex-row md:justify-between sm:gap-6 relative">
       {/* Posts section */}
-      <section className="space-y-5">
+      <section className="space-y-5 flex-1 md:pr-6 md:max-w-[calc(100%-380px-38px)]">
         <CreatePost />
         <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
         <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
       </section>
 
-      <section className="pt-5 md:pt-0 md:min-w-[380px] space-y-3 md:sticky md:top-3  h-fit">
+      {/* Fixed sidebar section */}
+      <section className="md:min-w-[380px] fixed right-9 top-30 max-h-screen space-y-3">
         {/* Recognition section */}
         <div
           className={`flex flex-col bg-white p-4 rounded-lg space-y-3 transition-all duration-300 ease-in ${
@@ -50,7 +51,7 @@ const Feed = () => {
 
           {/* Recognition List */}
           <div
-            className="flex flex-col space-y-3 overflow-y-scroll h-36"
+            className="flex flex-col space-y-3 overflow-y-auto max-h-36"
             style={{
               scrollbarWidth: "none" /* Firefox */,
               msOverflowStyle: "none" /* IE and Edge */,
@@ -77,7 +78,7 @@ const Feed = () => {
         </div>
 
         {/* Upcoming Events and Announcements */}
-        <div className="p-4 bg-white rounded-lg space-y-5">
+        <div className="p-4 bg-white rounded-lg space-y-5 overflow-y-auto max-h-[calc(100vh-150px)]">
           {/* Upcoming Events */}
           <div className="flex items-center justify-between">
             <p className="text-[#706D8A] font-[600]">Upcoming Events</p>
@@ -100,14 +101,17 @@ const Feed = () => {
           <div className="w-full space-y-2">
             <p className="text-[#706D8A] font-[600]">Announcements</p>
             {announcements.map((announcement, index) => (
-              <div className="flex h-16 ">
-                <div className="h-full  border-2 border-rgtpink rounded-full" />
-                <AnnouncementCard {...announcement} key={index} />
+              <div className="flex h-16" key={index}>
+                <div className="h-full border-2 border-rgtpink rounded-full" />
+                <AnnouncementCard {...announcement} />
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Spacer div to maintain layout with fixed sidebar */}
+      <div className="hidden md:block md:min-w-[380px]"></div>
     </main>
   );
 };
