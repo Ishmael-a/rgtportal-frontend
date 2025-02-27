@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { timeOffDummy, timeOffTableColumns } from "@/constants";
 import React, { useState } from "react";
 
-
-
 export default function TimeOff() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -69,12 +67,14 @@ export default function TimeOff() {
           data={timeOffDummy}
           actionBool={true}
           actionObj={[
-            { name: "edit", action: () => console.log("edit") },
+            { name: "edit", action: () => console.log("view") },
             { name: "delete", action: () => console.log("delete") },
+            
           ]}
         />
       </div>
 
+      {/* modal for a new Time off request */}
       {isModalOpen && (
         <TimeOffModal
           onSubmit={handleFormSubmit}
@@ -146,6 +146,7 @@ export default function TimeOff() {
         </TimeOffModal>
       )}
 
+      {/* Success modal for timeoff creation */}
       {isSuccess && (
         <section
           className="fixed inset-0  backdrop-blur-xs  flex items-center justify-center"

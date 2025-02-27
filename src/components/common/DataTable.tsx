@@ -26,24 +26,24 @@ export function DataTable({
             <div className="space-x-1">
               {actionObj.map((action) => {
                 switch (action.name) {
-                  case "edit":
+                  case "view":
                     return (
                       <button
-                        key="edit"
+                        key="view"
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action()}
                       >
                         <img src="Show.svg" />
                       </button>
                     );
-                  case "invite":
+                  case "edit":
                     return (
                       <button
-                        key="invite"
-                        className="bg-blue-400 text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
+                        key="edit"
+                        className="bg-[#C0AFFF] text-white p-1 rounded-md hover:bg-purple-300 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action()}
                       >
-                        <img src="Show.svg" alt="edit" />
+                        <img src="Edit 2.svg" alt="edit" />
                       </button>
                     );
                   case "delete":
