@@ -4,7 +4,7 @@ import { projectCards } from "@/constants";
 
 const Projects = () => {
   return (
-    <main className="bg-green-400">
+    <main className="">
       <header className="text-[#706D8A] font-semibold text-3xl">
         All Projects
       </header>
@@ -23,5 +23,3 @@ const Projects = () => {
 };
 
 export default Projects;
-
-

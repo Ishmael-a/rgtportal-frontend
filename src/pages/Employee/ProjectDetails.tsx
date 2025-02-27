@@ -25,7 +25,7 @@ const ProjectDetails = () => {
       {/* header with back functionality */}
       <header className="">
         <h3 className="text-[#706D8A] font-semibold text-[30px]">
-          {details?.projectName}
+          {details?.name}
         </h3>
         <div className="flex items-center">
           <p
@@ -36,7 +36,7 @@ const ProjectDetails = () => {
           </p>
           <img src="/Down 2.svg" className="-rotate-90" />
           <p className="text-[#79797E] text-sm font-semibold">
-            {details?.projectName}
+            {details?.name}
           </p>
         </div>
       </header>

@@ -4,22 +4,23 @@ import { IProjectCard } from "@/types/employee";
 
 const ProjectCard: React.FC<IProjectCard> = ({
   members,
-  projectName,
+  name,
   leadName,
   id,
+  // path
 }) => {
   const maxVisible = 3; // Show up to 3 avatars before the "+X" indicator
   const extraCount = members.length - maxVisible;
 
-  console.log("members:", members)
+  console.log("members:", members);
   const totalMembers = members.length;
 
   return (
     <div className="flex flex-col space-y-2 bg-white rounded-md p-2 md:min-w-64 shadow-md hover:shadow-gray-400 transition-all duration-300 ease-in ">
       <div className="pb-4 border-b-[1px]  border-gray-100">
         <header className="text-[#706D8A] text-[21.56px] font-semibold flex justify-between items-start">
-          <p className="w-44 text-nowrap truncate">{projectName}</p>
-          <NavLink to={`/all-projects/${id}`}>
+          <p className="w-44 text-nowrap truncate">{name}</p>
+          <NavLink to={`emp/all-projects/${id}`}>
             <img
               src="/Down 2.svg"
               className="-rotate-90 hover:bg-slate-200 transition-colors duration-300 ease-in rounded-full p-1"
@@ -28,7 +29,9 @@ const ProjectCard: React.FC<IProjectCard> = ({
         </header>
         <div className="flex ">
           <div>
-            <p className=" text-[#C0AFFF]">{leadName}-Team Lead</p>
+            {leadName && (
+              <p className=" text-[#C0AFFF]">{leadName}-Team Lead</p>
+            )}
             <p className="text-[#A2A1A8] text-sm">{totalMembers} Members</p>
           </div>
         </div>
