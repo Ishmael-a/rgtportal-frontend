@@ -4,8 +4,8 @@ import { Button } from "./components/ui/button";
 import Feed from "./pages/Feed";
 import NotFoundPage from "./pages/NotFoundPage"
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import { EmpLayout } from "./layouts/EmpLayout";
-import { HrLayout } from "./layouts/HrLayout";
+// import { EmpLayout } from "./layouts/EmpLayout";
+import { BaseLayout } from "./layouts/HrLayout";
 
 
 
@@ -27,7 +27,7 @@ function App() {
 
 
         {/* Employee routes */}
-        <Route path="/emp" element={<EmpLayout />}>
+        <Route path="/emp" element={<BaseLayout />}>
           {/* <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}> */}
             <Route index path="dashboard" element={
               <div className="font-inter">
@@ -41,7 +41,7 @@ function App() {
         </Route>
 
         {/* HR routes */}
-        <Route path="/hr" element={<HrLayout />}>
+        <Route path="/hr" element={<BaseLayout />}>
           <Route
             index
             path="dashboard"
