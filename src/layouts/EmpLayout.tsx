@@ -16,7 +16,10 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
   return (
     <div>
-      <header className="sticky top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
+      <header
+        className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b"
+        style={{ zIndex: "99" }}
+      >
         {/* Left section with logo */}
         <div className="flex items-center gap-16 ">
           <div className=" ">
