@@ -1,11 +1,9 @@
 import { useState } from "react";
-import rgtIcon from "../assets/logos/RGT TRANSPARENT 1.svg";
 import { Search, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { SideBar } from "../components/SideBar/SideBar";
 import { Outlet } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 type EmpLayoutProps = {
   userName?: string;
@@ -18,23 +16,22 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
   return (
     <div>
-      <header
-        className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b"
-        style={{ zIndex: "99" }}
-      >
+      <header className="sticky top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
         {/* Left section with logo */}
-        <div className="flex items-center gap-40 ">
+        <div className="flex items-center gap-16 ">
           <div className=" ">
-            <img src={rgtIcon} className="w-10 h-10" />
+            <img src="/RgtPortalLogo.svg" className="w-40 h-15" />
           </div>
 
           {/* Greeting section */}
           <div className="flex items-center gap-2" onClick={toggleDropdown}>
-            {isOpen ? (
-              <ChevronUp className="ml-2 h-4 w-4 transition-all ease-in-out duration-200" />
-            ) : (
-              <ChevronDown className="ml-2 h-4 w-4 transition-all ease-in-out duration-200" />
-            )}
+            <img
+              src="/Down 2.svg"
+              className={`ml-2 h-4 w-4  hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
+                isOpen ? "rotate-180" : ""
+              }`}
+              onClick={toggleDropdown}
+            />
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="https://github.com/shadcn.png" />
@@ -76,15 +73,13 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
       <div className="flex mt-5 min-h-screen">
         <div
           className="fixed translate-x-[30px] text-center"
-          style={{ zIndex:  50}}
+          style={{ zIndex: 50 }}
         >
           <SideBar />
         </div>
 
         <div className="ml-68 flex-grow">
-          {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
           <Outlet />
-          {/* </AnimationWrapper> */}
         </div>
       </div>
     </div>

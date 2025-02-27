@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import { Button } from "./components/ui/button";
-import ProtectedRoute from "./components/common/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+// import ProtectedRoute from "./components/common/ProtectedRoute";
 import { EmpLayout } from "./layouts/EmpLayout";
 import { HrLayout } from "./layouts/HrLayout";
 import Feed from "./pages/Employee/Feed";
@@ -14,10 +15,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/login" element={<Login />} />
 
         <Route element={<EmpLayout />}>
-          <Route
+          {/* <Route
             index
             path="/emp"
             element={
@@ -28,7 +30,7 @@ function App() {
                 </div>
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route path="/feed" element={<Feed />} />
           <Route path="/events-calendar" element={<EventsCalendar />} />
           <Route path="/all-projects" element={<Projects />} />
@@ -36,9 +38,11 @@ function App() {
           <Route path="/time-off" element={<TimeOff />} />
         </Route>
 
+        {/* HR routes */}
         <Route path="/hr" element={<HrLayout />}>
           <Route
             index
+            path="dashboard"
             element={
               <div className="font-inter">
                 This is the HR Homepage
@@ -46,7 +50,12 @@ function App() {
               </div>
             }
           />
+
+          <Route path="feed" element={<Feed />} />
         </Route>
+
+        {/* 404 route */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
