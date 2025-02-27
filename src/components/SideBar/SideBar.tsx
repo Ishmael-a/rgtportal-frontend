@@ -21,16 +21,7 @@ export const SideBar = () => {
     <nav className="w-55 rounded-xl  h-auto bg-white p-4 flex flex-col gap-7">
       {
         navItems.map((item) => (
-          // item.items ? (
-          // <NavDropdown
-          //   items={item.items}
-          //   label={item.label}
-          //   iconPath = {item.icon}
-          //   className="w-48 "
-          //   iconClassName = "mr-4"
-          //   itemlabelClassName='ml-4 text-sm'
-          // />
-          // ) : (
+          
           <NavLink
             key={item.path}
             to={item.path}
@@ -45,7 +36,6 @@ export const SideBar = () => {
             <span className="text-sm font-medium">{item.label}</span>
           </NavLink>
         ))
-        // )
       }
     </nav>
   );

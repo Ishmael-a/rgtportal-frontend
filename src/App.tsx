@@ -2,15 +2,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import { Button } from "./components/ui/button";
 import NotFoundPage from "./pages/NotFoundPage";
-// import ProtectedRoute from "./components/common/ProtectedRoute";
-import { EmpLayout } from "./layouts/EmpLayout";
-import { HrLayout } from "./layouts/HrLayout";
-import Feed from "./pages/Employee/Feed";
+import { BaseLayout } from "./layouts/BaseLayout";
+import Feed from "./pages/common/Feed";
 import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import AllDepartments from "./pages/Manager/AllDepartments";
 
 function App() {
   return (
@@ -19,34 +16,38 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
 
-        <Route path="/emp" element={<EmpLayout />}>
-          {/* <Route
+        {/* Common routes with base layout */}
+        {/* <Route element={<EmpLayout />}> */}
+        {/* <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "HR", "ADMIN"]} />}> */}
+        {/* <Route path="/feed" element={<Feed />} /> */}
+        {/* </Route> */}
+        {/* </Route> */}
+
+        {/* Employee routes */}
+        <Route path="/emp" element={<BaseLayout />}>
+          {/* <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}> */}
+          <Route
             index
-            path="/emp"
+            path="dashboard"
             element={
-              <ProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
-                <div className="font-inter">
-                  This is the Employee Homepage
-                  <Button>Add Homepage</Button>
-                </div>
-              </ProtectedRoute>
+              <div className="font-inter">
+                This is the Employee Homepage
+                <Button>Add Homepage</Button>
+              </div>
             }
-          /> */}
+          />
           <Route index path="feed" element={<Feed />} />
           <Route path="events-calendar" element={<EventsCalendar />} />
           <Route path="all-projects/" element={<Projects />}>
             <Route path=":id" element={<ProjectDetails />} />
           </Route>
           <Route path="time-off" element={<TimeOff />} />
-        </Route>
 
-        {/* Manager routes */}
-        <Route path="/mgr" element={<EmpLayout />}>
-          <Route path="all-departments" element={<AllDepartments />} />
+          {/* </Route> */}
         </Route>
 
         {/* HR routes */}
-        <Route path="/hr" element={<HrLayout />}>
+        <Route path="/hr" element={<BaseLayout />}>
           <Route
             index
             path="dashboard"

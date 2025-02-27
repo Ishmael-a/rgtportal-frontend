@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Search, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { SideBar } from "../components/SideBar/SideBar";
+import { HrSideBar } from "@/components/SideBar/HrSideBar";
+import { SideBar } from "@/components/SideBar/SideBar";
 import { Outlet } from "react-router-dom";
+import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 
-type EmpLayoutProps = {
-  userName?: string;
-};
-export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
+export const BaseLayout = () => {
+  const { currentUser: user } = useAuthContextProvider();
   const [isOpen, setIsOpen] = useState(false);
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -16,12 +16,9 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
   return (
     <div>
-      <header
-        className="sticky top-0 z-50 flex items-center justify-between px-16 py-5 bg-white border-b"
-        style={{ zIndex: "150" }}
-      >
+      <header className="sticky z-10 top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
         {/* Left section with logo */}
-        <div className="flex items-center gap-16 ">
+        <div className="flex items-center gap-28 ">
           <div className=" ">
             <img src="/RgtPortalLogo.svg" className="w-40 h-15" />
           </div>
@@ -41,9 +38,11 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
                 <AvatarFallback>LA</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">Hello, {userName}!</span>
+                <span className="text-sm font-medium">
+                  Hello, {user?.username}!
+                </span>
                 <span className="text-xs text-gray-500">
-                  Welcome back, let's explore now!
+                  Welcome back, This is your hr dashboard so far!
                 </span>
               </div>
             </div>
@@ -52,7 +51,7 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
 
         <div className="flex">
           {/* Center section with search */}
-          <div className="flex-1 max-w-xl w-[400px] mx-8">
+          <div className="flex-1 max-w-xl w-[470px] mx-8">
             <div className="relative">
               <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -72,17 +71,17 @@ export const EmpLayout = ({ userName = "Layla Odam" }: EmpLayoutProps) => {
         </div>
       </header>
 
-      {/* className="min-h-screen flex" */}
-      <div className="flex mt-5 min-h-screen">
-        <div
-          className="fixed translate-x-[30px] text-center"
-          style={{ zIndex: 50 }}
-        >
-          <SideBar />
+      <div className="flex mt-5">
+        <div className="fixed translate-x-[30px] text-center ">
+          {user?.role.name === "HR" && <HrSideBar />}
+          {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className="ml-68 flex-grow">
+        <div className="ml-80">
+          {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
+          {/* {children} */}
           <Outlet />
+          {/* </AnimationWrapper> */}
         </div>
       </div>
     </div>
