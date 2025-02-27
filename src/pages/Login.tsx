@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useFormik, Field, Form as FormikForm, Formik, FieldInputProps } from 'formik';
+import { Field, Form as FormikForm, Formik, FieldInputProps } from 'formik';
 import rgtIcon from "../assets/images/RGT TRANSPARENT 1.png"
 import rgtPattern from "../assets/images/RGT PATTERN 1.png"
 import envato from "../assets/images/envato-labs-image-edit (5) 2.png"

@@ -1,13 +1,15 @@
 import { Bell } from "lucide-react";
 import { useState } from "react";
+import { ClassNameValue } from "tailwind-merge";
 
 export interface IEventList {
   event: "holiday" | "birthday" | "meeting";
   date: string;
   title: string;
+  className?: ClassNameValue;
 }
 
-const EventList: React.FC<IEventList> = ({ event, date, title }) => {
+const EventList: React.FC<IEventList> = ({ event, date, title, className }) => {
   const [ringBell, setRingBell] = useState(false);
 
   const handleRingBell = () => {
@@ -15,7 +17,9 @@ const EventList: React.FC<IEventList> = ({ event, date, title }) => {
   };
 
   return (
-    <div className="flex items-center justify-between border-b pb-4">
+    <div
+      className={`flex items-center justify-between border-b pb-4 ${className}`}
+    >
       <div className="flex items-center space-x-2">
         <img
           src={
@@ -26,7 +30,7 @@ const EventList: React.FC<IEventList> = ({ event, date, title }) => {
               : "/UsersFour.svg"
           }
           alt="calendar"
-          className="bg-[#EEF2FF] p-2 rounded-full"
+          className="bg-[#EEF2FF] p-2 rounded-[8px]"
         />
         <div>
           <p className="text-rgtgray text-sm font-medium">{title}</p>
@@ -39,6 +43,7 @@ const EventList: React.FC<IEventList> = ({ event, date, title }) => {
         className={`cursor-pointer text-rgtgray ${
           ringBell ? "fill-rgtpurple stroke-0" : ""
         }`}
+        size={20}
       />
     </div>
   );

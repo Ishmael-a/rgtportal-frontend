@@ -1,20 +1,21 @@
-import { IAvtrComponent } from "@/types";
+import { IAvtrComponent } from "@/types/employee";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-
-
-const Avtr: React.FC<IAvtrComponent> = ({ className, index, avtr }) => {
+const Avtr: React.FC<IAvtrComponent> = ({ className, index = 0, url,name }) => {
   return (
     <Avatar
-      className={`absolute border-2 border-white ${className}`}
-      style={{ left: `${index * 20}px`, zIndex: `${10 - index}` }} // Adjust stacking
+      className={`border-2 border-white ${className}`}
+      style={{
+        transform: `translateX(${index * 24}px)`, // Adjust overlap spacing
+        zIndex: `${100 - index}`, // Higher z-index for first items
+      }}
     >
       <AvatarImage
-        src={avtr.avatarUrl}
-        alt={avtr.name}
+        src={url}
+        alt={name}
         className="h-full w-full"
       />
-      <AvatarFallback className="h-full w-full">{avtr.fallBack}</AvatarFallback>
+      <AvatarFallback className="h-full w-full">{name}</AvatarFallback>
     </Avatar>
   );
 };
