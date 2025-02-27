@@ -3,11 +3,13 @@ import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import TimeOffModal from "@/components/Modal";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { timeOffDummy, timeOffTableColumns } from "@/constants";
 import React, { useState } from "react";
 
 export default function TimeOff() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appRej, setAppRej] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [timeOffType, setTimeOffType] = useState("PTO");
@@ -67,9 +69,8 @@ export default function TimeOff() {
           data={timeOffDummy}
           actionBool={true}
           actionObj={[
-            { name: "edit", action: () => console.log("view") },
+            { name: "edit", action: () => setAppRej(true) },
             { name: "delete", action: () => console.log("delete") },
-            
           ]}
         />
       </div>
@@ -83,7 +84,7 @@ export default function TimeOff() {
             { name: "Cancel", fn: () => setIsModalOpen(false) },
             { name: "Create", fn: () => setIsSuccess(true) },
           ]}
-          className="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
+          buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
           <section className="space-y-[25px] h-[85%]">
             {/* Time Off Type */}
@@ -140,6 +141,73 @@ export default function TimeOff() {
                 placeholder="Provide your reason"
                 // required
                 maxLength={50}
+              />
+            </div>
+          </section>
+        </TimeOffModal>
+      )}
+
+      {/* modal for viewing old request */}
+      {appRej && (
+        <TimeOffModal
+          title="Approve or Reject Request"
+          back={true}
+          backFn={() => setAppRej(false)}
+        >
+          <div className="flex flex-col gap-1">
+            <label className="text-[#73727675] font-semibold text-sm">
+              Employee Name
+            </label>
+            <Input
+              value={"Enchill Beckham"}
+              className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-base text-[#73727675] font-semibold"
+              disabled
+            />
+          </div>
+
+          <section className="flex gap-2">
+            <div>
+              <label className="text-[#73727675] font-semibold text-sm">
+                From
+              </label>
+              <Input
+                value={"01 March 2023"}
+                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                disabled
+              />
+            </div>
+
+            <div>
+              <label className="text-[#73727675] font-semibold text-sm">
+                To
+              </label>
+              <Input
+                value={"01 March 2024"}
+                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                disabled
+              />
+            </div>
+          </section>
+          <section className="space-y-5 pt-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-[#73727675] font-semibold text-sm">
+                Reason
+              </label>
+              <textarea
+                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                value={"Engagement"}
+                disabled
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[#73727675] font-semibold text-sm">
+                HR Reason
+              </label>
+              <textarea
+                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                value={"We can't let you go at the moment"}
+                disabled
               />
             </div>
           </section>
