@@ -5,7 +5,7 @@ import Feed from "./pages/Feed";
 import NotFoundPage from "./pages/NotFoundPage"
 import ProtectedRoute from "./components/common/ProtectedRoute";
 // import { EmpLayout } from "./layouts/EmpLayout";
-import { BaseLayout } from "./layouts/HrLayout";
+import { BaseLayout } from "./layouts/BaseLayout";
 
 
 

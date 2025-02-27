@@ -11,9 +11,6 @@ import {useAuthContextProvider} from "../hooks/useAuthContextProvider"
 
 
 
-type BaseLayoutProps = {
-    userName?: string;
-}
 
 
 export const BaseLayout = () => {
