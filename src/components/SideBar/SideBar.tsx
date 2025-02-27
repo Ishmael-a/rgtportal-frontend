@@ -10,7 +10,7 @@ export const SideBar = () => {
     },
     { icon: "/Message28.svg", label: "Messages", path: "messages" },
     {
-      icon: "Time.svg",
+      icon: "/Time.svg",
       label: "Time Off",
       path: "time-off",
     },

@@ -20,7 +20,7 @@ const AllDepartments = () => {
         </div>
       </Header>
 
-      <section>
+      <section className="flex flex-wrap gap-6 pt-10">
         {projectCards.map((item, index) => (
           <ProjectCard name={item.name} members={item.members} id={index} />
         ))}

@@ -52,7 +52,7 @@ export default function TimeOff() {
             className="bg-rgtpink hover:bg-pink-500 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
             onClick={() => setIsModalOpen(true)}
           >
-            <img src="Add.svg" alt="add" />
+            <img src="/Add.svg" alt="add" />
             Add New Request
           </Button>
         </header>
@@ -69,7 +69,7 @@ export default function TimeOff() {
           data={timeOffDummy}
           actionBool={true}
           actionObj={[
-            { name: "edit", action: () => setAppRej(true) },
+            { name: "view", action: () => setAppRej(true) },
             { name: "delete", action: () => console.log("delete") },
           ]}
         />

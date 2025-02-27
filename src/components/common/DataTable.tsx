@@ -33,7 +33,7 @@ export function DataTable({
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action()}
                       >
-                        <img src="Show.svg" />
+                        <img src="/Show.svg" alt="view" />
                       </button>
                     );
                   case "edit":
@@ -43,7 +43,7 @@ export function DataTable({
                         className="bg-[#C0AFFF] text-white p-1 rounded-md hover:bg-purple-300 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action()}
                       >
-                        <img src="Edit 2.svg" alt="edit" />
+                        <img src="/Edit 2.svg" alt="edit" />
                       </button>
                     );
                   case "delete":
@@ -53,7 +53,7 @@ export function DataTable({
                         className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors"
                         onClick={() => action.action()}
                       >
-                        <img src="Delete.svg" alt="delete" />
+                        <img src="/Delete.svg" alt="delete" />
                       </button>
                     );
                   default:

@@ -20,7 +20,7 @@ const ProjectCard: React.FC<IProjectCard> = ({
       <div className="pb-4 border-b-[1px]  border-gray-100">
         <header className="text-[#706D8A] text-[21.56px] font-semibold flex justify-between items-start">
           <p className="w-44 text-nowrap truncate">{name}</p>
-          <NavLink to={`emp/all-projects/${id}`}>
+          <NavLink to={`all-projects/${id}`}>
             <img
               src="/Down 2.svg"
               className="-rotate-90 hover:bg-slate-200 transition-colors duration-300 ease-in rounded-full p-1"
