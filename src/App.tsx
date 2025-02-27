@@ -10,6 +10,7 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
+import AllDepartments from "./pages/Manager/AllDepartments";
 
 function App() {
   return (
@@ -39,7 +40,9 @@ function App() {
         </Route>
 
         {/* Manager routes */}
-        <Route path="/hr"></Route>
+        <Route path="/mgr" element={<EmpLayout />}>
+          <Route path="all-departments" element={<AllDepartments />} />
+        </Route>
 
         {/* HR routes */}
         <Route path="/hr" element={<HrLayout />}>
