@@ -21,10 +21,10 @@ export const HrSideBar = () => {
         { label: 'Help', path: '/help' }
       ] 
     },
-    { icon: "/AddProfile.svg", label: 'Recruitment', path: '/recruitment',
+    { icon: "/AddProfile.svg", label: 'Recruitment', path: '/hr/recruitment',
       items: [
-        { label: 'Settings', path: '/settings' },
-        { label: 'Help', path: '/help' }
+        { label: 'FullTime', path: '/hr/recruitment/employee' },
+        { label: 'NSS', path: '/hr/recruitment/nss' }
       ] 
     },
     { icon: "/Message28.svg", label: 'Messages', path: '/messages' },

@@ -7,19 +7,21 @@ import { Store } from './state/store';
 import AuthContextProvider from "./contexts/AuthContextProvider"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools"
+import { Toaster } from './components/ui/toaster.tsx';
 
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={Store}>
-    <QueryClientProvider  client={queryClient}>
-      <AuthContextProvider>
-        <App />
-      </AuthContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthContextProvider>
+          <App />
+          <Toaster />
+        </AuthContextProvider>
 
-      <ReactQueryDevtools/>
-    </QueryClientProvider>
+        <ReactQueryDevtools />
+      </QueryClientProvider>
     </Provider>
-  </StrictMode>,
-)
+  </StrictMode>
+);
