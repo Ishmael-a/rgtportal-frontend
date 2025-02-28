@@ -22,7 +22,7 @@ const ProjectDetails = () => {
   }, [id]);
 
   return (
-    <main className="space-y-10 w-full">
+    <main className="space-y-10 w-full f">
       {/* header with back functionality */}
       <header className="">
         <h3 className="text-[#706D8A] font-semibold text-[30px]">
@@ -45,7 +45,7 @@ const ProjectDetails = () => {
       {/* main section */}
 
       <div
-        className=" max-w-80 sm:max-w-full p-3 bg-white rounded-md shadow-sm overflow-scroll"
+        className="w-full flex justify-center sm:block bg-white rounded-md shadow-sm"
         style={{
           scrollbarWidth: "none" /* Firefox */,
           msOverflowStyle: "none" /* IE and Edge */,
