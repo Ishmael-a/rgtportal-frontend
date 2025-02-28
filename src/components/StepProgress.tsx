@@ -45,7 +45,7 @@ const StepProgress = () => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 p-4 ">
+    <div className="flex items-center justify-center  p-4">
       {/* Left Arrow */}
       <button
         onClick={handlePrev}
@@ -56,11 +56,11 @@ const StepProgress = () => {
       </button>
 
       {/* Step Indicators */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center">
         {getDisplayedSteps().map((step, index) => (
           <div key={index} className="flex items-center">
             {step === "..." ? (
-              <span className="text-gray-500 mx-2">...</span>
+              <span className="text-gray-500 ">...</span>
             ) : (
               <button
                 onClick={() => setCurrentStep(step as number)}
@@ -90,5 +90,4 @@ const StepProgress = () => {
   );
 };
 
-
-export default StepProgress
+export default StepProgress;

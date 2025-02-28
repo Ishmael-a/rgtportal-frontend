@@ -1,5 +1,6 @@
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
+import DeleteCard from "@/components/common/DeleteCard";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
 import TimeOffModal from "@/components/Modal";
@@ -216,7 +217,8 @@ export default function TimeOff() {
       )}
 
       {/* Success modal for timeoff creation */}
-      {isSuccess && <SuccessCard handleClick={handleCheckNow} />}
+      {/* {isSuccess && <SuccessCard handleClick={handleCheckNow} />} */}
+      {isSuccess && <DeleteCard onDelete={handleCheckNow} />}
     </main>
   );
 }

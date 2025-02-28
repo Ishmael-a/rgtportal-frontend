@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const ProjectDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  console.log("id:", id);
 
   const [details, setDetails] = useState<IProjectCard | null>(null);
 

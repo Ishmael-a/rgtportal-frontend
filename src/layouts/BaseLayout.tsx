@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Search, Bell } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { HrSideBar } from "@/components/SideBar/HrSideBar";
 import { SideBar } from "@/components/SideBar/SideBar";
@@ -9,57 +7,33 @@ import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  //   const [isOpen, setIsOpen] = useState(false);
+  //   const toggleDropdown = () => {
+  //     setIsOpen(!isOpen);
+  //   };
 
   return (
     <div>
-      <header className="sticky z-10 top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
+      <header
+        className="sticky z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
+        style={{ zIndex: 150 }}
+      >
         {/* Left section with logo */}
-        <div className="flex items-center gap-28 ">
-          <div className=" ">
-            <img src="/RgtPortalLogo.svg" className="w-40 h-15" />
-          </div>
-
-          {/* Greeting section */}
-          <div className="flex items-center gap-2" onClick={toggleDropdown}>
-            <img
-              src="/Down 2.svg"
-              className={`ml-2 h-4 w-4  hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
-                isOpen ? "rotate-180" : ""
-              }`}
-              onClick={toggleDropdown}
-            />
-            <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>LA</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  Hello, {user?.username}!
-                </span>
-                <span className="text-xs text-gray-500">
-                  Welcome back, This is your hr dashboard so far!
-                </span>
-              </div>
-            </div>
+        <div className="flex items-center">
+          <div className="">
+            <img src="/RgtPortalLogo.svg" className="w-24" />
           </div>
         </div>
 
-        <div className="flex">
+        <div className="flex w-full justify-end gap-3">
           {/* Center section with search */}
-          <div className="flex-1 max-w-xl w-[470px] mx-8">
-            <div className="relative">
-              <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search"
-                className="pl-10 py-5 bg-gray-50 border-none outline-none shadow-none"
-              />
-            </div>
+          <div className="relative w-[30%]">
+            <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search"
+              className="pl-10 py-5 bg-gray-50 border-none outline-none shadow-none"
+            />
           </div>
 
           {/* Right section with notification */}
@@ -71,17 +45,14 @@ export const BaseLayout = () => {
         </div>
       </header>
 
-      <div className="flex mt-5">
-        <div className="fixed translate-x-[30px] text-center ">
+      <div className="flex p-2 gap-2">
+        <div className="text-center hidden sm:block ">
           {user?.role.name === "HR" && <HrSideBar />}
           {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className="ml-80">
-          {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
-          {/* {children} */}
+        <div className=" flex-grow">
           <Outlet />
-          {/* </AnimationWrapper> */}
         </div>
       </div>
     </div>

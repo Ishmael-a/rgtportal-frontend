@@ -38,9 +38,9 @@ function App() {
           />
           <Route index path="feed" element={<Feed />} />
           <Route path="events-calendar" element={<EventsCalendar />} />
-          <Route path="all-projects/" element={<Projects />}>
-            <Route path=":id" element={<ProjectDetails />} />
-          </Route>
+          <Route path="all-projects/" element={<Projects />} />
+          <Route path="all-projects/:id" element={<ProjectDetails />} />
+
           <Route path="time-off" element={<TimeOff />} />
 
           {/* </Route> */}
