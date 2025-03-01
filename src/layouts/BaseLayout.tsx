@@ -6,6 +6,8 @@ import { HrSideBar } from "@/components/SideBar/HrSideBar";
 import { SideBar } from "@/components/SideBar/SideBar";
 import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useInitializeSharedData } from '@/hooks/useInitializeSharedData';
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
@@ -13,53 +15,78 @@ export const BaseLayout = () => {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+  const { isLoading, isError } = useInitializeSharedData();
 
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner label="Fetching Shared Data..." size={32} />;
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Error loading shared data</div>
+      </div>
+    )
+  }
+
+      // <header
+      //   className="fixed z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
+      //   style={{ zIndex: 150 }}
+      // >
+      //   {/* Left section with logo */}
+      //   <div className="flex items-center">
+      //     <div className="">
+      //       <img src="/RgtPortalLogo.svg" className="w-24" />
+      //     </div>
+      //   </div>
+
+      //   <div className="flex w-full justify-end gap-3">
+      //     {/* Center section with search */}
+      //     <div className="relative w-[30%]">
+      //       <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
+      //       <Input
+      //         type="text"
+      //         placeholder="Search"
+      //         className="pl-10 py-5 bg-gray-50 border-none outline-none shadow-none"
+      //       />
+      //     </div>
+
+      //     {/* Right section with notification */}
+      //     <div className="flex items-center">
+      //       <button className="p-2 hover:bg-gray-100 rounded-full">
+      //         <Bell className="h-5 w-5 text-gray-600" />
+      //       </button>
+      //     </div>
+      //   </div>
+      // </header>
   return (
     <div>
-      <header className="sticky z-10 top-0 flex items-center justify-between pl-8 pr-16 py-5 bg-white border-b">
-        {/* Left section with logo */}
-        <div className="flex items-center gap-28 ">
-          <div className=" ">
-            <img src="/RgtPortalLogo.svg" className="w-40 h-15" />
-          </div>
 
-          {/* Greeting section */}
-          <div className="flex items-center gap-2" onClick={toggleDropdown}>
-            <img
-              src="/Down 2.svg"
-              className={`ml-2 h-4 w-4  hover:bg-slate-200 rounded-full transition-all duration-300 ease-in cursor-pointer ${
-                isOpen ? "rotate-180" : ""
-              }`}
-              onClick={toggleDropdown}
-            />
-            <div className="flex items-center gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>LA</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  Hello, {user?.username}!
-                </span>
-                <span className="text-xs text-gray-500">
-                  Welcome back, This is your hr dashboard so far!
-                </span>
-              </div>
-            </div>
+      <header
+        className="sticky z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
+        style={{ zIndex: 150 }}
+      >
+        {/* Left section with logo */}
+        <div className="flex items-center">
+          <div className="">
+            <img src="/RgtPortalLogo.svg" className="w-24" />
           </div>
         </div>
 
-        <div className="flex">
+        <div className="flex w-full justify-end gap-3">
           {/* Center section with search */}
-          <div className="flex-1 max-w-xl w-[470px] mx-8">
-            <div className="relative">
-              <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search"
-                className="pl-10 py-5 bg-gray-50 border-none outline-none shadow-none"
-              />
-            </div>
+          <div className="relative w-[30%]">
+            <Search className="absolute left-2 top-3 h-4 w-4 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search"
+              className="pl-10 py-5 bg-gray-50 border-none outline-none shadow-none"
+            />
           </div>
 
           {/* Right section with notification */}
@@ -71,17 +98,15 @@ export const BaseLayout = () => {
         </div>
       </header>
 
-      <div className="flex mt-5">
-        <div className="fixed translate-x-[30px] text-center ">
+
+      <div className="flex px-[13px] space-x-[17px] h-screen">
+        <div className="min-h-screen text-center  py-[90px]">
           {user?.role.name === "HR" && <HrSideBar />}
           {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className="ml-80">
-          {/* <AnimationWrapper key="childrenOfEmpLayout"> */}
-          {/* {children} */}
+        <div className="bg-green-400 h-full pt-[40px] overflow-y-scroll w-full  flex-1">
           <Outlet />
-          {/* </AnimationWrapper> */}
         </div>
       </div>
     </div>

@@ -34,11 +34,11 @@ const Feed = () => {
   };
 
   return (
-    <main className="p-4 flex flex-col-reverse md:flex-row md:justify-end sm:gap-6 relative flex-grow w-full">
+    <main className="flex flex-col-reverse overflow-y-scroll [779px]:flex-row">
       <div className="space-y-10">
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 flex flex-col  sm:max-w-[430px] md:max-w-[800px]"
+          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 flex flex-col  sm:max-w-[430px] md:max-w-full"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
@@ -116,9 +116,7 @@ const Feed = () => {
         </section>
       </div>
 
-      <section className="pt-5 md:pt-0 md:min-w-[400px] space-y-3 md:sticky md:top-22  h-fit order-2 bg-white rounded-t-2xl">
-        {/* Upcoming Events */}
-        <p className="text-[#706D8A] font-[700] text-lg p-5">Upcoming Events</p>
+      <section className="pt-5 space-y-3 h-fit order-2 bg-white rounded-t-2xl">
         <Calendar
           mode="single"
           selected={date}
