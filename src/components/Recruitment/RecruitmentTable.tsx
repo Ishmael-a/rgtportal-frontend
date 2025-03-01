@@ -151,12 +151,12 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
           header: "Source",
         },
         {
-          key: "position",
-          header: "Position",
+          key: "currentStatus",
+          header: "Status",
         },
         {
-          key: "failReason",
-          header: "Fail Reason",
+          key: "position",
+          header: "Position",
         },
         {
           key: "failStage",
@@ -180,8 +180,8 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
           header: "Second Priority",
         },
         {
-          key: "failReason",
-          header: "Fail Reason",
+          key: "failStage",
+          header: "Fail Stage",
         },
       ];
     }

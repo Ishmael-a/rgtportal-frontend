@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "./use-toast";
+import { RecruitmentStatus } from "@/lib/enums";
 
 export interface Recruitment {
   id: number;
@@ -10,7 +11,7 @@ export interface Recruitment {
   photoUrl?: string;
   cvPath?: string;
   type: string;
-  currentStatus: string;
+  currentStatus: RecruitmentStatus;
   statusDueDate?: string;
   assignee?: string;
   notified?: boolean;
@@ -61,6 +62,12 @@ export interface RecruitmentFilters {
   dateTo?: Date;
   createdFrom?: Date;
   createdTo?: Date;
+}
+
+interface StatusUpdateDto {
+  status: RecruitmentStatus;
+  failStage?: string;
+  failReason?: string;
 }
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/recruitment`;
@@ -195,5 +202,45 @@ export const useRecruitment = (id: number | null, enabled = true) => {
     },
     enabled: Boolean(id) && enabled,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+
+export const useUpdateRecruitmentStatus = () => {
+  const queryClient = useQueryClient();
+  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/recruitment`;
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: StatusUpdateDto }) => {
+      const response = await axios.patch<ApiResponse<Recruitment>>(
+        `${API_URL}/${id}/status`,
+        data
+      );
+
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message || "Failed to update recruitment status"
+        );
+      }
+
+      return response.data.data;
+    },
+    onSuccess: (_, variables) => {
+      toast({
+        title: "Success",
+        description: "Recruitment status updated successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["recruitments"] });
+      queryClient.invalidateQueries({
+        queryKey: ["recruitment", variables.id],
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 };

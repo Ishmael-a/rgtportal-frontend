@@ -2,13 +2,13 @@ import React, { useState, useCallback, useMemo } from "react";
 import { RecruitmentType } from "@/lib/enums";
 import RecruitmentTable from "@/components/Recruitment/RecruitmentTable";
 import { CreateRecruitment } from "@/components/Recruitment/CreateRecruitment";
+import { EditRecruitment } from "@/components/Recruitment/EditRecruiment";
 import {
   useRecruitments,
   useDeleteRecruitment,
   RecruitmentFilters,
 } from "@/hooks/useRecruitment";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,9 +29,11 @@ interface RecruitmentPageProps {
 }
 
 const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ type }) => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editCandidateId, setEditCandidateId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -57,17 +59,21 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ type }) => {
     return filterParams;
   }, [searchParams, type]);
 
-  const { data, isLoading, isError, error, refetch, isFetching } : any =
+  const { data, isLoading, isError, error, refetch, isFetching }: any =
     useRecruitments(page, limit, filters);
 
   const deleteMutation = useDeleteRecruitment();
 
-  const handleView = useCallback((id: number) => {
-    console.log("Viewing candidate:", id);
-  }, []);
+  const handleView = useCallback(
+    (id: number) => {
+      navigate(`/hr/recruitment/candidate/${id}`);
+    },
+    [navigate]
+  );
 
   const handleEdit = useCallback((id: number) => {
-    console.log("Editing candidate:", id);
+    setEditCandidateId(id);
+    setIsEditModalOpen(true);
   }, []);
 
   const handleDelete = useCallback((id: number) => {
@@ -105,7 +111,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ type }) => {
       } else {
         searchParams.delete("name");
       }
-      searchParams.set("page", "1"); 
+      searchParams.set("page", "1");
       setSearchParams(searchParams);
     },
     [searchParams, setSearchParams]
@@ -170,6 +176,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ type }) => {
         onSearch={handleSearch}
       />
 
+      {/* Create Recruitment Modal */}
       <CreateRecruitment
         type={type}
         title={
@@ -181,6 +188,20 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ type }) => {
         onOpenChange={setIsModalOpen}
       />
 
+      {/* Edit Recruitment Modal */}
+      <EditRecruitment
+        type={type}
+        title={
+          type === RecruitmentType.NSS
+            ? "Edit NSS Candidate"
+            : "Edit Employee Candidate"
+        }
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        candidateId={editCandidateId}
+      />
+
+      {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}

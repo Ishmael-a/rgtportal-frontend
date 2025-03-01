@@ -10,6 +10,7 @@ import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
 import RecruitmentPage from "./pages/Hr/Recruitment";
 import { RecruitmentType } from "./lib/enums";
+import CandidateDetailView from "./pages/Hr/CandidateDetailed";
 
 function App() {
   return (
@@ -63,8 +64,18 @@ function App() {
 
           <Route path="feed" element={<Feed />} />
           <Route path="recruitment">
-            <Route path="employee" element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />} />
-            <Route path="nss" element={<RecruitmentPage type={RecruitmentType.NSS} />} />
+            <Route
+              path="employee"
+              element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />}
+            />
+            <Route
+              path="nss"
+              element={<RecruitmentPage type={RecruitmentType.NSS} />}
+            />
+            <Route
+              path="candidate/:id"
+              element={<CandidateDetailView />}
+            />
           </Route>
         </Route>
 
