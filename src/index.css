@@ -8,9 +8,8 @@
 
 body {
   font-family: "Inter", serif;
-  background-color:  transparent;
+  background-color: #F0F4F8;
   color: #1E293B;
-   border-radius: 25px;
 }
 
 :root {
@@ -103,7 +102,6 @@ body {
   --color-purpleaccent2: #EFE7FF;
   --color-rgtred : #EB2E31;
   --color-rgtgray: #475569;
-  --color-rgtpurpleaccent2: #C9ADFF;
   /* ... */
 }
 
