@@ -7,13 +7,13 @@ import * as Yup from "yup"; // Ensure Yup is imported for validation
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
-  validationSchema: Yup.ObjectSchema<T>;
+  validationSchema?: Yup.ObjectSchema<T>;
   initialFormValues: T;
   buttonClassName?: ClassNameValue;
   children: React.ReactNode;
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
-  back: boolean;
-  backFn: () => void;
+  back?: boolean;
+  backFn?: () => void;
 }
 
 export const SideFormModal = <T extends FormikValues>({

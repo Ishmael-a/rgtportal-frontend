@@ -2,6 +2,7 @@ import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
+import { SideFormModal } from "@/components/Modal";
 // import {SideFormModal} from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
@@ -15,27 +16,40 @@ export default function TimeOff() {
 
   // const [timeOffType, setTimeOffType] = useState("PTO");
   // const [reason, setReason] = useState("");
-  // const [fromDate, setFromDate] = useState<Date>();
-  // const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+
+
+  const [ptoForm, setPtoForm] = useState({
+    timeOffType: "PTO",
+    reason:'',
+    fromDate,
+    toDate
+  });
 
   // console.log("Time Off Type:", timeOffType);
-  // console.log("From:", fromDate);
-  // console.log("To:", toDate);
+  console.log("From:", fromDate);
+  console.log("To:", toDate);
   // console.log("Reason:", reason);
 
-  // const handleFromDate = (val: Date | undefined) => {
-  //   setFromDate(val);
-  // };
+  const handleFromDate = (val: Date | undefined) => {
+    setFromDate(val);
+    // setPtoForm({
+    //   ...ptoForm,
+    //   fromDate
+    // })
+  };
 
-  // const handleToDate = (val: Date | undefined) => {
-  //   setToDate(val);
-  // };
+  const handleToDate = (val: Date | undefined) => {
+    setToDate(val);
+  };
 
-  // const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log("submitting", e);
-  //   setIsModalOpen(false);
-  // };
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("submitting", e);
+    console.log("form:", ptoForm)
+    setIsModalOpen(false);
+  };
 
   const handleCheckNow = () => {
     console.log("...checking");
@@ -78,75 +92,76 @@ export default function TimeOff() {
 
       {/* modal for a new Time off request */}
       {isModalOpen && (
-        <div>TimeOff</div>
-        // <TimeOffModal
-        //   onSubmit={handleFormSubmit}
-        //   title="Add New Time Off"
-        //   buttons={[
-        //     { name: "Cancel", fn: () => setIsModalOpen(false) },
-        //     { name: "Create", fn: () => setIsSuccess(true) },
-        //   ]}
-        //   buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
-        // >
-        //   <section className="space-y-[25px] h-[85%]">
-        //     {/* Time Off Type */}
-        //     <div className="">
-        //       <label className="block pb-[10px] text-xs font-semibold text-[#7D7D81]">
-        //         Time Off Type
-        //       </label>
-        //       <div className="flex space-x-4">
-        //         <button
-        //           type="button"
-        //           onClick={() => setTimeOffType("PTO")}
-        //           className={`px-3 py-1 rounded-md text-[11px] font-medium border-[1px] duration-300 transition-colors ease-in cursor-pointer ${
-        //             timeOffType === "PTO"
-        //               ? "bg-gray-200"
-        //               : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-        //           }`}
-        //         >
-        //           PTO
-        //         </button>
-        //         <button
-        //           type="button"
-        //           onClick={() => setTimeOffType("Sick Leave")}
-        //           className={`px-4 py-2 rounded-md border text-[11px] font-medium duration-300 transition-colors ease-in cursor-pointer ${
-        //             timeOffType === "Sick Leave"
-        //               ? "bg-gray-200"
-        //               : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-        //           }`}
-        //         >
-        //           Sick Leave
-        //         </button>
-        //       </div>
-        //     </div>
+        // <div>TimeOff</div>
+        <SideFormModal
+          // onSubmit={handleFormSubmit}
+          title="Add New Time Off"
+          // buttons={[
+          //   { name: "Cancel", fn: () => setIsModalOpen(false) },
+          //   { name: "Create", fn: () => setIsSuccess(true) },
+          // ]}
+          validationSchema={ptoForm}
+          buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
+        >
+          <section className="space-y-[25px] h-[85%]">
+            {/* Time Off Type */}
+            <div className="">
+              <label className="block pb-[10px] text-xs font-semibold text-[#7D7D81]">
+                Time Off Type
+              </label>
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setTimeOffType("PTO")}
+                  className={`px-3 py-1 rounded-md text-[11px] font-medium border-[1px] duration-300 transition-colors ease-in cursor-pointer ${
+                    timeOffType === "PTO"
+                      ? "bg-gray-200"
+                      : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  PTO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTimeOffType("Sick Leave")}
+                  className={`px-4 py-2 rounded-md border text-[11px] font-medium duration-300 transition-colors ease-in cursor-pointer ${
+                    timeOffType === "Sick Leave"
+                      ? "bg-gray-200"
+                      : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  Sick Leave
+                </button>
+              </div>
+            </div>
 
-        //     {/* From and To Dates */}
-        //     <div className="grid grid-cols-2 gap-4">
-        //       <div>
-        //         <DatePicker placeholder="From" fn={handleFromDate} />
-        //       </div>
-        //       <div>
-        //         <DatePicker placeholder="To" fn={handleToDate} />
-        //       </div>
-        //     </div>
+            {/* From and To Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <DatePicker placeholder="From" fn={handleFromDate} />
+              </div>
+              <div>
+                <DatePicker placeholder="To" fn={handleToDate} />
+              </div>
+            </div>
 
-        //     {/* Reason */}
-        //     <div className="mb-6">
-        //       <label className="block text-sm font-medium pb-2 text-[#737276]">
-        //         Reason
-        //       </label>
-        //       <textarea
-        //         value={reason}
-        //         onChange={(e) => setReason(e.target.value)}
-        //         className="w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9]"
-        //         rows={3}
-        //         placeholder="Provide your reason"
-        //         // required
-        //         maxLength={50}
-        //       />
-        //     </div>
-        //   </section>
-        // </TimeOffModal>
+            {/* Reason */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium pb-2 text-[#737276]">
+                Reason
+              </label>
+              <textarea
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9]"
+                rows={3}
+                placeholder="Provide your reason"
+                // required
+                maxLength={50}
+              />
+            </div>
+          </section>
+        </SideFormModal>
       )}
 
       {/* modal for viewing old request */}

@@ -74,7 +74,7 @@ export const SideBar = () => {
       <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[354px] bg-white py-4 flex flex-col space-y-4 shadow-md">
         {navItems.map((item) => (
           <div
-            className="flex items-center w-full"
+            className="flex items-center justify-center w-full"
             onClick={() => handleIndicator(item.path)}
           >
             {indicator === item.path && (
@@ -87,7 +87,7 @@ export const SideBar = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) => `
-              flex items-center justify-start gap-3 px-4 py-2.5 rounded-lg
+              flex items-center justify-center md:justify-start gap-3 px-4 py-2.5 rounded-lg
               transition-colors duration-200 font-medium space-x-3 flex-1 text-[#706D8A]
               ${isActive ? "text-[#E328AF]" : "hover:bg-gray-50"}
               `}
