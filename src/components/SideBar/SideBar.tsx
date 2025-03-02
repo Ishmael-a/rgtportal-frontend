@@ -74,7 +74,7 @@ export const SideBar = () => {
       <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[354px] bg-white py-4 flex flex-col space-y-4 shadow-md">
         {navItems.map((item) => (
           <div
-            className="flex items-center"
+            className="flex items-center w-full"
             onClick={() => handleIndicator(item.path)}
           >
             {indicator === item.path && (
