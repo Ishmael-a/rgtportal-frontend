@@ -1,6 +1,6 @@
 import DepartmentTable from "@/components/common/DepartmentTable";
 import { projectCards } from "@/constants";
-import { IProjectCard } from "@/types/employee";
+import { IProjectCard, IProjectType } from "@/types/employee";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -8,7 +8,7 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [details, setDetails] = useState<IProjectCard | null>(null);
+  const [details, setDetails] = useState<IProjectType | null>(null);
 
   useEffect(() => {
     const project = projectCards.find((item) => item.id === Number(id));

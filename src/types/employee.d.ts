@@ -1,10 +1,16 @@
 import { ClassNameValue } from "tailwind-merge";
 interface IProjectCard {
   id: string | number;
+  members: IProjectMembers[]| Employee[];
+  name: string;
+  leadName?: string;
+  path: string;
+}
+interface IProjectType {
+  id: string | number;
   members: IProjectMembers[];
   name: string;
   leadName?: string;
-  path?: string;
 }
 
 interface IProjectMembers {

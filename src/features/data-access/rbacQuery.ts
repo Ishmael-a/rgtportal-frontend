@@ -16,7 +16,7 @@ export const queryClient = new QueryClient({
     },
   });
 
-  
+
   
   /**
    * Enhanced React Query hook that integrates with the RBAC permission system
@@ -29,7 +29,6 @@ export const queryClient = new QueryClient({
     options?: Omit<UseQueryOptions<TData, TError, TData, QueryKey>, 'queryKey' | 'queryFn'>,
     dataForPermissionCheck?: any
   ) {
-    const { currentUser } = useAuthContextProvider();
     const { hasAccess } = usePermission();
     
     // Check if user has permission
@@ -39,17 +38,7 @@ export const queryClient = new QueryClient({
       queryKey,
       queryFn,
       ...options,
-      // Only enable the query if user has permission
       enabled: hasPermission && (options?.enabled !== false),
-      // Add onError handler to deal with permission errors
-    //   onError: (error) => {
-    //     if (options?.onError) {
-    //       options.onError(error);
-    //     }
-    //     // Log permission-related errors
-    //     console.error(`Permission error for ${resource}.${action}:`, error);
-    //   },
-      // Add a meta field to track permissions
       meta: {
         ...options?.meta,
         permissionChecked: true,

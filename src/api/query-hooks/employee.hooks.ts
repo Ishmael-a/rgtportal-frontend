@@ -1,30 +1,33 @@
 import { useRbacQuery, usePrefetchWithPermission } from '@/features/data-access/rbacQuery';
 import { employeeService } from '../services/employee.service';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast'; // Assuming you use this for notifications
+import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
+import { toast } from 'react-hot-toast'; 
 import {Employee} from "@/types/employee"
 
-export const useAllEmployees = (params?: { 
-  departmentId?: string; 
-  status?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}) => {
+
+export const useAllEmployees = (
+    params?: { 
+        departmentId?: string; 
+        status?: string;
+        search?: string;
+        page?: number;
+        limit?: number;
+    },
+    options?: Omit<UseQueryOptions<Employee[],Error,Employee[],QueryKey>,'queryKey' | 'queryFn' > & {
+        enabled?: boolean;
+    }
+) => {
   return useRbacQuery(
     'employeeRecords',
     'view',
     ['employees', params],
     () => employeeService.getAllEmployees(params),
     {
+        ...options,
         placeholderData: (previousData) => {
-            // Use the previous data as placeholder data while fetching new data
             return previousData;
         },
-      // Show error notification on failure
-    //   onError: (error) => {
-    //     toast.error(`Failed to fetch employees: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    //   }
+
     }
   );
 };
@@ -60,7 +63,6 @@ export const useUpdateEmployee = () => {
 };
 
 
-// Hook for prefetching employee data when navigating to employee details
 export const usePrefetchEmployeeData = () => {
     const { prefetchIfAllowed } = usePrefetchWithPermission();
     

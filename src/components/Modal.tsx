@@ -10,8 +10,12 @@ interface ISideFormModal<T extends FormikValues> {
   validationSchema: Yup.ObjectSchema<T>;
   initialFormValues: T;
   buttonClassName?: ClassNameValue;
+  formClassName?: string;
   children: React.ReactNode;
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
+  submitBtnText?: string;
+  isSubmitting?: boolean;
+  isSubmittingClassName?: string;
   back: boolean;
   backFn: () => void;
 }
@@ -22,7 +26,11 @@ export const SideFormModal = <T extends FormikValues>({
   initialFormValues,
   validationSchema,
   buttonClassName,
+  formClassName,
   onSubmit,
+  submitBtnText = "Create",
+  isSubmitting,
+  isSubmittingClassName,
   back ,
   backFn,
 }: ISideFormModal<T>) => {
@@ -55,7 +63,7 @@ export const SideFormModal = <T extends FormikValues>({
             className="flex flex-col justify-start h-full"
           >
             {/* Form fields container */}
-            <div className="flex-grow">{children}</div>
+            <div className={`flex-grow ${formClassName}`}>{children}</div>
 
             {/* Buttons */}
             <div className="flex w-full mt-auto h-14 gap-[20px]">
@@ -65,8 +73,8 @@ export const SideFormModal = <T extends FormikValues>({
               </Button>
 
               {/* Create Button */}
-              <Button  key={"Create"} className="w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white">
-                Create
+              <Button type={"submit"}  key={"Create"} className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white ${isSubmitting && isSubmittingClassName? isSubmittingClassName: ""}` }>
+                {submitBtnText}
               </Button>
 
             </div>

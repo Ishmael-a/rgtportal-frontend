@@ -11,7 +11,7 @@ const Projects = () => {
 
       <section className="pt-6 flex flex-wrap gap-4 ">
         {projectCards.map((item, index) => (
-          <ProjectCard {...item} key={index} />
+          <ProjectCard {...item} key={index} path={`all-projects/${item.id}`}/>
         ))}
       </section>
 

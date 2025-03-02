@@ -1,6 +1,6 @@
 import { createApiClient } from '../axios';
 import { ApiResponse, PaginatedResponse } from '../types';
-import { Department } from '@/types/department';
+import { Department, CreateDepartmentDTO } from '@/types/department';
 
 
 const departmentApiClient = createApiClient(`${import.meta.env.VITE_API_URL}/departments`);
@@ -9,8 +9,13 @@ const departmentApiClient = createApiClient(`${import.meta.env.VITE_API_URL}/dep
 export const departmentService = {
 
 
-    getAllDepartments: async (): Promise<Department[]> => {
-        const response = await departmentApiClient.get<Department[]>('/');
+    createNewDepartment: async (data : CreateDepartmentDTO) : Promise<CreateDepartmentDTO> => {
+        const response = await departmentApiClient.post<CreateDepartmentDTO>('/', data);
+        return response.data;
+    },
+
+    getAllDepartments: async (): Promise<ApiResponse<Department[]>> => {
+        const response = await departmentApiClient.get<ApiResponse<Department[]>>('/');
         return response.data;
     },
 } 
