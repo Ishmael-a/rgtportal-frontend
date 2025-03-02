@@ -2,7 +2,7 @@ import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
-import { SideFormModal } from "@/components/Modal";
+import {SideFormModal}  from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { timeOffDummy, timeOffTableColumns } from "@/constants";
 import { useState } from "react";

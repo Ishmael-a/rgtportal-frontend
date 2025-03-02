@@ -1,28 +1,33 @@
-import {
-  useRbacQuery,
-  usePrefetchWithPermission,
-} from "@/features/data-access/rbacQuery";
-import { employeeService } from "../services/employee.service";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
-import { Employee } from "@/types/employee";
+import { useRbacQuery, usePrefetchWithPermission } from '@/features/data-access/rbacQuery';
+import { employeeService } from '../services/employee.service';
+import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
+import { toast } from 'react-hot-toast'; 
+import {Employee} from "@/types/employee"
 
-export const useAllEmployees = (params?: {
-  departmentId?: string;
-  status?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}) => {
+
+export const useAllEmployees = (
+    params?: { 
+        departmentId?: string; 
+        status?: string;
+        search?: string;
+        page?: number;
+        limit?: number;
+    },
+    options?: Omit<UseQueryOptions<Employee[],Error,Employee[],QueryKey>,'queryKey' | 'queryFn' > & {
+        enabled?: boolean;
+    }
+) => {
   return useRbacQuery(
     "employeeRecords",
     "view",
     ["employees", params],
     () => employeeService.getAllEmployees(params),
     {
-      placeholderData: (previousData) => {
-        return previousData;
-      },
+        ...options,
+        placeholderData: (previousData) => {
+            return previousData;
+        },
+
     }
   );
 };
@@ -59,6 +64,7 @@ export const useUpdateEmployee = () => {
     },
   });
 };
+
 
 export const usePrefetchEmployeeData = () => {
   const { prefetchIfAllowed } = usePrefetchWithPermission();
