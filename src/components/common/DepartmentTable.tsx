@@ -1,10 +1,10 @@
-import { IProjectCard } from "@/types/employee";
+import { IProjectCard, IProjectType } from "@/types/employee";
 import Avtr from "../Avtr";
 
-const DepartmentTable = ({ details }: { details: IProjectCard | null }) => {
+const DepartmentTable = ({ details }: { details: IProjectType | null }) => {
   return (
-    <main>
-      <table className="min-w-full border-collapse rounded-lg overflow-hidden">
+    <main className="flex max-w-[360px] sm:max-w-full overflow-scroll">
+      <table className="border-collapse rounded-lg w-full">
         {/* Table Head */}
         <thead>
           <tr className=" text-gray-700 text-left">

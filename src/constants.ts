@@ -2,7 +2,7 @@
 import { IEventList } from "./components/EventList";
 import {
   IAnnouncementCard,
-  IProjectCard,
+  IProjectType,
   IProjectMembers,
 } from "./types/employee";
 import { Column } from "./types/tables";
@@ -119,18 +119,18 @@ export const announcements: IAnnouncementCard[] = [
     title: "RGT University",
     date: new Date(),
   },
-  // {
-  //   title: "New Policy Update",
-  //   time: "1 PM",
-  // },
-  // {
-  //   title: "RGT University",
-  //   time: "1 PM",
-  // },
-  // {
-  //   title: "New Policy Update",
-  //   time: "1 PM",
-  // },
+  {
+    title: "New Policy Update",
+    date: new Date(),
+  },
+  {
+    title: "RGT University",
+    date: new Date(),
+  },
+  {
+    title: "New Policy Update",
+    date: new Date(),
+  },
 ];
 
 export const recognees = [
@@ -234,7 +234,7 @@ const membersArray = [
 ];
 
 // for all project page
-export const projectCards: IProjectCard[] = [
+export const projectCards: IProjectType[] = [
   {
     id: 0,
     name: "Design",

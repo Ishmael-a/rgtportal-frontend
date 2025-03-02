@@ -1,0 +1,9 @@
+# Ignore build and dependency directories
+dist
+build
+node_modules
+
+# Ignore specific file types
+*.log
+.env
+.env.*
