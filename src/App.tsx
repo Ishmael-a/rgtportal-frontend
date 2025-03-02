@@ -10,7 +10,6 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import { ManageEmployees } from "./pages/HR/ManageEmployees";
 import RecruitmentPage from "./pages/HR/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/CandidateDetailed";
