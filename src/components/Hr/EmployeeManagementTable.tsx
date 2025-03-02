@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Column, ActionObject } from "@/types/tables";
 import { DataTable } from '../common/DataTable';
-import {StepProgress} from "../StepProgress";
-import { ChevronLeft, ChevronRight, Check, Eye, Pencil } from "lucide-react";
+import StepProgress from "../StepProgress";
+import { Check, Eye, Pencil } from "lucide-react";
 
 
 

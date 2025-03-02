@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
@@ -77,26 +78,29 @@ export const AllDepartments = () => {
 
 
 
-    return (
-        <>
-        <div className="flex flex-col gap-[15px] pt-[10px] h-full ">
-            <section className="h-[62px] flex justify-between w-full items-center py-1">
+  return (
+    <>
+      <div className="flex flex-col gap-[15px] pt-[10px] h-full ">
+        <section className="h-[62px] flex justify-between w-full items-center py-1">
+          {/* Title and subtitle */}
+          <div className="flex flex-col h-full">
+            <h1 className="text-xl font-medium text-gray-600">
+              All Departments
+            </h1>
+            <p className="text-sm text-gray-500">
+              These are all current Departments
+            </p>
+          </div>
 
-                {/* Title and subtitle */}
-                <div className="flex flex-col h-full">
-                    <h1 className="text-xl font-medium text-gray-600">All Departments</h1>
-                    <p className="text-sm text-gray-500">These are all current Departments</p>
-                </div>
-
-                <div className="md:flex md:flex-row gap-4 items-center h-full flex-col">
-                    <div className="relative justify-between items-center sm:w-[100px] md:w-[301px] md:max-w-[301px] flex-grow">
-                        <Input
-                            type="text"
-                            placeholder="Search For A Department"
-                            className="pl-5 py-5 rounded-xl bg-gray-50 border-none outline-none shadow-none h-full"
-                        />
-                        <Search className="absolute right-4 top-4 h-6 w-6 text-gray-400" />
-                    </div>
+          <div className="md:flex md:flex-row gap-4 items-center h-full flex-col">
+            <div className="relative justify-between items-center sm:w-[100px] md:w-[301px] md:max-w-[301px] flex-grow">
+              <Input
+                type="text"
+                placeholder="Search For A Department"
+                className="pl-5 py-5 rounded-xl bg-gray-50 border-none outline-none shadow-none h-full"
+              />
+              <Search className="absolute right-4 top-4 h-6 w-6 text-gray-400" />
+            </div>
 
                     <Button onClick={() => setIsModalOpen(true)} className="bg-rgtviolet hover:bg-violet-900 rounded-xl h-full">
                         Create a New Department
@@ -135,7 +139,7 @@ export const AllDepartments = () => {
         {isModalOpen && (
         <SideFormModal
           initialFormValues={initialFormValues}
-          validationSchema = {NewDepSchema}
+          validationSchema={NewDepSchema}
           onSubmit={handleFormSubmit}
           title="Add New Department"
           back = {true}
@@ -143,8 +147,6 @@ export const AllDepartments = () => {
           formClassName="flex flex-col my-8 gap-6"
           submitBtnText = {createDepartmentMutation.isPending ? "Loading..." : "Create"}
           isSubmitting= {createDepartmentMutation.isPending}
-          isSubmittingClassName= {"bg-pink-200"}
-        //   cancelbuttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
             <Field name="name">
                 {({ field, form: { touched, errors } }: { field: FieldInputProps<string>; form: any }) => (
@@ -223,7 +225,6 @@ export const AllDepartments = () => {
             </Field>
         </SideFormModal>
       )}
-        </>
-
-    )
-}
+    </>
+  );
+};

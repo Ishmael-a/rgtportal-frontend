@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassNameValue } from "tailwind-merge";
 import { Button } from "@/components/ui/button";
-import { Field, Form as FormikForm, Formik, FieldInputProps, FormikHelpers, FormikValues } from 'formik';
+import {  Form as FormikForm, Formik, FormikHelpers, FormikValues } from 'formik';
 import * as Yup from "yup"; // Ensure Yup is imported for validation
 
 
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
-  validationSchema: Yup.ObjectSchema<T>;
+  validationSchema?: Yup.ObjectSchema<any, Yup.AnyObject, any, "">;
   initialFormValues: T;
   buttonClassName?: ClassNameValue;
   formClassName?: string;
@@ -15,7 +16,6 @@ interface ISideFormModal<T extends FormikValues> {
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
   submitBtnText?: string;
   isSubmitting?: boolean;
-  isSubmittingClassName?: string;
   back: boolean;
   backFn: () => void;
 }
@@ -30,7 +30,6 @@ export const SideFormModal = <T extends FormikValues>({
   onSubmit,
   submitBtnText = "Create",
   isSubmitting,
-  isSubmittingClassName,
   back ,
   backFn,
 }: ISideFormModal<T>) => {
@@ -73,7 +72,7 @@ export const SideFormModal = <T extends FormikValues>({
               </Button>
 
               {/* Create Button */}
-              <Button type={"submit"}  key={"Create"} className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white ${isSubmitting && isSubmittingClassName? isSubmittingClassName: ""}` }>
+              <Button type={"submit"}  key={"Create"} disabled={isSubmitting} className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white` }>
                 {submitBtnText}
               </Button>
 

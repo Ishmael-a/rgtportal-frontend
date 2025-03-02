@@ -13,7 +13,6 @@ export const HRDashboard = () => {
     return (
         <div className="flex flex-col gap-[17px]">
 
-            {/* <div className="p-6 bg-gray-50"> */}
                 <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
                     {metrics.map((metric, index) => (
                     <MetricCard 
@@ -25,7 +24,6 @@ export const HRDashboard = () => {
                     />
                     ))}
                 </div>
-            {/* </div> */}
             <div>
                 <EmployeeTable/>
             </div>

@@ -18,9 +18,9 @@ export const useAllEmployees = (
     }
 ) => {
   return useRbacQuery(
-    'employeeRecords',
-    'view',
-    ['employees', params],
+    "employeeRecords",
+    "view",
+    ["employees", params],
     () => employeeService.getAllEmployees(params),
     {
         ...options,
@@ -34,9 +34,9 @@ export const useAllEmployees = (
 
 export const useEmployeeDetails = (id: string) => {
   return useRbacQuery(
-    'employeeRecords',
-    'view',
-    ['employee', id],
+    "employeeRecords",
+    "view",
+    ["employee", id],
     () => employeeService.getEmployeeById(id),
     {
       enabled: !!id,
@@ -46,34 +46,34 @@ export const useEmployeeDetails = (id: string) => {
 
 export const useUpdateEmployee = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Employee> }) => 
+    mutationFn: ({ id, data }: { id: string; data: Partial<Employee> }) =>
       employeeService.updateEmployee(id, data),
     onSuccess: (_, variables) => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['employee', variables.id] });
-      queryClient.invalidateQueries({ queryKey: ['employees'] });
-      toast.success('Employee updated successfully');
+      queryClient.invalidateQueries({ queryKey: ["employee", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      toast.success("Employee updated successfully");
     },
     onError: (error) => {
-      toast.error(`Updating Employee failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+      toast.error(
+        `Updating Employee failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    },
   });
 };
 
 
 export const usePrefetchEmployeeData = () => {
-    const { prefetchIfAllowed } = usePrefetchWithPermission();
-    
-    const prefetchEmployee = (id: string) => {
-      return prefetchIfAllowed(
-        'employeeRecords',
-        'view',
-        ['employee', id],
-        () => employeeService.getEmployeeById(id),
-      );
-    };
-    
-    return { prefetchEmployee };
+  const { prefetchIfAllowed } = usePrefetchWithPermission();
+
+  const prefetchEmployee = (id: string) => {
+    return prefetchIfAllowed("employeeRecords", "view", ["employee", id], () =>
+      employeeService.getEmployeeById(id)
+    );
+  };
+
+  return { prefetchEmployee };
 };

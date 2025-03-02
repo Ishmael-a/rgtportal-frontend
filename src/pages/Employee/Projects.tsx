@@ -4,12 +4,12 @@ import { projectCards } from "@/constants";
 
 const Projects = () => {
   return (
-    <main className="">
+    <main className="p-4">
       <header className="text-[#706D8A] font-semibold text-3xl">
         All Projects
       </header>
 
-      <section className="pt-6 flex flex-wrap gap-4 ">
+      <section className="pt-6 flex flex-wrap gap-4 justify-center sm:justify-start ">
         {projectCards.map((item, index) => (
           <ProjectCard {...item} key={index} path={`all-projects/${item.id}`}/>
         ))}

@@ -74,7 +74,7 @@ const ProjectCard: React.FC<IProjectCard> = ({
           {extraCount > 0 && (
             <div
               className="absolute flex items-center justify-center w-9 h-9 text-xs font-bold text-white bg-[#C0AFFF] rounded-full border-0"
-              style={{ left: `${maxVisible * 24}px`, zIndex: "200" }}
+              style={{ left: `${maxVisible * 24}px`, zIndex: "140" }}
             >
               +{extraCount}
             </div>

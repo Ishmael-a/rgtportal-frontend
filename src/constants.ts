@@ -119,18 +119,18 @@ export const announcements: IAnnouncementCard[] = [
     title: "RGT University",
     date: new Date(),
   },
-  // {
-  //   title: "New Policy Update",
-  //   time: "1 PM",
-  // },
-  // {
-  //   title: "RGT University",
-  //   time: "1 PM",
-  // },
-  // {
-  //   title: "New Policy Update",
-  //   time: "1 PM",
-  // },
+  {
+    title: "New Policy Update",
+    date: new Date(),
+  },
+  {
+    title: "RGT University",
+    date: new Date(),
+  },
+  {
+    title: "New Policy Update",
+    date: new Date(),
+  },
 ];
 
 export const recognees = [

@@ -32,7 +32,7 @@ export function DataTable({
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action()}
                       >
-                        <img src="/Show.svg" alt="view" />
+                        <img src="/Show.svg" />
                       </button>
                     );
                   case "edit":
@@ -66,7 +66,7 @@ export function DataTable({
     : columns;
 
   return (
-    <div className="max-w-72 sm:max-w-[500px] flex flex-col md:max-w-full">
+    <div className="max-w-xs sm:max-w-[500px] flex flex-col md:max-w-full">
       <Table
         className={
           dividers ? "" : "border-none bg-white rounded-md min-h-60 space-y-6  "
@@ -115,9 +115,6 @@ export function DataTable({
           ))}
         </TableBody>
       </Table>
-      {/* <div className="flex w-full mx-auto mt-3"> */}
-        {/* <StepProgress /> */}
-      {/* </div> */}
     </div>
   );
 }

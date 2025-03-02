@@ -48,18 +48,17 @@ const FeedActions = () => {
           </div>
           <p className="text-sm font-medium">3 Comments</p>
         </div>
-
       </div>
-        <div
-          className="p-[6px] rounded-full hover:bg-purple-100 transition-colors duration-200 cursor-pointer"
-          onClick={handleBookmark}
-        >
-          <Bookmark
-            className={`text-[#94A3B8] ${
-              bookmarked ? "fill-rgtblue stroke-0" : "fill-none"
-            }`}
-          />
-        </div>
+      <div
+        className="p-[6px] rounded-full hover:bg-purple-100 transition-colors duration-200 cursor-pointer"
+        onClick={handleBookmark}
+      >
+        <Bookmark
+          className={`text-[#94A3B8] ${
+            bookmarked ? "fill-rgtblue stroke-0" : "fill-none"
+          }`}
+        />
+      </div>
     </div>
   );
 };

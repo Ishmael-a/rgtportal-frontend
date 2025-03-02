@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Eye, Pencil, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 
 export interface StepProgressProps {
@@ -8,7 +8,7 @@ export interface StepProgressProps {
 }
 
 
-export const StepProgress: React.FC<StepProgressProps> = ({ 
+const StepProgress: React.FC<StepProgressProps> = ({ 
   currentPage, 
   setCurrentPage, 
   totalPages 
@@ -52,7 +52,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-4 p-4">
+    <div className="flex items-center justify-center  p-4">
       {/* Left Arrow */}
       <button
         onClick={handlePrev}
@@ -63,11 +63,11 @@ export const StepProgress: React.FC<StepProgressProps> = ({
       </button>
 
       {/* Step Indicators */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center">
         {getDisplayedSteps().map((step, index) => (
           <div key={index} className="flex items-center">
             {step === "..." ? (
-              <span className="text-gray-500 mx-2">...</span>
+              <span className="text-gray-500 ">...</span>
             ) : (
               <button
                 onClick={() => setCurrentPage(step as number)}
@@ -95,3 +95,5 @@ export const StepProgress: React.FC<StepProgressProps> = ({
     </div>
   );
 };
+
+export default StepProgress;

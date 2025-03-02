@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../common/DataTable';
-import {StepProgress} from "../StepProgress";
+import StepProgress from "../StepProgress";
 import { Column, ActionObject } from "@/types/tables";
 import CustomSelect from "@/components/common/Select";
  
