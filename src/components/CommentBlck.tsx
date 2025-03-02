@@ -6,8 +6,8 @@ const CommentBlck = () => {
   return (
     <section className="border-t px-2 pt-4 flex items-center space-x-2">
       <Avatar>
-        <AvatarImage src={avtrDets[0].avatarUrl} alt={avtrDets[0].name} />
-        <AvatarFallback>{avtrDets[0].fallBack}</AvatarFallback>
+        <AvatarImage src={avtrDets[0].avtr?.url} alt={avtrDets[0].name} />
+        <AvatarFallback>{avtrDets[0].avtr?.fallBack}</AvatarFallback>
       </Avatar>
       <Input
         className="rounded-full p-6 max-w-[500px]"

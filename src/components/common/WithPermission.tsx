@@ -1,8 +1,9 @@
-import React from 'react';
-import { usePermission } from '@/hooks/use-permission';
-import { Navigate } from 'react-router-dom';
-import { PermissionResource } from '@/types/permissions';
-import toast from 'react-hot-toast';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { usePermission } from "@/hooks/use-permission";
+import { Navigate } from "react-router-dom";
+import { PermissionResource } from "@/types/permissions";
+import toast from "react-hot-toast";
 
 type WithPermissionProps = {
   resource: keyof PermissionResource;
@@ -13,9 +14,6 @@ type WithPermissionProps = {
   children: React.ReactNode;
 };
 
-/**
- * Higher-order component that checks permissions before rendering children
- */
 export const WithPermission: React.FC<WithPermissionProps> = ({
   resource,
   action,
@@ -29,19 +27,21 @@ export const WithPermission: React.FC<WithPermissionProps> = ({
 
   if (!hasPermission) {
     if (redirectTo) {
-      toast.error("You don't have permission to access this resource.")
+      toast.error("You don't have permission to access this resource.");
       return <Navigate to={redirectTo} replace />;
     }
-    
+
     if (fallback) {
-      toast.error("You don't have permission to access this resource.")
+      toast.error("You don't have permission to access this resource.");
       return <>{fallback}</>;
     }
-    
-    toast.error("You don't have permission to access this resource.")
+
+    toast.error("You don't have permission to access this resource.");
     return (
       <div className="p-6 text-center">
-        <p className="text-red-500">You don't have permission to access this resource.</p>
+        <p className="text-red-500">
+          You don't have permission to access this resource.
+        </p>
       </div>
     );
   }

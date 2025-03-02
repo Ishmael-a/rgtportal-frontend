@@ -42,8 +42,6 @@ const ProjectDetails = () => {
         </div>
       </header>
 
-      {/* main section */}
-
       <div
         className="w-full flex justify-center sm:block bg-white rounded-md shadow-sm"
         style={{

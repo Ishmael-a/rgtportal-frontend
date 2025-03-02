@@ -1,4 +1,5 @@
-import { IPollUI } from "@/types";
+import { IPollUI } from "@/types/employee";
+
 const PollUI = ({ poll }: { poll: IPollUI[] }) => {
   const totalVotes = poll.reduce((acc, item) => acc + item.totalVotes, 0);
 

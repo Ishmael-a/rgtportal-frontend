@@ -92,7 +92,6 @@ export const SideBar = () => {
               ${isActive ? "text-[#E328AF]" : "hover:bg-gray-50"}
               `}
             >
-              {/* <img src={item.icon} className="h-[31px] w-[31px]" /> */}
               {indicator === item.path ? (
                 <item.icon color="#E328AF" />
               ) : (

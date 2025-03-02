@@ -23,9 +23,9 @@ const Feed = () => {
   const [date, setDate] = React.useState<Date>();
 
   const colors = [
-    { color: "#FFCFF2", name: "pink" }, // bg: "#FFCFF2"
-    { color: "#FFEBCC", name: "yellow" }, // bg: "#FFEBCC"
-    { color: "#F6EEFF", name: "purple" }, // bg: "#F6EEFF"
+    { color: "#FFCFF2", name: "pink" },
+    { color: "#FFEBCC", name: "yellow" },
+    { color: "#F6EEFF", name: "purple" },
   ];
 
   const getRandomColor = () => {
@@ -121,15 +121,8 @@ const Feed = () => {
           </div>
         </section>
       </div>
-      {/* events & announcements */}
-      {/* className="flex justify-center md:h-screen md:flex-1" */}
-      <section
-        className="flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto"
-        // style={{
-        //   scrollbarWidth: "none" /* Firefox */,
-        //   msOverflowStyle: "none" /* IE and Edge */,
-        // }}
-      >
+
+      <section className="flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto">
         <div className="pt-5 space-y-3 h-fit  order-2 bg-white rounded-t-2xl w-full">
           <Calendar
             mode="single"
@@ -139,7 +132,7 @@ const Feed = () => {
             classNames={{
               day_selected:
                 "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
-              month: "flex flex-col space-y-3 flex-grow", // Ensure month expands
+              month: "flex flex-col space-y-3 flex-grow",
               day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
               head_cell: "w-8 sm:w-10 flex-grow",
               cell: "flex items-center justify-center flex-grow",
@@ -147,7 +140,6 @@ const Feed = () => {
             className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
           />
 
-          {/* Special Events */}
           <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
             <div className="flex items-center justify-between">
               <p className="text-[#706D8A] font-[700] text-lg">
@@ -174,11 +166,10 @@ const Feed = () => {
               ))}
             </div>
           </div>
-          {/* Announcements */}
+
           <div className="p-4 bg-white rounded-lg space-y-2">
             <div className="flex items-center justify-between pb-4">
               <p className="font-[700] text-lg">Announcements</p>
-            
             </div>
             <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
               {announcements.map((announcement, index) => (

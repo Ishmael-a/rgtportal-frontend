@@ -17,7 +17,9 @@ const AnnouncementCard: React.FC<IAnnouncementCard> = ({ date, title }) => {
         <p>{day}</p>
       </div>
       <div className="flex flex-col items-start justify-center md:space-y-1 text-[#706D8A]">
-        <p className="text-sm w-[190px] sm:w-[113px] text-nowrap truncate ">{title}</p>
+        <p className="text-sm w-[190px] sm:w-[113px] text-nowrap truncate ">
+          {title}
+        </p>
         <div className="flex items-center justify-center space-x-1">
           <AlarmClock size={15} />
           <p className="text-[12px]">{time.toLocaleLowerCase()}</p>
@@ -28,26 +30,3 @@ const AnnouncementCard: React.FC<IAnnouncementCard> = ({ date, title }) => {
 };
 
 export default AnnouncementCard;
-
-// const images = [
-//   { url: "/bellPink.svg", color: "pink" }, // bg: "#FFCFF2"
-//   { url: "/bellYellow.svg", color: "yellow" }, // bg: "#FFEBCC"
-//   { url: "/BellPurple.svg", color: "purple" }, // bg: "#F6EEFF"
-// ];
-
-// const randomIndex = Math.floor(Math.random() * images.length);
-// const randomImage = images[randomIndex];
-
-{
-  /* <img
-  src={randomImage.url}
-  alt=""
-  className={`${
-    randomImage.color === "pink"
-      ? "bg-[#FFCFF2]"
-      : randomImage.color === "yellow"
-      ? "bg-[#FFEBCC]"
-      : "bg-[#F6EEFF]"
-  } p-2 rounded-md w-10`}
-/> */
-}
