@@ -2,7 +2,8 @@ import { createContext, PropsWithChildren, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import { useCurrentUser } from "@/api/query-hooks/auth.hooks";
-import { LOGOUT, SETCURRENTUSER } from "../state/authState/authSlice";
+import { LOGOUT, SETCURRENTUSER } from "@/state/authState/authSlice";
+import LoadingSpinner from "@/components/common/LoadingSpinner"
 // import {useNavigate} from "react-router-dom"
 
 // Define proper types for the context
@@ -98,7 +99,7 @@ const AuthContextProvider = ({ children }: AuthProviderProps) => {
   if (isLoading && !currentUser) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        Loading user information...
+        <LoadingSpinner label="Fetching User data..." size={32} />
       </div>
     );
   }

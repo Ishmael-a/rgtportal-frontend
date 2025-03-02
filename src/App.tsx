@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import { Button } from "./components/ui/button";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import NotFoundPage from "./pages/NotFoundPage";
+import { WithPermission } from "@/components/common/WithPermission";
 import { BaseLayout } from "./layouts/BaseLayout";
+import NotFoundPage from "./pages/NotFoundPage";
+import Login from "./pages/Login";
 import Feed from "./pages/common/Feed";
+import { HRDashboard } from "./pages/HR/HRDashboard";
+import { AllDepartments } from "./pages/HR/AllDepartments";
 import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
@@ -17,46 +18,28 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
 
-        {/* Common routes with base layout */}
-        {/* <Route element={<EmpLayout />}> */}
-        {/* <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "HR", "ADMIN"]} />}> */}
-        {/* <Route path="/feed" element={<Feed />} /> */}
-        {/* </Route> */}
-        {/* </Route> */}
-
         {/* Employee routes */}
         <Route path="/emp" element={<BaseLayout />}>
-          {/* <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}> */}
-          <Route
-            index
-            path="dashboard"
-            element={
-              <div className="font-inter">
-                This is the Employee Homepage
-                <Button>Add Homepage</Button>
-              </div>
-            }
-          />
           <Route index path="feed" element={<Feed />} />
           <Route path="events-calendar" element={<EventsCalendar />} />
-          <Route path="all-projects/" element={<Projects />}>
-            <Route path=":id" element={<ProjectDetails />} />
-          </Route>
+          <Route path="all-projects/" element={<Projects />} />
+          <Route path="all-projects/:id" element={<ProjectDetails />} />
           <Route path="time-off" element={<TimeOff />} />
-
-          {/* </Route> */}
         </Route>
 
         {/* HR routes */}
         <Route path="/hr" element={<BaseLayout />}>
+          <Route index path="dashboard" element={<HRDashboard />} />
           <Route
-            index
-            path="dashboard"
+            path="alldepartments"
             element={
-              <div className="font-inter">
-                This is the HR Homepage
-                <Button>Add Homepage</Button>
-              </div>
+              <WithPermission
+                resource="employeeRecords"
+                action="view"
+                redirectTo="/hr/dashboard"
+              >
+                <AllDepartments />
+              </WithPermission>
             }
           />
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassNameValue } from "tailwind-merge";
 interface IProjectCard {
   id: string | number;
@@ -45,16 +46,37 @@ interface IAnnouncementCard {
   date: Date;
 }
 
-// interface IAvtrDets {
-//   name: string;
-//   role: string;
-//   avatarUrl: string;
-//   fallBack: string;
-// }
-
 interface IAvtrComponent {
   className?: ClassNameValue;
   index?: number;
   url: string;
   name: string;
+}
+
+export interface Employee {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  position: string | null;
+  hireDate: Date | null;
+  sickDaysBalance: number;
+  annualDaysOff: number;
+  vacationDaysBalance: number;
+  contactDetails: Record<string, any> | null;
+  
+  givenRecognitions?: EmployeeRecognition[];
+  receivedRecognitions?: EmployeeRecognition[];
+  user?: User;
+  department: Department;
+  departmentId: number | null;
+  
+  ptoRequests?: PtoRequest[];
+  projectAssignments?: ProjectAssignment[];
+  posts?: Post[];
+  organizedEvents?: Event[];
+  eventParticipations?: EventParticipant[];
+  attendanceRecords?: AttendanceRecord[];
+  createdPolls?: Poll[];
+  pollVotes?: PollVote[];
 }

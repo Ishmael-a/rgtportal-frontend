@@ -11,18 +11,17 @@ const CreatePost = () => {
     <main className="flex-col flex space-y-3">
       <div className="relative flex items-center">
         <Avatar>
-          <AvatarImage src={avtrDets[0].avatarUrl} alt="Avatar" />
-          <AvatarFallback>{avtrDets[0].fallBack}</AvatarFallback>
+          <AvatarImage src={avtrDets[0].avtr?.url} alt="Avatar" />
+          <AvatarFallback>{avtrDets[0].avtr?.fallBack}</AvatarFallback>
         </Avatar>
         <TextareaAutosize
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder=" "
-          maxRows={4} // Limit to 5 rows
+          maxRows={4}
           style={{
             width: "100%",
             padding: "10px",
-            // borderRadius: "20px",
             border: "1px solid #ccc",
             color: "",
             backgroundColor: "transparent",

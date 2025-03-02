@@ -1,29 +1,36 @@
-import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
-// Create custom type for API client configuration
-interface ApiClientConfig {
-    baseURL: string;
-    timeout?: number;
-    headers?: Record<string, string>;
-    withCredentials?: true;
+interface ApiClientConfig extends AxiosRequestConfig {
+  baseURL: string;
+  timeout?: number;
+  headers?: Record<string, string>;
+  withCredentials?: true;
 }
 
-
-// Default configuration
-const defaultConfig: ApiClientConfig = {
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+export const createApiClient = (
+  baseURL: string = import.meta.env.VITE_BASE_URL
+): AxiosInstance => {
+  const config: ApiClientConfig = {
+    baseURL,
     timeout: 15000,
-    headers: { 
-        'Content-Type': 'application/json' 
+    headers: {
+      "Content-Type": "application/json",
     },
-    withCredentials: true // Enable cookie handling
-}
+    withCredentials: true,
+  };
 
+  const axiosInstance = axios.create(config);
 
-  
-const axiosInstance = axios.create(defaultConfig);
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
 
+  return axiosInstance;
+};
 
-export default axiosInstance;
+export const defaultApiClient = createApiClient();
 
-
+export default defaultApiClient;
