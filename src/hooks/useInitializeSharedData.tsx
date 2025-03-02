@@ -1,9 +1,8 @@
-// hooks/useInitializeSharedData.ts
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDepartments } from '@/api/query-hooks/department.hooks';
 import { setDepartments } from '@/state/sharedDataState/sharedDataSlice';
-import { toast } from 'react-hot-toast';
+import { toast } from './use-toast';
 
 
 export const useInitializeSharedData = () => {
@@ -17,16 +16,17 @@ export const useInitializeSharedData = () => {
     error: departmentsError 
   } = useDepartments();
 
-
-
   useEffect(() => {
 
     // Handle Departments Error
     if (isDepartmentsError && departmentsError) {
         console.log("Unable to load departments..", departmentsError)
-        toast.error('Unable to load departments. Please try again later.');
+        toast({
+            title: "Error",
+            description: "Unable to load Departments",
+            variant: "destructive",
+        });
     }
-
 
     // Initialize shared data
     if (departments) {

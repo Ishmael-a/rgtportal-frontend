@@ -1,8 +1,8 @@
 import { useRbacQuery, usePrefetchWithPermission } from '@/features/data-access/rbacQuery';
 import { employeeService } from '../services/employee.service';
 import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
-import { toast } from 'react-hot-toast'; 
 import {Employee} from "@/types/employee"
+import { toast } from '@/hooks/use-toast';
 
 
 export const useAllEmployees = (
@@ -53,14 +53,17 @@ export const useUpdateEmployee = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["employee", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-      toast.success("Employee updated successfully");
+    toast({
+      title: "Success",
+      description: "Employee updated successfully",
+    });
     },
     onError: (error) => {
-      toast.error(
-        `Updating Employee failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      })
     },
   });
 };
