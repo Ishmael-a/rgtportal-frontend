@@ -112,7 +112,7 @@ export const announcements: IAnnouncementCard[] = [
     date: new Date(),
   },
   {
-    title: "New Policy Update",
+    title: "New Policy Update sdfasfd afdgadfgadfgadfgadfgadf gadfgafdgadf agdga",
     date: new Date(),
   },
   {

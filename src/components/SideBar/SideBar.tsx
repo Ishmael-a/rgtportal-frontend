@@ -10,8 +10,7 @@ import MessageIcon from "@/assets/empNavCons/MessageIcon";
 import ProfileIcon from "@/assets/empNavCons/ProfileIcon";
 import TimeIcon from "@/assets/empNavCons/TimeIcon";
 
-export const 
-SideBar = () => {
+export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
   const [indicator, setIndicator] = useState("");
   const [showProfile, setShowProfile] = useState(false);

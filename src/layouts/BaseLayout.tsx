@@ -4,18 +4,38 @@ import { HrSideBar } from "@/components/SideBar/HrSideBar";
 import { SideBar } from "@/components/SideBar/SideBar";
 import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
+// import { useState } from "react";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  //   const [isOpen, setIsOpen] = useState(false);
-  //   const toggleDropdown = () => {
-  //     setIsOpen(!isOpen);
-  //   };
+  // const [isOpen, setIsOpen] = useState(false);
+  // const toggleDropdown = () => {
+  //   setIsOpen(!isOpen);
+  // };
+  const { isLoading, isError } = useInitializeSharedData();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner label="Fetching Shared Data..." size={32} />;
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Error loading shared data</div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <header
-        className="sticky z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
+        className="fixed z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
         style={{ zIndex: 150 }}
       >
         {/* Left section with logo */}
@@ -44,14 +64,18 @@ export const BaseLayout = () => {
           </div>
         </div>
       </header>
-
-      <div className="flex p-2 gap-2">
-        <div className="text-center hidden sm:block ">
+      <div className="flex sm:px-[13px] sm:space-x-[17px] w-screen h-screen">
+        <div className="min-h-screen text-center sm:py-[78px] hidden sm:block">
           {user?.role.name === "HR" && <HrSideBar />}
           {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className=" flex-grow">
+        <div className="md:pt-[78px] pt-4 px-10 flex-1 md:w-3/5 h-screen overflow-y-auto"  
+        style={{
+          scrollbarWidth: "none" /* Firefox */,
+          msOverflowStyle: "none" /* IE and Edge */,
+        }}
+        >
           <Outlet />
         </div>
       </div>

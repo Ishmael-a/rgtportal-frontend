@@ -1,6 +1,6 @@
 import { useAuthContextProvider } from '../hooks/useAuthContextProvider';
 import { ROLES } from '../lib/constants/roles';
-import type { Permissions, PermissionResource, PermissionCheck } from '../types/permissions';
+import type { Permissions, PermissionResource, PermissionCheck } from '@/types/permissions';
 
 export const usePermission = () => {
     const { currentUser } = useAuthContextProvider();
@@ -12,24 +12,24 @@ export const usePermission = () => {
     ): boolean => {
       if (!currentUser) return false;
   
-      return currentUser.roles.some(role => {
-        const rolePermissions = ROLES[role];
-        if (rolePermissions.$all) return true;
-  
-        // Type-safe permission access using type guard
-        const resourcePermissions = rolePermissions[resource] as 
-          Record<PermissionResource[K], boolean | PermissionCheck<Permissions[K]["dataType"]>> | undefined;
-  
-        const permission = resourcePermissions?.[action];
-        
-        if (typeof permission === 'function') {
-          return permission(currentUser, data);
-        }
-        
-        return !!permission;
-      });
+      // Check permissions for the user's current role
+      const rolePermissions = ROLES[currentUser.role.name];
+      
+      // Check for global access
+      if (rolePermissions.$all) return true;
+
+      // Type-safe permission access using type guard
+      const resourcePermissions = rolePermissions[resource] as 
+        Record<PermissionResource[K], boolean | PermissionCheck<Permissions[K]["dataType"]>> | undefined;
+
+      const permission = resourcePermissions?.[action];
+      
+      if (typeof permission === 'function') {
+        return permission(currentUser, data);
+      }
+      
+      return !!permission;
     };
   
     return { hasAccess };
-  };
-  
+};

@@ -11,14 +11,14 @@ const AnnouncementCard: React.FC<IAnnouncementCard> = ({ date, title }) => {
   const dayOfWeek = date.toDateString().split(" ")[0];
   console.log("day, time:", day, time, dayOfWeek);
   return (
-    <section className="flex bg-[#F6F6F9]">
-      <div className="min-w-4 bg-[#E328AF] text-white p-3 rounded-md flex flex-col items-center justify-center text-sm">
+    <section className="flex bg-[#F6F6F9] p-2 sm:w-[174px] space-x-3 w-full">
+      <div className=" bg-[#E328AF] text-white p-3 rounded-md flex flex-col items-center justify-center text-sm">
         <p>{dayOfWeek}</p>
         <p>{day}</p>
       </div>
-      <div className="flex sm:flex-col items-center justify-center md:space-y-1 text-[#706D8A] p-3">
-        <p className="text-sm  w-[113px] text-nowrap truncate ">{title}</p>
-        <div className="flex items-center justify-center gap-1">
+      <div className="flex flex-col items-start justify-center md:space-y-1 text-[#706D8A]">
+        <p className="text-sm w-[190px] sm:w-[113px] text-nowrap truncate ">{title}</p>
+        <div className="flex items-center justify-center space-x-1">
           <AlarmClock size={15} />
           <p className="text-[12px]">{time.toLocaleLowerCase()}</p>
         </div>
