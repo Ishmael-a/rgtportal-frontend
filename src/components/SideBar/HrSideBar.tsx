@@ -11,8 +11,9 @@ export const HrSideBar = () => {
     { 
       icon: "/Employees.svg", label: 'Employees', path: '/employees', 
       items: [
-        { label: 'Manage Employees', path: '/manageemployees' },
-        { label: 'Employee Card', path: '/employeecard' }
+        { label: 'Manage Employees', path: 'manageemployees' },
+        { label: 'Employee Card', path: 'employeecard' },
+        { label: 'All Departments', path: 'alldepartments' },
       ] 
     },
     { icon: "/Time.svg", label: 'Time Off', path: '/time-off',
@@ -33,7 +34,7 @@ export const HrSideBar = () => {
   ];
 
     return (
-      <nav className="w-64 rounded-4xl h-full text-center bg-white pb-8  flex flex-col ">
+      <nav className="w-[280px] rounded-4xl h-fit text-center bg-white flex-col hidden md:flex">
         <NavLink 
           to="/hr/dashboard"
           end={true}
@@ -64,7 +65,7 @@ export const HrSideBar = () => {
             </>
           )}
         </NavLink>
-        <div className=" w-full text-center flex flex-col gap-6">
+        <div className=" pb-8 w-full text-center flex flex-col gap-6">
       {navItems.map((item) => (
           item.items ?  
           <NavDropdown 

@@ -58,3 +58,39 @@ interface IAvtrComponent {
   url: string;
   name: string;
 }
+
+
+// export interface Employee{
+//   id: string;
+//   // other fields...
+// };
+
+export interface Employee {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  position: string | null;
+  hireDate: Date | null;
+  sickDaysBalance: number;
+  annualDaysOff: number;
+  vacationDaysBalance: number;
+  contactDetails: Record<string, any> | null;
+  
+  // Relationships
+  givenRecognitions?: EmployeeRecognition[];
+  receivedRecognitions?: EmployeeRecognition[];
+  user?: User;
+  department: Department;
+  departmentId: number | null;
+  
+  // One-to-Many Relationships
+  ptoRequests?: PtoRequest[];
+  projectAssignments?: ProjectAssignment[];
+  posts?: Post[];
+  organizedEvents?: Event[];
+  eventParticipations?: EventParticipant[];
+  attendanceRecords?: AttendanceRecord[];
+  createdPolls?: Poll[];
+  pollVotes?: PollVote[];
+}

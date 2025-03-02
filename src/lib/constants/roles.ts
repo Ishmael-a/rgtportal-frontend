@@ -1,26 +1,34 @@
-import {RolesWithPermissions} from "../../types/permissions"
+import {RolesWithPermissions} from "@/types/permissions"
 
 
 export const ROLES: RolesWithPermissions = {
-    EMPLOYEE: {
-      ptoRequests: {
-        create: true,
-        view: (user, request) => request?.employee_id === user.id
-      }
-    },
-    MANAGER: {
-      ptoRequests: {
-        approve: (user, request) => request?.department_id === user.department_id
-      }
-    },
-    HR: {
-      employeeRecords: {
-        view: true,
-        edit: true
-      }
-    },
-    SUPER_ADMIN: {
-      $all: true
+  HR: {
+    employeeRecords: {
+      view: true,
+      edit: true,
+      delete: true
     }
-  } as const;
+  },
+  MANAGER: {
+    ptoRequests: {
+      approve: (user: User, request?: PTORequest) => request?.department_id === user.employee?.department_id
+    }
+  },
+  EMPLOYEE: {
+    ptoRequests: {
+      create: true,
+      view: (user: User, request?: PTORequest) => request?.employee_id === user.id.toString()
+    }
+  },
+  ADMIN: {
+    $all: true  // Full access to everything
+  },
+  MODERATOR: {
+    // Specific permissions for moderators
+    employeeRecords: {
+      view: true
+    }
+  }
+} as const;
+
   

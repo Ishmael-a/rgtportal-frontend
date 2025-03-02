@@ -1,4 +1,4 @@
-import axiosInstance from '../axios';
+import { defaultApiClient } from '../axios'; 
 import { ApiResponse } from '../types';
 
 export interface LoginRequest {
@@ -17,24 +17,24 @@ export const authService = {
         return new Promise((resolve) => {
           // Show loader for at least 500ms to prevent flash
           setTimeout(() => {
-            window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+            window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google`;
             resolve();
           }, 50); // Minimum time to allow React state update
         });
     },
 
     login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
-      const response = await axiosInstance.post<ApiResponse<LoginResponse>>('/auth/login', data);
+      const response = await defaultApiClient.post<ApiResponse<LoginResponse>>('/auth/login', data);
       return response.data;
     },
     
     logout: async (): Promise<ApiResponse<null>> => {
-      const response = await axiosInstance.post<ApiResponse<null>>('/auth/logout');
+      const response = await defaultApiClient.post<ApiResponse<null>>('/auth/logout');
       return response.data;
     },
     
-    getCurrentUser: async (): Promise<User> => {
-      const response = await axiosInstance.get('/user');
+    getCurrentUser: async (): Promise<ResponseUser> => {
+      const response = await defaultApiClient.get('/user');
       console.log("User data",response.data)
       return response.data;
     },

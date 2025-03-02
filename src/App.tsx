@@ -1,9 +1,18 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
 import { Button } from "./components/ui/button";
-import NotFoundPage from "./pages/NotFoundPage";
+import ProtectedRoute from "@/components/common/ProtectedRoute";
+import { WithPermission } from '@/components/common/WithPermission';
+
 import { BaseLayout } from "./layouts/BaseLayout";
+
+import NotFoundPage from "./pages/NotFoundPage";
+import Login from "./pages/Login";
+
 import Feed from "./pages/common/Feed";
+
+import {HRDashboard} from "./pages/HR/HRDashboard";
+import {AllDepartments} from "./pages/HR/AllDepartments";
+
 import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
@@ -28,7 +37,6 @@ function App() {
 
         {/* Employee routes */}
         <Route path="/emp" element={<BaseLayout />}>
-          {/* <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}> */}
           <Route
             index
             path="dashboard"
@@ -55,10 +63,17 @@ function App() {
             index
             path="dashboard"
             element={
-              <div className="font-inter">
-                This is the HR Homepage
-                <Button>Add Homepage</Button>
-              </div>
+              <HRDashboard/>
+            }
+          />
+          <Route  path="alldepartments"  element={
+              <WithPermission 
+                resource="employeeRecords" 
+                action="view" 
+                redirectTo="/hr/dashboard"
+              >
+                <AllDepartments/>
+              </WithPermission>
             }
           />
 
