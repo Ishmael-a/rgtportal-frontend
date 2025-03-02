@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassNameValue } from "tailwind-merge";
 import { Button } from "@/components/ui/button";
-import { Field, Form as FormikForm, Formik, FieldInputProps, FormikHelpers, FormikValues } from 'formik';
+import {  Form as FormikForm, Formik, FormikHelpers, FormikValues } from 'formik';
 import * as Yup from "yup"; // Ensure Yup is imported for validation
 
 
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
-  validationSchema: Yup.ObjectSchema<T>;
+  validationSchema?: Yup.ObjectSchema<any, Yup.AnyObject, any, "">;
   initialFormValues: T;
   buttonClassName?: ClassNameValue;
   children: React.ReactNode;
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
-  back: boolean;
-  backFn: () => void;
+  back?: boolean;
+  backFn?: () => void;
 }
 
 export const SideFormModal = <T extends FormikValues>({
@@ -21,7 +22,7 @@ export const SideFormModal = <T extends FormikValues>({
   children,
   initialFormValues,
   validationSchema,
-  buttonClassName,
+  // buttonClassName,
   onSubmit,
   back ,
   backFn,

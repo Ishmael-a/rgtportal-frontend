@@ -1,8 +1,7 @@
-import React from 'react';
-import { usePermission } from '@/hooks/use-permission';
-import { PermissionResource } from '@/types/permissions';
-
-// Data hook that integrates with WithPermission component
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from "react";
+import { usePermission } from "@/hooks/use-permission";
+import { PermissionResource } from "@/types/permissions";
 
 export const usePermissionData = <T,>(
   resource: keyof PermissionResource,
@@ -16,15 +15,19 @@ export const usePermissionData = <T,>(
   permissionData?: any
 ) => {
   const { hasAccess } = usePermission();
-  const hasPermission = hasAccess(resource as any, action as any, permissionData);
-  
+  const hasPermission = hasAccess(
+    resource as any,
+    action as any,
+    permissionData
+  );
+
   const [data, setData] = React.useState<T | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>(null);
-  
+
   React.useEffect(() => {
     if (!hasPermission || options?.enabled === false) return;
-    
+
     const fetchData = async () => {
       setIsLoading(true);
       try {
@@ -38,9 +41,9 @@ export const usePermissionData = <T,>(
         setIsLoading(false);
       }
     };
-    
+
     fetchData();
   }, [hasPermission, JSON.stringify(permissionData), options?.enabled]);
-  
+
   return { data, isLoading, error, hasPermission };
 };

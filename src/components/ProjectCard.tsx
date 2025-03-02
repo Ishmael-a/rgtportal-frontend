@@ -16,11 +16,11 @@ const ProjectCard: React.FC<IProjectCard> = ({
   const totalMembers = members.length;
 
   return (
-    <div className="flex flex-col space-y-2 bg-white rounded-md p-2 md:min-w-64 shadow-md hover:shadow-gray-400 transition-all duration-300 ease-in ">
+    <div className="flex flex-col space-y-2 bg-white w-full sm:w-fit rounded-md p-2 md:min-w-[245px] shadow-md hover:shadow-gray-400 transition-all duration-300 ease-in ">
       <div className="pb-4 border-b-[1px]  border-gray-100">
         <header className="text-[#706D8A] text-[21.56px] font-semibold flex justify-between items-start">
           <p className="w-44 text-nowrap truncate">{name}</p>
-          <NavLink to={`all-projects/${id}`}>
+          <NavLink to={`${id}`}>
             <img
               src="/Down 2.svg"
               className="-rotate-90 hover:bg-slate-200 transition-colors duration-300 ease-in rounded-full p-1"
@@ -51,7 +51,7 @@ const ProjectCard: React.FC<IProjectCard> = ({
           {extraCount > 0 && (
             <div
               className="absolute flex items-center justify-center w-9 h-9 text-xs font-bold text-white bg-[#C0AFFF] rounded-full border-0"
-              style={{ left: `${maxVisible * 24}px`, zIndex: "200" }}
+              style={{ left: `${maxVisible * 24}px`, zIndex: "140" }}
             >
               +{extraCount}
             </div>

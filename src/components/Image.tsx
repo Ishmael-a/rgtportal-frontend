@@ -1,13 +1,8 @@
-import { IImage } from "@/types";
+import { IImage } from "@/types/employee";
 import React from "react";
 
-
-const Image:React.FC<IImage> = ({
-  url,
-  alt = "Image",
-}) => {
+const Image: React.FC<IImage> = ({ url, alt = "Image" }) => {
   const [imageError, setImageError] = React.useState(false);
-  
 
   console.log(url);
   return (
@@ -16,7 +11,7 @@ const Image:React.FC<IImage> = ({
         <img
           src={url}
           alt={alt}
-          onError={() => setImageError(true)} 
+          onError={() => setImageError(true)}
           className="w-full h-auto rounded-md"
         />
       ) : (
