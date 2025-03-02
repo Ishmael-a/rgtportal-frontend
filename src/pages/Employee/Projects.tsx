@@ -1,5 +1,5 @@
 import ProjectCard from "@/components/ProjectCard";
-import StepProgress from "@/components/StepProgress";
+// import StepProgress from "@/components/StepProgress";
 import { projectCards } from "@/constants";
 
 const Projects = () => {
@@ -15,9 +15,9 @@ const Projects = () => {
         ))}
       </section>
 
-      <section className=" mt-5 flex justify-center items-center">
-        <StepProgress />
-      </section>
+      {/* <section className=" mt-5 flex justify-center items-center"> */}
+        {/* <StepProgress /> */}
+      {/* </section> */}
     </main>
   );
 };

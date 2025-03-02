@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import StepProgress from "../StepProgress";
 import { Column, DataTableProps } from "@/types/tables";
 
 export function DataTable({
@@ -70,7 +69,7 @@ export function DataTable({
     <div className="max-w-72 sm:max-w-[500px] flex flex-col md:max-w-full">
       <Table
         className={
-          dividers ? "" : "border-none bg-white rounded-md min-h-52 space-y-2  "
+          dividers ? "" : "border-none bg-white rounded-md min-h-60 space-y-6  "
         }
       >
         <TableHeader>
@@ -78,7 +77,7 @@ export function DataTable({
             {tableColumns.map((column) => (
               <TableHead
                 key={column.key}
-                className={"border-none text-[#A3A7AA] text-xs p-5"}
+                className={"border-none text-[#A3A7AA] text-xs p-6 text-left"}
               >
                 {column.header}
               </TableHead>
@@ -89,7 +88,7 @@ export function DataTable({
           {data.map((row, rowIndex) => (
             <TableRow
               key={rowIndex}
-              className={` ${dividers ? "" : "border-none"}`}
+              className={` ${dividers ? "" : " border-none"}`}
             >
               {tableColumns.map((column) => (
                 <TableCell
@@ -97,7 +96,7 @@ export function DataTable({
                   className={`${
                     dividers
                       ? ""
-                      : "border-none   text-xs font-semibold text-[#898989] text-nowrap"
+                      : "border-none text-xs font-semibold text-[#898989] text-nowrap"
                   }
                   `}
                 >
@@ -106,7 +105,7 @@ export function DataTable({
                       typeof column.cellClassName === "function"
                         ? column.cellClassName(row) // Call the function with row data
                         : column.cellClassName ?? ""
-                    } ${column.render ? "flex gap-2 p-0 space-x-4" : "p-2"} `}
+                    } ${column.render ? "flex gap-2 px-4 py-4 space-x-4" : "p-2 px-4 text-center"} `}
                   >
                     {column.render ? column.render(row) : row[column.key]}
                   </div>
@@ -116,9 +115,9 @@ export function DataTable({
           ))}
         </TableBody>
       </Table>
-      <div className="flex w-full mt-3">
-        <StepProgress />
-      </div>
+      {/* <div className="flex w-full mx-auto mt-3"> */}
+        {/* <StepProgress /> */}
+      {/* </div> */}
     </div>
   );
 }

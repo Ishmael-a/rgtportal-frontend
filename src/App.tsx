@@ -17,6 +17,7 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
+import { ManageEmployees } from "./pages/HR/ManageEmployees";
 
 function App() {
   return (
@@ -70,6 +71,16 @@ function App() {
                 redirectTo="/hr/dashboard"
               >
                 <AllDepartments/>
+              </WithPermission>
+            }
+          />
+          <Route  path="manageemployees"  element={
+              <WithPermission 
+                resource="employeeRecords" 
+                action="edit" 
+                redirectTo="/hr/dashboard"
+              >
+                <ManageEmployees/>
               </WithPermission>
             }
           />

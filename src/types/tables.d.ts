@@ -14,3 +14,15 @@ export interface DataTableProps {
   actionBool?: boolean;
   actionObj: { name: string; action: () => void }[];
 }
+
+
+export interface ActionObject {
+  name: "view" | "edit" | "delete" | "approve" | "reject";  // Allowed action types
+  action: (id?: number) => void;  // Handler function that receives optional id
+  icon?: React.ReactNode;  // Optional custom icon
+  tooltip?: string;  // Optional tooltip text
+  disabled?: boolean | ((row: any) => boolean);  // Whether action is disabled (static or per-row)
+  className?: string;  // Optional CSS class
+  confirmRequired?: boolean;  // Whether action requires confirmation
+  confirmMessage?: string;  // Optional confirmation message
+}

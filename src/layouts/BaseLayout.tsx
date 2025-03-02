@@ -105,7 +105,7 @@ export const BaseLayout = () => {
           {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className="bg-green-400 h-full pt-[40px] overflow-y-scroll w-full  flex-1">
+        <div className=" h-full pt-[40px] overflow-y-scroll w-full  flex-1">
           <Outlet />
         </div>
       </div>

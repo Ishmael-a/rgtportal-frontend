@@ -1,3 +1,4 @@
+import EmployeeTable from "@/components/Hr/EmployeesTable";
 import {MetricCard, IMetricCard} from "../../components/Hr/MetricCard";
 
 export const HRDashboard = () => {
@@ -10,7 +11,7 @@ export const HRDashboard = () => {
     ];
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-[17px]">
 
             {/* <div className="p-6 bg-gray-50"> */}
                 <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-4">
@@ -26,7 +27,7 @@ export const HRDashboard = () => {
                 </div>
             {/* </div> */}
             <div>
-                Employee Table
+                <EmployeeTable/>
             </div>
 
         </div>

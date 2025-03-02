@@ -6,6 +6,7 @@ import {SideFormModal} from "@/components/Modal";
 import { Field, Form as FormikForm, Formik, FieldInputProps, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import {Mail} from "lucide-react"
+import EmployeeManagementTable from "@/components/Hr/EmployeeManagementTable"
 
 const NewDepSchema = Yup.object({
     name: Yup.string().min(3, "A minimum of 3 characters are required for you rdepartment name")
@@ -17,7 +18,7 @@ interface FormValues {
 }
   
 
-export const AllDepartments = () => {
+export const ManageEmployees = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleFormSubmit = (values: typeof initialFormValues, helpers: FormikHelpers<typeof initialFormValues>) => {
@@ -39,40 +40,31 @@ export const AllDepartments = () => {
 
                 {/* Title and subtitle */}
                 <div className="flex flex-col h-full">
-                    <h1 className="text-xl font-medium text-gray-600">All Departments</h1>
-                    <p className="text-sm text-gray-500">These are all current Departments</p>
+                    <h1 className="text-xl font-medium text-gray-600">RGT Team</h1>
+                    <p className="text-sm text-gray-500">This is the data of all employees</p>
                 </div>
 
                 <div className="md:flex md:flex-row gap-4 items-center h-full flex-col">
                     <div className="relative justify-between items-center sm:w-[100px] md:w-[301px] md:max-w-[301px] flex-grow">
                         <Input
                             type="text"
-                            placeholder="Search For A Department"
+                            placeholder="Search Employee"
                             className="pl-5 py-5 rounded-xl bg-gray-50 border-none outline-none shadow-none h-full"
                         />
                         <Search className="absolute right-4 top-4 h-6 w-6 text-gray-400" />
                     </div>
 
-                    <Button onClick={() => setIsModalOpen(true)} className="bg-rgtviolet hover:bg-violet-900 rounded-xl h-full">
-                        Create a New Department
+                    <Button onClick={() => {}}  className="bg-white text-gray-400 hover:bg-gray-100 rounded-xl h-full">
+                        <img src={"/Filter 3.svg"}/>
+                        Filter
                     </Button>
                 </div>
             </section>
 
 
-            {/* No Departments Section */}
-            <div className="flex flex-col items-center justify-center h-full  ">
-                <div className="flex items-center justify-center w-16 h-16 rounded-lg  mb-4">
-                    <img src="/FolderAdd.svg" />
-                </div>
-                
-                <h2 className="text-gray-600 text-lg font-medium mb-1">
-                    No Departments at the moment
-                </h2>
-                
-                <p className="text-gray-400 text-sm">
-                    Click create a new department
-                </p>
+            {/* Manage Employees Table Section */}
+            <div className="flex flex-col  h-full  ">
+                <EmployeeManagementTable />
             </div>
 
 
@@ -80,7 +72,7 @@ export const AllDepartments = () => {
 
         </div>
         {/* modal for a new Time off request */}
-        {isModalOpen && (
+      {isModalOpen && (
         <SideFormModal
           initialFormValues={initialFormValues}
           validationSchema = {NewDepSchema}
@@ -109,27 +101,6 @@ export const AllDepartments = () => {
                 </div>
                 )}
             </Field>
-
-            <Field as="select" name="manager">
-                <Select >
-                <div className={"w-40 md:min-w-62 "}>
-                    <SelectTrigger className="w-full h-full">
-                    <SelectValue placeholder={`${placeholder ? placeholder : "Select"}`} />
-                    </SelectTrigger>
-                    <SelectContent className="w-full h-full">
-                    <SelectGroup>
-                        <SelectLabel>Select a manger for this department</SelectLabel>
-                        {users.map((item, index) => (
-                        <SelectItem value={item.toLowerCase()} key={index}>
-                            <p>Red</p>
-                            <p>Red</p>
-                            <p>Red</p>
-                        </SelectItem>
-                        ))}
-                    </SelectGroup>
-                    </SelectContent>
-                </div>
-                </Select>
         </SideFormModal>
       )}
         </>
