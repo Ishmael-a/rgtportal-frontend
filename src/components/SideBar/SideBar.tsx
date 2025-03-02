@@ -37,7 +37,7 @@ export const SideBar = () => {
   ];
 
   return (
-    <section className="space-y-3 p-2 flex flex-col items-center fix">
+    <section className="space-y-3 p-2 flex flex-col items-center h-full">
       <div className="space-y-3">
         <header className="md:flex flex-col items-start hidden">
           <p className="font-semibold text-[24px] text-[#706D8A]">
@@ -71,7 +71,7 @@ export const SideBar = () => {
           </div>
         </div>
       </div>
-      <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[354px] bg-white py-4 flex flex-col space-y-4">
+      <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[354px] bg-white py-4 flex flex-col space-y-4 shadow-md">
         {navItems.map((item) => (
           <div
             className="flex items-center"

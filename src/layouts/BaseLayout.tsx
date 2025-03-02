@@ -65,16 +65,23 @@ export const BaseLayout = () => {
         </div>
       </header>
       <div className="flex sm:px-[13px] sm:space-x-[17px] w-screen h-screen">
-        <div className="min-h-screen text-center sm:py-[78px] hidden sm:block">
+        <div
+          className="h-screen text-center sm:py-[78px] hidden sm:block overflow-y-scroll"
+          style={{
+            scrollbarWidth: "none" /* Firefox */,
+            msOverflowStyle: "none" /* IE and Edge */,
+          }}
+        >
           {user?.role.name === "HR" && <HrSideBar />}
           {user?.role.name === "EMPLOYEE" && <SideBar />}
         </div>
 
-        <div className="md:pt-[78px] pt-4 px-10 flex-1 md:w-3/5 h-screen overflow-y-auto"  
-        style={{
-          scrollbarWidth: "none" /* Firefox */,
-          msOverflowStyle: "none" /* IE and Edge */,
-        }}
+        <div
+          className="pt-[78px]  flex-1 md:w-3/5 h-screen overflow-y-auto"
+          style={{
+            scrollbarWidth: "none" /* Firefox */,
+            msOverflowStyle: "none" /* IE and Edge */,
+          }}
         >
           <Outlet />
         </div>
