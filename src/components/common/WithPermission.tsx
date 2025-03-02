@@ -3,7 +3,8 @@ import React from "react";
 import { usePermission } from "@/hooks/use-permission";
 import { Navigate } from "react-router-dom";
 import { PermissionResource } from "@/types/permissions";
-import toast from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
+
 
 type WithPermissionProps = {
   resource: keyof PermissionResource;
@@ -27,16 +28,28 @@ export const WithPermission: React.FC<WithPermissionProps> = ({
 
   if (!hasPermission) {
     if (redirectTo) {
-      toast.error("You don't have permission to access this resource.");
+      toast({
+        title: "You don't have permission to access this resource.",
+        description: "You will be redirected to the home page.",
+        variant: "destructive",
+     })
       return <Navigate to={redirectTo} replace />;
     }
 
     if (fallback) {
-      toast.error("You don't have permission to access this resource.");
+      toast({
+        title: "You don't have permission to access this resource.",
+        description: "You will be redirected to the home page.",
+        variant: "destructive",
+      })
       return <>{fallback}</>;
     }
 
-    toast.error("You don't have permission to access this resource.");
+  toast({
+    title: "You don't have permission to access this resource.",
+    description: "You will be redirected to the home page.",
+    variant: "destructive",
+  })
     return (
       <div className="p-6 text-center">
         <p className="text-red-500">
