@@ -31,7 +31,7 @@ export const useInitializeSharedData = () => {
     // Initialize shared data
     if (departments) {
       console.log("Loaded departments..", departments)
-      dispatch(setDepartments(departments));
+      dispatch(setDepartments(departments.data));
     }
 
   }, [departments, dispatch]);

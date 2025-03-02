@@ -6,14 +6,9 @@ import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
-// import { useState } from "react";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  // const [isOpen, setIsOpen] = useState(false);
-  // const toggleDropdown = () => {
-  //   setIsOpen(!isOpen);
-  // };
   const { isLoading, isError } = useInitializeSharedData();
 
   if (isLoading) {
@@ -35,7 +30,7 @@ export const BaseLayout = () => {
   return (
     <div>
       <header
-        className="fixed z-10 top-0 flex items-center justify-between p-4 bg-white border-b w-full"
+        className="fixed top-0 flex items-center justify-between p-4 bg-white border-b w-full"
         style={{ zIndex: 150 }}
       >
         {/* Left section with logo */}

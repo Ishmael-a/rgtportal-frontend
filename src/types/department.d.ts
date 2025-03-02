@@ -8,3 +8,9 @@ export interface Department{
   manager: Employee;
   employees: Employee[];
 }
+
+export interface CreateDepartmentDTO{
+  name: string;
+  description?: string;
+  managerId: number;
+}

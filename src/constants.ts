@@ -2,7 +2,7 @@
 import { IEventList } from "./components/EventList";
 import {
   IAnnouncementCard,
-  IProjectCard,
+  IProjectType,
   IProjectMembers,
 } from "./types/employee";
 import { Column } from "./types/tables";
@@ -234,7 +234,7 @@ const membersArray = [
 ];
 
 // for all project page
-export const projectCards: IProjectCard[] = [
+export const projectCards: IProjectType[] = [
   {
     id: 0,
     name: "Design",
