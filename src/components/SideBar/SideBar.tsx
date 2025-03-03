@@ -3,11 +3,10 @@ import Avtr from "../Avtr";
 import { avtrDets } from "@/constants";
 import { ChevronDown } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UsersIcon from "@/assets/empNavCons/UsersIcon";
 import FeedIcon from "@/assets/empNavCons/FeedIcon";
 import MessageIcon from "@/assets/empNavCons/MessageIcon";
-import ProfileIcon from "@/assets/empNavCons/ProfileIcon";
 import TimeIcon from "@/assets/empNavCons/TimeIcon";
 
 export const SideBar = () => {
@@ -17,8 +16,14 @@ export const SideBar = () => {
 
   const handleIndicator = (val: string) => {
     setIndicator(val);
+    localStorage.setItem('indicator', val)
     console.log("val:", val);
   };
+
+  useEffect(()=>{
+    const indicator = localStorage.getItem('indicator') as string
+    setIndicator(indicator)
+  }, [indicator])
 
   const navItems = [
     { icon: FeedIcon, label: "Feed", path: "feed" },
@@ -33,7 +38,7 @@ export const SideBar = () => {
       label: "Time Off",
       path: "time-off",
     },
-    { icon: ProfileIcon, label: "Profile", path: "profile" },
+    // { icon: ProfileIcon, label: "Profile", path: "profile" },
   ];
 
   return (
@@ -71,7 +76,7 @@ export const SideBar = () => {
           </div>
         </div>
       </div>
-      <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[354px] bg-white py-4 flex flex-col space-y-4 shadow-md">
+      <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[294px] bg-white py-4 flex flex-col space-y-4 shadow-md">
         {navItems.map((item) => (
           <div
             className="flex items-center justify-center w-full"

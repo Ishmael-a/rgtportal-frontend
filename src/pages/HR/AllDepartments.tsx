@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import {useState} from "react"
 import {SideFormModal} from "@/components/Modal";
-import { Field, Form as FormikForm, Formik, FieldInputProps, FormikHelpers, FieldProps } from 'formik';
+import { Field, FieldInputProps, FormikHelpers, FieldProps } from 'formik';
 import * as Yup from 'yup';
 import { Textarea } from "@/components/ui/textarea";
 import {Mail,FileText} from "lucide-react"
@@ -45,9 +45,7 @@ export const AllDepartments = () => {
 
 
     const { 
-        data: users, 
-        isLoading,
-        isError,
+        data: users,
       } = useAllEmployees(
         {},
         {

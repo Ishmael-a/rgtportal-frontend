@@ -25,7 +25,7 @@ export const SideFormModal = <T extends FormikValues>({
   children,
   initialFormValues,
   validationSchema,
-  buttonClassName,
+  // buttonClassName,
   formClassName,
   onSubmit,
   submitBtnText = "Create",
@@ -85,4 +85,3 @@ export const SideFormModal = <T extends FormikValues>({
   );
 };
 
-// export default TimeOffModal;
