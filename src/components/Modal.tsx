@@ -2,7 +2,7 @@
 import { ClassNameValue } from "tailwind-merge";
 import { Button } from "@/components/ui/button";
 import {  Form as FormikForm, Formik, FormikHelpers, FormikValues } from 'formik';
-import * as Yup from "yup"; // Ensure Yup is imported for validation
+import * as Yup from "yup";
 
 
 
@@ -63,10 +63,7 @@ export const SideFormModal = <T extends FormikValues>({
           >
             {/* Form fields container */}
             <div className={`flex-grow ${formClassName}`}>{children}</div>
-
-            {/* Buttons */}
             <div className="flex w-full mt-auto h-14 gap-[20px]">
-              {/* Cancel Button */}
               <Button onClick={backFn} key={"Cancel"} variant="outline" className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100">
                 Cancel
               </Button>
@@ -78,7 +75,7 @@ export const SideFormModal = <T extends FormikValues>({
 
             </div>
           </FormikForm>
-
+          
         </Formik>
       </div>
     </div>
