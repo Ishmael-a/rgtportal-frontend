@@ -2,19 +2,18 @@ import EmployeeTable from "@/components/dash/EmployeeTable";
 import RightSidebar from "@/components/dash/RightSidebar";
 import StatsGrid from "@/components/dash/StatsCard";
 import Header from "@/components/Header"
-import Sidebar from "@/components/Sidebar"
+// import Sidebar from "@/components/Sidebar"
+import {HrSideBar} from "../components/HrSideBar"
 
 const Dashboard = () => {
   return (
     <div className="w-[100vw] h-[100vh]">
         <Header />
       <div className="flex flex-row justify-between">
-        <Sidebar />
-        <div className="flex flex-row gap-4">
-          <div className="w-full">
+        <HrSideBar />
+        <div className="flex flex-col w-full gap-4 px-4">
             <StatsGrid />
             <EmployeeTable />
-          </div>
         </div>
         <RightSidebar />
       </div>
