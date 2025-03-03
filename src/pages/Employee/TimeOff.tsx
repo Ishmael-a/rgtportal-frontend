@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
-import {SideFormModal}  from "@/components/Modal";
+import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { timeOffDummy, timeOffTableColumns } from "@/constants";
+import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -13,55 +16,38 @@ export default function TimeOff() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
-
-  const [ptoForm, setPtoForm] = useState({
-    timeOffType: "PTO",
+  const initialFormValues = {
+    leaveType: "pto",
     reason: "",
-    fromDate: new Date(),
-    toDate: new Date(),
-  });
+    fromDate: undefined,
+    toDate: undefined,
+  };
 
   const ptoFormSchema = Yup.object({
-    timeOffType: Yup.string().required("Required"),
+    leaveType: Yup.string()
+      .oneOf(["pto", "sickLeave"], "Invalid leave type")
+      .required("Leave type is required"),
     reason: Yup.string()
-      .min(3, "A minimum of 3 characters are required for you rdepartment name")
-      .max(100, "A max of 100 characters are required for you rdepartment name")
-      .required("Required"),
-    fromDate: Yup.date().required("Required"),
-    toDate: Yup.date().required("Required"),
+      .max(50, "Reason must be at most 50 characters")
+      .required("Reason is required"),
+    fromDate: Yup.date()
+      .required("From date is required")
+      .typeError("Invalid date"),
+    toDate: Yup.date()
+      .required("To date is required")
+      .min(Yup.ref("fromDate"), "To date must be after From date")
+      .typeError("Invalid date"),
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setPtoForm((prev) =>
-      prev
-        ? {
-            ...prev,
-            [name]: value,
-          }
-        : prev
-    );
-    console.log("formChanging:", ptoForm);
+  const handleFormSubmit = (
+    values: typeof initialFormValues,
+    { setSubmitting }: FormikHelpers<typeof initialFormValues>
+  ) => {
+    console.log("Submmitting Form", values);
+    setSubmitting(false);
+    setIsModalOpen(false);
+    setIsSuccess(true);
   };
-
-  console.log("From:", fromDate);
-  console.log("To:", toDate);
-
-  const handleFromDate = (val: Date | undefined) => {
-    setFromDate(val);
-  };
-
-  const handleToDate = (val: Date | undefined) => {
-    setToDate(val);
-  };
-
-  // const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log("submitting", e);
-  //   setIsModalOpen(false);
-  // };
 
   const handleCheckNow = () => {
     console.log("...checking");
@@ -84,13 +70,10 @@ export default function TimeOff() {
           </Button>
         </header>
 
-        <div className="flex gap-3 h-[50px] items-center my-8">
-          <div> <DatePicker /></div>
-          <div>  <CustomSelect options={["plnt"]} /></div>
-          <div>  <CustomSelect options={["plnt"]} /></div>
-         
-        
-        
+        <div className="grid grid-cols-3 gap-3 h-[50px] my-8">
+          <DatePicker />
+          <CustomSelect options={["plnt"]} />
+          <CustomSelect options={["plnt"]} />
         </div>
 
         {/* Table with custom cell styles */}
@@ -99,7 +82,7 @@ export default function TimeOff() {
           data={timeOffDummy}
           actionBool={true}
           actionObj={[
-            { name: "view", action: () => setAppRej(true) },
+            { name: "view", action: () => setAppRej(!appRej) },
             { name: "delete", action: () => console.log("delete") },
           ]}
         />
@@ -107,150 +90,197 @@ export default function TimeOff() {
 
       {/* modal for a new Time off request */}
       {isModalOpen && (
-        // <div>TimeOff</div>
         <SideFormModal
-          // onSubmit={handleFormSubmit}
+          onSubmit={handleFormSubmit}
           title="Add New Time Off"
-          back
           validationSchema={ptoFormSchema}
-          initialFormValues={ptoForm}
+          initialFormValues={initialFormValues}
+          backFn={() => setIsModalOpen(false)}
+          back={true}
+          submitBtnText="Create"
           buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
-          <section className="space-y-[25px] h-[85%]">
-            {/* Time Off Type */}
-            <div className="">
-              <label className="block pb-[10px] text-xs font-semibold text-[#7D7D81]">
-                Time Off Type
-              </label>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  // onClick={(e) => setPtoForm()}
-                  className={`px-3 py-1 rounded-md text-[11px] font-medium border-[1px] duration-300 transition-colors ease-in cursor-pointer 
-                    `}
-                  //   ${
-                  //   timeOffType === "PTO"
-                  //     ? "bg-gray-200"
-                  //     : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-                  // }
-                >
-                  PTO
-                </button>
-                <button
-                  type="button"
-                  // onClick={() => setTimeOffType("Sick Leave")}
-                  className={`px-4 py-2 rounded-md border text-[11px] font-medium duration-300 transition-colors ease-in cursor-pointer
-                    `}
-                  //   ${
-                  //   timeOffType === "Sick Leave"
-                  //     ? "bg-gray-200"
-                  //     : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-                  // }
-                >
-                  Sick Leave
-                </button>
-              </div>
-            </div>
-
-            {/* From and To Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="font-medium text-xs text-[#737276]">
-                  From
+          <Field name="leaveType">
+            {({
+              field,
+              form: { touched, errors },
+            }: {
+              field: FieldInputProps<string>;
+              form: any;
+            }) => (
+              <div className="">
+                <label className="block text-xs font-medium pb-1 text-[#737276]">
+                  Leave Type
                 </label>
-                <DatePicker placeholder="From" fn={handleFromDate} />
+                <div className="flex gap-4">
+                  <label className="flex items-center text-[#737276] text-xs font-medium">
+                    <input
+                      type="radio"
+                      {...field}
+                      value="pto"
+                      checked={field.value === "pto"}
+                      className="mr-2"
+                    />
+                    PTO
+                  </label>
+                  <label className="flex items-center text-[#737276] text-xs font-medium">
+                    <input
+                      type="radio"
+                      {...field}
+                      value="sickLeave"
+                      checked={field.value === "sickLeave"}
+                      className="mr-2"
+                    />
+                    Sick Leave
+                  </label>
+                </div>
+                {touched.leaveType && errors.leaveType && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.leaveType}
+                  </div>
+                )}
               </div>
-              <div>
-                <label className="font-medium text-xs text-[#737276]">To</label>
-                <DatePicker placeholder="To" fn={handleToDate} />
-              </div>
-            </div>
+            )}
+          </Field>
 
-            {/* Reason */}
-            <div className="pt-5">
-              <label className="block text-xs font-medium  text-[#737276]">
-                Reason
-              </label>
-              <textarea
-                name="reason"
-                value={ptoForm.reason}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9]"
-                rows={3}
-                placeholder="Provide your reason"
-                maxLength={50}
-              />
-            </div>
-          </section>
+          <div className="flex w-full gap-4 pt-2">
+            <Field name="fromDate">
+              {({
+                field,
+                form: { setFieldValue, touched, errors },
+              }: {
+                field: FieldInputProps<Date>;
+                form: any;
+              }) => (
+                <div className="flex flex-col w-full">
+                  <label className="font-medium text-xs text-[#737276]">
+                    From
+                  </label>
+                  <DatePicker
+                    placeholder="From"
+                    value={field.value}
+                    onChange={(val) => setFieldValue("fromDate", val)}
+                  />
+                  {touched.fromDate && errors.fromDate && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {errors.fromDate}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Field>
+
+            <Field name="toDate">
+              {({
+                field,
+                form: { setFieldValue, touched, errors },
+              }: {
+                field: FieldInputProps<Date>;
+                form: any;
+              }) => (
+                <div className="flex flex-col w-full">
+                  <label className="font-medium text-xs text-[#737276]">
+                    To
+                  </label>
+                  <DatePicker
+                    placeholder="To"
+                    value={field.value}
+                    onChange={(val) => setFieldValue("toDate", val)}
+                  />
+                  {touched.toDate && errors.toDate && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {errors.toDate}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Field>
+          </div>
+
+          <Field name="reason">
+            {({
+              field,
+              form: { touched, errors },
+            }: {
+              field: FieldInputProps<string>;
+              form: any;
+            }) => (
+              <div className="pt-5">
+                <label className="block text-xs font-medium pb-1 text-[#737276]">
+                  Reason
+                </label>
+                <textarea
+                  {...field}
+                  className={`w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9] ${touched.reason && errors.reason ? "border-red-500" : ""}`}
+                  rows={3}
+                  placeholder="Provide your reason"
+                  maxLength={50}
+                />
+                {touched.reason && errors.reason && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.reason}
+                  </div>
+                )}
+              </div>
+            )}
+          </Field>
         </SideFormModal>
       )}
 
       {/* modal for viewing old request */}
       {appRej && (
-        <div>TimeOff</div>
-        // <SideFormModal
-        //   title="Approve or Reject Request"
-        //   back={true}
-        //   backFn={() => setAppRej(false)}
-        // >
-        //   <div className="flex flex-col gap-1">
-        //     <label className="text-[#73727675] font-semibold text-sm">
-        //       Employee Name
-        //     </label>
-        //     <Input
-        //       value={"Enchill Beckham"}
-        //       className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-base text-[#73727675] font-semibold"
-        //       disabled
-        //     />
-        //   </div>
+        <SideFormModal
+          title="Approve or Reject Request"
+          back={true}
+          backFn={() => setAppRej(false)}
+        >
+          <section className="flex gap-2">
+            <div>
+              <label className="text-[#73727675] font-semibold text-sm">
+                From
+              </label>
+              <Input
+                value={"01 March 2023"}
+                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                disabled
+              />
+            </div>
 
-        //   <section className="flex gap-2">
-        //     <div>
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         From
-        //       </label>
-        //       <Input
-        //         value={"01 March 2023"}
-        //         className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-        //         disabled
-        //       />
-        //     </div>
+            <div>
+              <label className="text-[#73727675] font-semibold text-sm">
+                To
+              </label>
+              <Input
+                value={"01 March 2024"}
+                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                disabled
+              />
+            </div>
+          </section>
+          <section className="space-y-5 pt-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-[#73727675] font-semibold text-sm">
+                Reason
+              </label>
+              <textarea
+                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                value={"Engagement"}
+                disabled
+              />
+            </div>
 
-        //     <div>
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         To
-        //       </label>
-        //       <Input
-        //         value={"01 March 2024"}
-        //         className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-        //         disabled
-        //       />
-        //     </div>
-        //   </section>
-        //   <section className="space-y-5 pt-3">
-        //     <div className="flex flex-col gap-1">
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         Reason
-        //       </label>
-        //       <textarea
-        //         className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-        //         value={"Engagement"}
-        //         disabled
-        //       />
-        //     </div>
-
-        //     <div className="flex flex-col gap-1">
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         HR Reason
-        //       </label>
-        //       <textarea
-        //         className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-        //         value={"We can't let you go at the moment"}
-        //         disabled
-        //       />
-        //     </div>
-        //   </section>
-        // </SideFormModal>
+            <div className="flex flex-col gap-1">
+              <label className="text-[#73727675] font-semibold text-sm">
+                HR Reason
+              </label>
+              <textarea
+                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                value={"We can't let you go at the moment"}
+                disabled
+              />
+            </div>
+          </section>
+        </SideFormModal>
       )}
 
       {/* Success modal for timeoff creation */}

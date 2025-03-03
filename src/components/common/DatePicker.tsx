@@ -15,15 +15,23 @@ import {
 
 interface IDatePicker {
   placeholder?: string;
-  fn?: (val: Date | undefined) => void;
+  value?: Date;
+  onChange?: (val: Date | undefined) => void;
 }
 
-const DatePicker: React.FC<IDatePicker> = ({ placeholder, fn }) => {
-  const [date, setDate] = React.useState<Date>();
-
-  if (fn) {
-    fn(date);
-  }
+const DatePicker: React.FC<IDatePicker> = ({
+  placeholder,
+  value,
+  onChange,
+}) => {
+  const [date, setDate] = React.useState<Date | undefined>(value);
+  // Update Formik's state when the date changes
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (onChange) {
+      onChange(newDate);
+    }
+  };
 
   return (
     <Popover>
@@ -50,7 +58,7 @@ const DatePicker: React.FC<IDatePicker> = ({ placeholder, fn }) => {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={handleDateChange}
           initialFocus
           classNames={{
             day_selected:
