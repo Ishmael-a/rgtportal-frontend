@@ -85,9 +85,12 @@ export default function TimeOff() {
         </header>
 
         <div className="flex gap-3 h-[50px] items-center my-8">
-          <DatePicker />
-          <CustomSelect options={["plnt"]} />
-          <CustomSelect options={["plnt"]} />
+          <div> <DatePicker /></div>
+          <div>  <CustomSelect options={["plnt"]} /></div>
+          <div>  <CustomSelect options={["plnt"]} /></div>
+         
+        
+        
         </div>
 
         {/* Table with custom cell styles */}
