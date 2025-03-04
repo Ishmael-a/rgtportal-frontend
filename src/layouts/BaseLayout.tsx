@@ -31,7 +31,7 @@ export const BaseLayout = () => {
     <div>
       <header
         className="fixed top-0 flex items-center justify-between p-4 bg-white border-b w-full"
-        style={{ zIndex: 150 }}
+        style={{ zIndex: 10 }}
       >
         {/* Left section with logo */}
         <div className="flex items-center">
