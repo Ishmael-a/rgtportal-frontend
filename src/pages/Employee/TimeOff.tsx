@@ -108,7 +108,7 @@ export default function TimeOff() {
               field: FieldInputProps<string>;
               form: any;
             }) => (
-              <div className="">
+              <div className="pb-1">
                 <label className="block text-xs font-medium pb-1 text-[#737276]">
                   Leave Type
                 </label>
