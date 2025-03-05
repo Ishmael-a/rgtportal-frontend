@@ -34,7 +34,7 @@ const Feed = () => {
   };
 
   return (
-    <main className="flex flex-col-reverse gap-6 md:flex-row h-full">
+    <main className="flex flex-col-reverse gap-6 md:flex-row h-full px-5 sm:px-0">
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
         style={{
