@@ -8,6 +8,19 @@ import { Button } from "./ui/button";
 import { FileUploadServices } from "@/api/services/fileUpload.services";
 import { PollService } from "@/api/services/poll.service";
 import { PostService } from "@/api/services/posts.service";
+import { FileUploadService } from "@/api/services/file.service";
+
+
+interface UploadStatus {
+  images?: "idle" | "loading" | "success" | "error";
+  videos?: "idle" | "loading" | "success" | "error";
+}
+
+interface UploadResult {
+  fieldName: string;
+  fileUrl?: string;
+  response: any;
+}
 
 const CreatePost = () => {
   const [message, setMessage] = useState("");
@@ -26,6 +39,7 @@ const CreatePost = () => {
   const allowedVideoTypes = ["video/mp4", "video/quicktime"];
   const maxImageSize = 5 * 1024 * 1024; // 5MB
   const maxVideoSize = 100 * 1024 * 1024; // 100MB
+  let mediaUrls = []
 
   const imageUrls = useMemo(
     () => images.map((image) => URL.createObjectURL(image)),
@@ -120,20 +134,19 @@ const CreatePost = () => {
       }
 
       // Create instances of the services
-      const fileUploadService = new FileUploadServices();
       const pollService = new PollService();
       const postService = new PostService();
 
       // Upload images and add their URLs to the formData
       for (const image of images) {
-        const uploadResponse = await fileUploadService.uploadFile(image);
-        formData.append("images", uploadResponse.data.url);
+        const uploadResponse = await FileUploadService.uploadFile(image);
+        mediaUrls.push(uploadResponse.file?.url)
       }
 
       // Upload videos and add their URLs to the formData
       for (const video of videos) {
-        const uploadResponse = await fileUploadService.uploadFile(video);
-        formData.append("videos", uploadResponse.data.url);
+        const uploadResponse = await FileUploadService.uploadFile(video);
+        mediaUrls.push(uploadResponse.file?.url)
       }
 
       // Add poll data
@@ -145,11 +158,13 @@ const CreatePost = () => {
         formData.append("pollId", pollResponse.data.id);
       }
 
-      formData.append("title", "new title");
 
       console.log("form:", formData);
       // Submit the post
-      const postResponse = await postService.createPost(formData);
+      const postResponse = await postService.createPost({
+        content: message,
+        media: mediaUrls,
+      });
 
       console.log("Post submitted successfully:", postResponse);
 

@@ -16,7 +16,7 @@ export class FileUploadServices {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post(`${this.baseUrl}/upload`, formData, {
+      const response = await axios.post(`${this.baseUrl}/file/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Required for file uploads
         },

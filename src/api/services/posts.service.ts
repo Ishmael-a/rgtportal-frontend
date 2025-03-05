@@ -10,6 +10,8 @@ import { ApiResponse } from "../types";
 //   poll?: string;
 // }
 
+
+
 export class PostService {
   private baseUrl: string;
 
@@ -18,10 +20,10 @@ export class PostService {
   }
 
   // Create a new post
-  public async createPost(postData: FormData): Promise<ApiResponse<any>> {
+  public async createPost(postData: any): Promise<ApiResponse<any>> {
     try {
       console.log("post data:", postData);
-      const response = await axios.post(`${this.baseUrl}/posts`, postData);
+      const response = await axios.post(`${this.baseUrl}`, postData);
       console.log("response:", response);
       return response.data;
     } catch (error) {
