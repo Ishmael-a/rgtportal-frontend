@@ -1,28 +1,30 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { avtrDets } from "@/constants";
-import { Plus, Vote, X } from "lucide-react";
+import { Loader, Plus, Vote, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { FileUploadServices } from "@/api/services/fileUpload.services";
-import { PollService } from "@/api/services/poll.service";
 import { PostService } from "@/api/services/posts.service";
 import { FileUploadService } from "@/api/services/file.service";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
+import SendIcon from "@/assets/empNavCons/SendIcon";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
   videos?: "idle" | "loading" | "success" | "error";
 }
 
-interface UploadResult {
-  fieldName: string;
-  fileUrl?: string;
-  response: any;
+interface CreatePostDto {
+  images?: string[];
+  videos?: string[];
+  content: string;
 }
 
 const CreatePost = () => {
+  const queryClient = useQueryClient();
+
   const [message, setMessage] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
@@ -34,12 +36,18 @@ const CreatePost = () => {
   const [poll, setPoll] = useState(false);
   const [pollQuestion, setPollQuestion] = useState("");
   const [pollOptions, setPollOptions] = useState<string[]>([]);
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>({
+    images: "idle",
+    videos: "idle",
+  });
+  const [submissionStatus, setSubmissionStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
   const allowedVideoTypes = ["video/mp4", "video/quicktime"];
   const maxImageSize = 5 * 1024 * 1024; // 5MB
   const maxVideoSize = 100 * 1024 * 1024; // 100MB
-  let mediaUrls = []
 
   const imageUrls = useMemo(
     () => images.map((image) => URL.createObjectURL(image)),
@@ -124,49 +132,78 @@ const CreatePost = () => {
     });
   };
 
+  const createPostMutation = useMutation({
+    mutationFn: (postData: CreatePostDto) => {
+      setSubmissionStatus("loading");
+      return PostService.createPost(postData);
+    },
+    onSuccess: (data) => {
+      setSubmissionStatus("success");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      toast({
+        title: "Success",
+        description: "Post created successfully",
+      });
+      console.log("data:", data);
+    },
+    onError: (error: Error) => {
+      setSubmissionStatus("error");
+      toast({
+        title: "Error",
+        description: "Failed to create post: " + error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const submitPost = async () => {
     try {
-      const formData = new FormData();
+      const mediaUrls: string[] = [];
 
-      // Add text message
-      if (message) {
-        formData.append("content", message);
+      // Upload images
+      if (images.length > 0) {
+        setUploadStatus((prev) => ({ ...prev, images: "loading" }));
+        for (const image of images) {
+          const uploadResponse = await FileUploadService.uploadFile(image);
+          if (uploadResponse.file) {
+            mediaUrls.push(uploadResponse.file.url);
+          } else {
+            throw new Error("Image upload failed");
+          }
+        }
+        setUploadStatus((prev) => ({ ...prev, images: "success" }));
       }
 
-      // Create instances of the services
-      const pollService = new PollService();
-      const postService = new PostService();
-
-      // Upload images and add their URLs to the formData
-      for (const image of images) {
-        const uploadResponse = await FileUploadService.uploadFile(image);
-        mediaUrls.push(uploadResponse.file?.url)
+      // Upload videos
+      if (videos.length > 0) {
+        setUploadStatus((prev) => ({ ...prev, videos: "loading" }));
+        for (const video of videos) {
+          const uploadResponse = await FileUploadService.uploadFile(video);
+          if (uploadResponse.file) {
+            mediaUrls.push(uploadResponse.file.url);
+          } else {
+            throw new Error("Video upload failed");
+          }
+        }
+        setUploadStatus((prev) => ({ ...prev, videos: "success" }));
       }
 
-      // Upload videos and add their URLs to the formData
-      for (const video of videos) {
-        const uploadResponse = await FileUploadService.uploadFile(video);
-        mediaUrls.push(uploadResponse.file?.url)
-      }
-
-      // Add poll data
-      if (poll) {
-        const pollResponse = await pollService.createPoll({
-          description: pollQuestion,
-          options: pollOptions,
-        });
-        formData.append("pollId", pollResponse.data.id);
-      }
-
-
-      console.log("form:", formData);
       // Submit the post
-      const postResponse = await postService.createPost({
+      const postData = {
         content: message,
         media: mediaUrls,
-      });
+      };
 
-      console.log("Post submitted successfully:", postResponse);
+      if (!postData.content && mediaUrls.length <= 0) {
+        toast({
+          title: "Error",
+          description: "Please enter some content or upload media.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await createPostMutation.mutateAsync(postData);
 
       // Reset form after successful submission
       setMessage("");
@@ -176,74 +213,41 @@ const CreatePost = () => {
       setPollQuestion("");
       setPollOptions([]);
       setError(null);
-
-      alert("Post submitted successfully!");
     } catch (error) {
       console.error("Error submitting post:", error);
       setError("Failed to submit post. Please try again.");
+    } finally {
+      setSubmissionStatus("idle");
+      setUploadStatus({ images: "idle", videos: "idle" });
     }
   };
 
-  // const submitPost = async () => {
-  //   try {
-  //     const formData = new FormData();
+  const renderUploadStatus = (fieldName: "images" | "videos") => {
+    const status = uploadStatus[fieldName];
+    if (status === "loading") {
+      return (
+        <div className="text-blue-500 text-xs mt-1 flex items-center">
+          <Loader className="animate-spin h-3 w-3 mr-1" /> Uploading...
+        </div>
+      );
+    } else if (status === "success") {
+      return (
+        <div className="text-green-500 text-xs mt-1">Upload successful</div>
+      );
+    } else if (status === "error") {
+      return <div className="text-red-500 text-xs mt-1">Upload failed</div>;
+    }
+    return null;
+  };
 
-  //     // Add text message
-  //     if (message) {
-  //       formData.append("content", message);
-  //     }
+  const isSubmitting =
+    uploadStatus.images === "loading" ||
+    uploadStatus.videos === "loading" ||
+    submissionStatus === "loading";
 
-  //     // Add images
-  //     images.forEach((image) => {
-  //       formData.append(`images`, image);
-  //     });
-
-  //     // Add videos
-  //     videos.forEach((video) => {
-  //       formData.append(`videos`, video);
-  //     });
-
-  //     // Add poll data
-  //     if (poll) {
-  //       formData.append("pollQuestion", pollQuestion);
-  //       pollOptions.forEach((option, index) => {
-  //         formData.append(`pollOptions[${index}]`, option);
-  //       });
-  //     }
-
-  //     // Send data to the backend
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_API_URL}/posts/posts`,
-  //       {
-  //         method: "POST",
-  //         body: formData,
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to submit post");
-  //     }
-
-  //     const result = await response.json();
-  //     console.log("Post submitted successfully:", result);
-
-  //     console.log("form submit:", formData);
-
-  //     // Reset form after successful submission
-  //     setMessage("");
-  //     setImages([]);
-  //     setVideos([]);
-  //     setPoll(false);
-  //     setPollQuestion("");
-  //     setPollOptions([]);
-  //     setError(null);
-
-  //     alert("Post submitted successfully!");
-  //   } catch (error) {
-  //     console.error("Error submitting post:", error);
-  //     setError("Failed to submit post. Please try again.");
-  //   }
-  // };
+  useEffect(() => {
+    console.log("issubmiting:", isSubmitting);
+  }, [isSubmitting]);
 
   return (
     <main className="flex-col flex space-y-1">
@@ -328,18 +332,21 @@ const CreatePost = () => {
             {/* Display selected images */}
             <div className="flex flex-wrap gap-2">
               {imageUrls.map((url, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={url}
-                    alt={`Selected Image ${index}`}
-                    className="w-18 h-18 object-cover rounded-lg cursor-pointer transition-all duration-300 ease-in hover:brightness-75"
-                    onClick={() => openPreview("image", url)}
-                  />
-                  <X
-                    size={18}
-                    onClick={() => removeImage(index)}
-                    className="absolute top-0 cursor-pointer left-0 p-1 bg-white border text-black rounded-full"
-                  />
+                <div key={index} className="space-y-2">
+                  <div className="relative">
+                    <img
+                      src={url}
+                      alt={`Selected Image ${index}`}
+                      className="w-18 h-18 object-cover rounded-lg cursor-pointer transition-all duration-300 ease-in hover:brightness-75"
+                      onClick={() => openPreview("image", url)}
+                    />
+                    <X
+                      size={18}
+                      onClick={() => removeImage(index)}
+                      className="absolute top-0 cursor-pointer left-0 p-1 bg-white border text-black rounded-full"
+                    />
+                  </div>
+                  {renderUploadStatus("images")}
                 </div>
               ))}
             </div>
@@ -347,17 +354,20 @@ const CreatePost = () => {
             {/* Display selected videos */}
             <div className="flex flex-wrap gap-2">
               {videoUrls.map((url, index) => (
-                <div key={index} className="relative">
-                  <video
-                    src={url}
-                    className="w-18 h-18 object-cover rounded-lg cursor-pointer transition-all duration-300 ease-in hover:brightness-75"
-                    onClick={() => openPreview("video", url)}
-                  />
-                  <X
-                    size={18}
-                    onClick={() => removeVideo(index)}
-                    className="absolute top-0 cursor-pointer left-0 p-1 bg-white border text-black rounded-full"
-                  />
+                <div key={index} className="space-y-2">
+                  <div className="relative">
+                    <video
+                      src={url}
+                      className="w-18 h-18 object-cover rounded-lg cursor-pointer transition-all duration-300 ease-in hover:brightness-75"
+                      onClick={() => openPreview("video", url)}
+                    />
+                    <X
+                      size={18}
+                      onClick={() => removeVideo(index)}
+                      className="absolute top-0 cursor-pointer left-0 p-1 bg-white border text-black rounded-full"
+                    />
+                  </div>
+                  {renderUploadStatus("videos")}
                 </div>
               ))}
             </div>
@@ -423,18 +433,24 @@ const CreatePost = () => {
           </div>
           <div
             className="flex space-x-1 cursor-pointer transition-colors duration-300 ease-in  hover:bg-[#d55991] p-2 rounded-lg"
-            onClick={() => setPoll(true)}
+            onClick={() => setPoll(!poll)}
           >
             <Vote />
             <p>Poll</p>
           </div>
         </div>
-        <div
-          className="flex-1 flex bg-purpleaccent2 rounded-br-2xl p-4 hover:bg-[#dfd2f8] transition-colors duration-300 ease-in cursor-pointer items-center justify-center"
+        <button
+          // className="flex-1 bg-green-600"
+          className="flex-1 flex bg-purpleaccent2 rounded-br-2xl hover:bg-[#dfd2f8] transition-colors duration-300 ease-in cursor-pointer items-center justify-center"
           onClick={submitPost}
+          disabled={isSubmitting}
         >
-          <img src="/Post.svg" />
-        </div>
+          {isSubmitting ? (
+            <Loader size={20} className="animate-spin text-slate-500" />
+          ) : (
+            <SendIcon className="p-4 rounded-br-2xl cursor-pointer  w-full h-full hover:fill-rgtpink transition-all duration-300 ease-in fill-[#2D264B]" />
+          )}
+        </button>
       </div>
     </main>
   );

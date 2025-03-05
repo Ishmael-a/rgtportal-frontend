@@ -10,20 +10,19 @@ import { ApiResponse } from "../types";
 //   poll?: string;
 // }
 
-
-
 export class PostService {
-  private baseUrl: string;
+  // Store base URL as a static private property
+  private static baseUrl = `${import.meta.env.VITE_API_URL}/posts`;
 
-  constructor() {
-    this.baseUrl = `${import.meta.env.VITE_API_URL}/posts`;
-  }
-
-  // Create a new post
-  public async createPost(postData: any): Promise<ApiResponse<any>> {
+  // Create a new post (static method)
+  public static async createPost(postData: any): Promise<ApiResponse<any>> {
     try {
       console.log("post data:", postData);
-      const response = await axios.post(`${this.baseUrl}`, postData);
+      const response = await axios.post(this.baseUrl, postData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       console.log("response:", response);
       return response.data;
     } catch (error) {
@@ -32,8 +31,8 @@ export class PostService {
     }
   }
 
-  // Fetch all posts
-  public async getPosts(
+  // Fetch all posts (static method)
+  public static async getPosts(
     page: number = 1,
     limit: number = 10
   ): Promise<ApiResponse<any>> {
@@ -48,8 +47,8 @@ export class PostService {
     }
   }
 
-  // Fetch a single post by ID
-  public async getPostById(postId: number): Promise<ApiResponse<any>> {
+  // Fetch a single post by ID (static method)
+  public static async getPostById(postId: number): Promise<ApiResponse<any>> {
     try {
       const response = await axios.get(`${this.baseUrl}/posts/${postId}`);
       return response.data;
