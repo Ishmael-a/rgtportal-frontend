@@ -187,7 +187,9 @@ const Feed = () => {
       </section>
 
       <div
-        className="w-fit md:hidden"
+        className={`w-fit md:hidden transition-all duration-300 ease-in ${
+          showEvents ? "rotate-180" : ""
+        }`}
         onClick={() => setShowEvents(!showEvents)}
       >
         <ArrowIcon className="bg-white rounded-full shadow-md hover:shadow-gray-400 cursor-pointer" />
