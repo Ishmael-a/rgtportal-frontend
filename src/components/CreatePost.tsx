@@ -10,6 +10,8 @@ import { FileUploadService } from "@/api/services/file.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import SendIcon from "@/assets/empNavCons/SendIcon";
+import { PollService } from "@/api/services/poll.service";
+import CustomSelect from "./common/Select";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
@@ -20,6 +22,14 @@ interface CreatePostDto {
   images?: string[];
   videos?: string[];
   content: string;
+}
+
+export interface CreatePollDto {
+  description: string;
+  options: { text: string }[];
+  isAnonymous: boolean;
+  type?: "single_choice" | "multiple_choice";
+  allowComments?: boolean;
 }
 
 const CreatePost = () => {
@@ -34,8 +44,15 @@ const CreatePost = () => {
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [poll, setPoll] = useState(false);
-  const [pollQuestion, setPollQuestion] = useState("");
-  const [pollOptions, setPollOptions] = useState<string[]>([]);
+
+  const initialPollData: CreatePollDto = {
+    description: "",
+    options: [{ text: "" }],
+    isAnonymous: true,
+    type: "single_choice",
+    allowComments: true,
+  };
+  const [pollInfo, setPollInfo] = useState<CreatePollDto>(initialPollData);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>({
     images: "idle",
     videos: "idle",
@@ -121,14 +138,15 @@ const CreatePost = () => {
   };
 
   const addPollOption = () => {
-    setPollOptions((prev) => [...prev, ""]);
+    setPollInfo({ ...pollInfo, options: [...pollInfo.options, { text: "" }] });
   };
 
   const handlePollOptionChange = (index: number, value: string) => {
-    setPollOptions((prev) => {
-      const newOptions = [...prev];
-      newOptions[index] = value;
-      return newOptions;
+    setPollInfo({
+      ...pollInfo,
+      options: pollInfo.options.map((option, i) =>
+        i === index ? { text: value } : option
+      ),
     });
   };
 
@@ -156,62 +174,138 @@ const CreatePost = () => {
     },
   });
 
+  const createPollMutation = useMutation({
+    mutationFn: (pollData: CreatePollDto) => {
+      setSubmissionStatus("loading");
+      return PollService.createPoll(pollData);
+    },
+    onSuccess: (data) => {
+      setSubmissionStatus("success");
+      queryClient.invalidateQueries({ queryKey: ["polls"] });
+      toast({
+        title: "Success",
+        description: "Poll created successfully",
+      });
+      console.log("data:", data);
+    },
+    onError: (error: Error) => {
+      setSubmissionStatus("error");
+      toast({
+        title: "Error",
+        description: "Failed to create poll: " + error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handlePollClick = () => {
+    setPoll(!poll);
+    setMessage("");
+    setImages([]);
+    setVideos([]);
+  };
+
+  const validatePoll = () => {
+    if (!pollInfo.description.trim()) {
+      toast({
+        title: "Error",
+        description: "Poll question is required",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (pollInfo.options.length < 2) {
+      toast({
+        title: "Error",
+        description: "Poll needs at least 2 options",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (pollInfo.options.some((option) => !option.text.trim())) {
+      toast({
+        title: "Error",
+        description: "All poll options must have text",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const submitPost = async () => {
     try {
-      const mediaUrls: string[] = [];
+      // posting poll
+      if (poll && pollInfo) {
+        // Handle poll submission
+        if (!validatePoll()) return;
 
-      // Upload images
-      if (images.length > 0) {
-        setUploadStatus((prev) => ({ ...prev, images: "loading" }));
-        for (const image of images) {
-          const uploadResponse = await FileUploadService.uploadFile(image);
-          if (uploadResponse.file) {
-            mediaUrls.push(uploadResponse.file.url);
-          } else {
-            throw new Error("Image upload failed");
+        console.log("pollInfo:", pollInfo);
+
+        await createPollMutation.mutateAsync(pollInfo);
+
+        setPoll(false);
+        setPollInfo(initialPollData);
+        // return;
+      } else {
+        // posting content(text) and other media
+        const mediaUrls: string[] = [];
+
+        // Upload images
+        if (images.length > 0) {
+          setUploadStatus((prev) => ({ ...prev, images: "loading" }));
+          for (const image of images) {
+            const uploadResponse = await FileUploadService.uploadFile(image);
+            if (uploadResponse.file) {
+              mediaUrls.push(uploadResponse.file.url);
+            } else {
+              throw new Error("Image upload failed");
+            }
           }
+          setUploadStatus((prev) => ({ ...prev, images: "success" }));
         }
-        setUploadStatus((prev) => ({ ...prev, images: "success" }));
-      }
 
-      // Upload videos
-      if (videos.length > 0) {
-        setUploadStatus((prev) => ({ ...prev, videos: "loading" }));
-        for (const video of videos) {
-          const uploadResponse = await FileUploadService.uploadFile(video);
-          if (uploadResponse.file) {
-            mediaUrls.push(uploadResponse.file.url);
-          } else {
-            throw new Error("Video upload failed");
+        // Upload videos
+        if (videos.length > 0) {
+          setUploadStatus((prev) => ({ ...prev, videos: "loading" }));
+          for (const video of videos) {
+            const uploadResponse = await FileUploadService.uploadFile(video);
+            if (uploadResponse.file) {
+              mediaUrls.push(uploadResponse.file.url);
+            } else {
+              throw new Error("Video upload failed");
+            }
           }
+          setUploadStatus((prev) => ({ ...prev, videos: "success" }));
         }
-        setUploadStatus((prev) => ({ ...prev, videos: "success" }));
+
+        // Submit the post
+        const postData = {
+          content: message,
+          media: mediaUrls,
+        };
+
+        if (!postData.content && mediaUrls.length <= 0) {
+          toast({
+            title: "Error",
+            description: "Please enter some content or upload media.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        await createPostMutation.mutateAsync(postData);
       }
-
-      // Submit the post
-      const postData = {
-        content: message,
-        media: mediaUrls,
-      };
-
-      if (!postData.content && mediaUrls.length <= 0) {
-        toast({
-          title: "Error",
-          description: "Please enter some content or upload media.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      await createPostMutation.mutateAsync(postData);
 
       // Reset form after successful submission
       setMessage("");
       setImages([]);
       setVideos([]);
       setPoll(false);
-      setPollQuestion("");
-      setPollOptions([]);
+      setPollInfo(initialPollData);
       setError(null);
     } catch (error) {
       console.error("Error submitting post:", error);
@@ -243,11 +337,18 @@ const CreatePost = () => {
   const isSubmitting =
     uploadStatus.images === "loading" ||
     uploadStatus.videos === "loading" ||
-    submissionStatus === "loading";
+    submissionStatus === "loading" ||
+    createPollMutation.isPending;
 
   useEffect(() => {
     console.log("issubmiting:", isSubmitting);
   }, [isSubmitting]);
+
+  useEffect(() => {
+    console.log("message:", message);
+    console.log("images:", images);
+    console.log("videos:", videos);
+  }, [images, videos, message]);
 
   return (
     <main className="flex-col flex space-y-1">
@@ -290,18 +391,20 @@ const CreatePost = () => {
               <Input
                 placeholder="Write poll question..."
                 className="border shadow-none w-full h-12 "
-                value={pollQuestion}
-                onChange={(e) => setPollQuestion(e.target.value)}
+                value={pollInfo.description}
+                onChange={(e) =>
+                  setPollInfo({ ...pollInfo, description: e.target.value })
+                }
               />
             </div>
             <>
               <p className="font-semibold text-sm">Options</p>
-              {pollOptions.map((option, index) => (
+              {pollInfo.options.map((option, index) => (
                 <Input
                   key={index}
                   placeholder={`Option ${index + 1}`}
                   className="border shadow-none w-full"
-                  value={option}
+                  value={option.text}
                   onChange={(e) =>
                     handlePollOptionChange(index, e.target.value)
                   }
@@ -309,25 +412,118 @@ const CreatePost = () => {
               ))}
             </>
 
-            <Button
-              variant={"ghost"}
-              className="text-rgtpurple font-semibold cursor-pointer"
-              onClick={addPollOption}
-            >
-              <Plus /> Add Option
-            </Button>
+            <section className="space-y-2">
+              <Button
+                variant={"ghost"}
+                className="text-rgtpurple font-semibold cursor-pointer"
+                onClick={addPollOption}
+              >
+                <Plus /> Add Option
+              </Button>
+              <div className="flex justify-between items-center gap-2 sm:flex-row">
+                <div className="flex flex-col gap-1 ">
+                  <p className=" text-slate-500 font-semibold text-sm">
+                    Is poll anonymous
+                  </p>
+                  <div className="flex gap-2 text-sm">
+                    <label className="gap-1 flex">
+                      Yes
+                      <input
+                        type="radio"
+                        value="yes"
+                        name="isAnonymous"
+                        checked={pollInfo.isAnonymous === true}
+                        onChange={() =>
+                          setPollInfo({ ...pollInfo, isAnonymous: true })
+                        }
+                      />
+                    </label>
+                    <label className="gap-1 flex">
+                      No
+                      <input
+                        type="radio"
+                        value="no"
+                        name="isAnonymous"
+                        checked={pollInfo.isAnonymous === false}
+                        onChange={() =>
+                          setPollInfo({ ...pollInfo, isAnonymous: false })
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1 ">
+                  <p className=" text-slate-500 font-semibold text-sm">
+                    Allow comments
+                  </p>
+                  <div className="flex gap-2 text-sm">
+                    <label className="gap-1 flex">
+                      Yes
+                      <input
+                        type="radio"
+                        value="yes"
+                        name="allowComments"
+                        checked={pollInfo.allowComments === true}
+                        onChange={() =>
+                          setPollInfo({ ...pollInfo, allowComments: true })
+                        }
+                      />
+                    </label>
+                    <label className="gap-1 flex">
+                      No
+                      <input
+                        type="radio"
+                        value="no"
+                        name="allowComments"
+                        checked={pollInfo.allowComments === false}
+                        onChange={() =>
+                          setPollInfo({ ...pollInfo, allowComments: false })
+                        }
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 font-semibold">
+                  Type
+                  <CustomSelect
+                    selectLabel="Poll type"
+                    placeholder="Choose poll type"
+                    options={["Single Choice", "Multiple Choice"]}
+                    value={
+                      pollInfo.type === "single_choice"
+                        ? "single choice"
+                        : pollInfo.type === "multiple_choice"
+                        ? "multiple choice"
+                        : ""
+                    }
+                    className="w-fit"
+                    onChange={(value) =>
+                      setPollInfo({
+                        ...pollInfo,
+                        type:
+                          value === "single choice"
+                            ? "single_choice"
+                            : "multiple_choice",
+                      })
+                    }
+                  />
+                </label>
+              </div>
+            </section>
           </div>
         )}
       </div>
 
+      {error && (
+        <div className="text-red-500 text-sm p-2 bg-red-100 rounded-lg">
+          {error}
+        </div>
+      )}
       {!poll ? (
         <>
-          {error && (
-            <div className="text-red-500 text-sm p-2 bg-red-100 rounded-lg">
-              {error}
-            </div>
-          )}
-
           <div className="flex items-center gap-2">
             {/* Display selected images */}
             <div className="flex flex-wrap gap-2">
@@ -433,7 +629,7 @@ const CreatePost = () => {
           </div>
           <div
             className="flex space-x-1 cursor-pointer transition-colors duration-300 ease-in  hover:bg-[#d55991] p-2 rounded-lg"
-            onClick={() => setPoll(!poll)}
+            onClick={handlePollClick}
           >
             <Vote />
             <p>Poll</p>

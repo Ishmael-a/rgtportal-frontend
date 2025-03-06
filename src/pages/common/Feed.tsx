@@ -17,10 +17,12 @@ import confetti from "../../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
-import React from "react";
+import React, { useState } from "react";
+import ArrowIcon from "@/assets/empNavCons/ArrowIcon";
 
 const Feed = () => {
   const [date, setDate] = React.useState<Date>();
+  const [showEvents, setShowEvents] = useState(false);
 
   const colors = [
     { color: "#FFCFF2", name: "pink" },
@@ -44,7 +46,7 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full"
+          className="bg-rgtpurple sticky top-0 z-50 rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
@@ -122,7 +124,11 @@ const Feed = () => {
         </section>
       </div>
 
-      <section className="flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto">
+      <section
+        className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
+          showEvents ? "h-full" : ""
+        }`}
+      >
         <div className="pt-5 space-y-3 h-fit  order-2 bg-white rounded-t-2xl w-full">
           <Calendar
             mode="single"
@@ -179,6 +185,13 @@ const Feed = () => {
           </div>
         </div>
       </section>
+
+      <div
+        className="w-fit md:hidden"
+        onClick={() => setShowEvents(!showEvents)}
+      >
+        <ArrowIcon className="bg-white rounded-full shadow-md hover:shadow-gray-400 cursor-pointer" />
+      </div>
     </main>
   );
 };
