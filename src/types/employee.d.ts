@@ -28,23 +28,16 @@ interface IPollUI {
   totalVotes: number;
 }
 
-interface IImage {
+interface IMedia {
   url: string;
   alt?: string;
 }
-
-// interface IAvtrBlock {
-//   name: string;
-//   role: string;
-//   avatarUrl: string;
-//   fallBack?: string;
-// }
 
 interface IPost {
   avtrDets: Partial<IProjectMembers>;
   text: string;
   poll?: IPollUI[];
-  images?: IImage[];
+  media?: string[];
 }
 
 interface IAnnouncementCard {

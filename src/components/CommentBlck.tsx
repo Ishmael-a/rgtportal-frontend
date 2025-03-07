@@ -1,13 +1,17 @@
-import { avtrDets } from "@/constants";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
 
-const CommentBlck = () => {
+const CommentBlck: React.FC<User> = ({ profileImage, employee }) => {
+  // if (!userDets) {
+  //   console.log("userDets is not sett");
+  //   return;
+  // }
+
   return (
     <section className="border-t px-2 pt-4 flex items-center space-x-2">
       <Avatar>
-        <AvatarImage src={avtrDets[0].avtr?.url} alt={avtrDets[0].name} />
-        <AvatarFallback>{avtrDets[0].avtr?.fallBack}</AvatarFallback>
+        <AvatarImage src={profileImage} alt={employee.firstName} />
+        <AvatarFallback>{employee.firstName}</AvatarFallback>
       </Avatar>
       <Input
         className="rounded-full p-6 max-w-[500px]"
@@ -16,10 +20,10 @@ const CommentBlck = () => {
 
       <div className="flex  min-w-[200px] justify-center space-x-">
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
-            <img
-              src="/Attachment.svg"
-              className=" border-2 p-[2px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
-            />
+          <img
+            src="/Attachment.svg"
+            className=" border-2 p-[2px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
+          />
         </div>
 
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">

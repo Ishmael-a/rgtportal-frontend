@@ -1,18 +1,14 @@
-import { IProjectMembers } from "@/types/employee";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
-const AvtrBlock: React.FC<{ avtDets: Partial<IProjectMembers> }> = ({
-  avtDets,
-}) => {
+const AvtrBlock: React.FC<User> = ({ profileImage, employee, role }) => {
   return (
     <div className="flex gap-2 items-center">
       <Avatar>
-        <AvatarImage src={avtDets.avtr?.url} alt={avtDets.name} />
-        <AvatarFallback>{avtDets.avtr?.fallBack}</AvatarFallback>
+        <AvatarImage src={profileImage} alt={employee.firstName} />
       </Avatar>
       <div className="">
-        <p className="font-bold">{avtDets.name}</p>
-        <p className="text-rgtgray text-xs">{avtDets.role}</p>
+        <p className="font-bold">{employee.firstName + employee.lastName}</p>
+        <p className="text-rgtgray text-xs">{role.name.toUpperCase()}</p>
       </div>
     </div>
   );

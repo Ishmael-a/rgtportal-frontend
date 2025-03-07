@@ -1,6 +1,6 @@
 import AnnouncementCard from "@/components/AnnouncementCard";
 import CreatePost, {
-  CreatePollDto,
+  // CreatePollDto,
   CreatePostDto,
 } from "@/components/CreatePost";
 import EventList from "@/components/EventList";
@@ -9,10 +9,10 @@ import {
   announcements,
   avtrDets,
   eventList,
-  imageUrl,
-  poll,
-  postText1,
-  postText2,
+  // imageUrl,
+  // poll,
+  // postText1,
+  // postText2,
   projectCards,
 } from "@/constants";
 import { Link } from "react-router-dom";
@@ -22,29 +22,30 @@ import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
 import React, { useEffect, useState } from "react";
 import ArrowIcon from "@/assets/empNavCons/ArrowIcon";
-import { PollService } from "@/api/services/poll.service";
+// import { PollService } from "@/api/services/poll.service";
 import { PostService } from "@/api/services/posts.service";
 
 const Feed = () => {
+  
   const [date, setDate] = React.useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
-  const [polls, setPolls] = useState<CreatePollDto[]>([]);
+  // const [polls, setPolls] = useState<CreatePollDto[]>([]);
   const [posts, setPosts] = useState<CreatePostDto[]>([]);
 
   // Fetch polls and posts on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch polls
-        const pollsResponse = await PollService.getPolls();
-        setPolls(pollsResponse.data);
+        // // Fetch polls
+        // const pollsResponse = await PollService.getPolls();
+        // setPolls(pollsResponse.data);
 
-        console.log("polls:", polls);
+        // console.log("polls:", polls);
 
         // Fetch posts
         const postsResponse = await PostService.getPosts();
+        console.log("posts:", postsResponse);
         setPosts(postsResponse.data);
-        console.log("posts:", posts);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -147,14 +148,14 @@ const Feed = () => {
               For you
             </header>
             {/* Render posts */}
-            {/* {posts.map((post, index) => (
+            {posts.map((post, index) => (
               <Post
                 key={index}
                 avtrDets={avtrDets[0]}
                 text={post.content}
-                images={post.images?.[0]} // Assuming images is an array
+                media={post.media || []} // Assuming images is an array
               />
-            ))} */}
+            ))}
             {/* Render polls */}
             {/* {polls.map((poll, index) => (
               <Post key={index} avtrDets={avtrDets[0]} poll={poll} />

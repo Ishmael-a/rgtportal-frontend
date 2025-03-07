@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { avtrDets } from "@/constants";
 import { Loader, Plus, Vote, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -12,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import SendIcon from "@/assets/empNavCons/SendIcon";
 import { PollService } from "@/api/services/poll.service";
 import CustomSelect from "./common/Select";
+import { authService } from "@/api/services/auth.service";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
@@ -19,9 +19,14 @@ interface UploadStatus {
 }
 
 export interface CreatePostDto {
-  images?: string[];
-  videos?: string[];
+  media?: string[];
   content: string;
+  author?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    profileImage?: string;
+  };
 }
 
 export interface CreatePollDto {
@@ -34,7 +39,11 @@ export interface CreatePollDto {
 
 const CreatePost = () => {
   const queryClient = useQueryClient();
-
+  const [user, setUser] = useState<{
+    employee: { id: number; firstName: string; lastName: string };
+    profileImage?: string;
+  } | null>(null);
+  console.log("user:", user);
   const [message, setMessage] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
@@ -74,6 +83,19 @@ const CreatePost = () => {
     () => videos.map((video) => URL.createObjectURL(video)),
     [videos]
   );
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPoll(false);
@@ -282,10 +304,20 @@ const CreatePost = () => {
           setUploadStatus((prev) => ({ ...prev, videos: "success" }));
         }
 
+        if (!user) {
+          console.log("User is not valid:");
+          return;
+        }
         // Submit the post
         const postData = {
           content: message,
           media: mediaUrls,
+          author: {
+            id: user.employee.id,
+            firstName: user.employee.firstName,
+            lastName: user.employee.lastName,
+            profileImage: user.profileImage,
+          },
         };
 
         if (!postData.content && mediaUrls.length <= 0) {
@@ -354,8 +386,8 @@ const CreatePost = () => {
     <main className="flex-col flex space-y-1">
       <div className="relative flex items-start gap-1">
         <Avatar>
-          <AvatarImage src={avtrDets[0].avtr?.url} alt="Avatar" />
-          <AvatarFallback>{avtrDets[0].avtr?.fallBack}</AvatarFallback>
+          <AvatarImage src={user?.profileImage} alt="Avatar" />
+          <AvatarFallback>{user?.employee.firstName}</AvatarFallback>
         </Avatar>
         {!poll ? (
           <>

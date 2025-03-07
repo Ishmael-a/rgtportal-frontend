@@ -37,7 +37,7 @@ export class PostService {
     limit: number = 10
   ): Promise<ApiResponse<any>> {
     try {
-      const response = await axios.get(`${this.baseUrl}/posts`, {
+      const response = await axios.get(`${this.baseUrl}/`, {
         params: { page, limit },
       });
       return response.data;
@@ -50,7 +50,7 @@ export class PostService {
   // Fetch a single post by ID (static method)
   public static async getPostById(postId: number): Promise<ApiResponse<any>> {
     try {
-      const response = await axios.get(`${this.baseUrl}/posts/${postId}`);
+      const response = await axios.get(`${this.baseUrl}/${postId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching post:", error);
