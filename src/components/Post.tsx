@@ -2,11 +2,11 @@ import AvtrBlock from "./AvtrBlock";
 import Image from "./Image";
 import FeedActions from "./feedActions";
 import CommentBlck from "./CommentBlck";
-import { IPost } from "@/types";
+import { IPost } from "@/types/employee";
 import PollUI from "./PollUI";
 import { MoreVertical } from "lucide-react";
 
-const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
+const Post: React.FC<IPost> = ({ avtrDets, poll, images, text }) => {
   const formatText = (text: string) => {
     return text.split(" ").map((word, index) => {
       if (word.startsWith("#")) {
@@ -31,7 +31,7 @@ const Post: React.FC<IPost> = ({ avtrDets, poll, image, text }) => {
         <p className="text-sm">{formatText(text)}</p>
         {poll && <PollUI poll={poll} />}
 
-        {image && <Image url={image.url} alt={image.alt} />}
+        {/* {image && <Image url={image.url} alt={image.alt} />} */}
 
         <FeedActions />
       </section>

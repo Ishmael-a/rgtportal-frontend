@@ -18,7 +18,7 @@ interface UploadStatus {
   videos?: "idle" | "loading" | "success" | "error";
 }
 
-interface CreatePostDto {
+export interface CreatePostDto {
   images?: string[];
   videos?: string[];
   content: string;

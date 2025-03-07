@@ -1,5 +1,8 @@
 import AnnouncementCard from "@/components/AnnouncementCard";
-import CreatePost from "@/components/CreatePost";
+import CreatePost, {
+  CreatePollDto,
+  CreatePostDto,
+} from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
 import {
@@ -17,12 +20,38 @@ import confetti from "../../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ArrowIcon from "@/assets/empNavCons/ArrowIcon";
+import { PollService } from "@/api/services/poll.service";
+import { PostService } from "@/api/services/posts.service";
 
 const Feed = () => {
   const [date, setDate] = React.useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
+  const [polls, setPolls] = useState<CreatePollDto[]>([]);
+  const [posts, setPosts] = useState<CreatePostDto[]>([]);
+
+  // Fetch polls and posts on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch polls
+        const pollsResponse = await PollService.getPolls();
+        setPolls(pollsResponse.data);
+
+        console.log("polls:", polls);
+
+        // Fetch posts
+        const postsResponse = await PostService.getPosts();
+        setPosts(postsResponse.data);
+        console.log("posts:", posts);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const colors = [
     { color: "#FFCFF2", name: "pink" },
@@ -36,7 +65,9 @@ const Feed = () => {
   };
 
   return (
-    <main className={`flex flex-col-reverse gap-2 md:flex-row h-full px-5 sm:px-0`}>
+    <main
+      className={`flex flex-col-reverse gap-2 md:flex-row h-full px-5 sm:px-0 bg-blue-500`}
+    >
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
         style={{
@@ -75,7 +106,6 @@ const Feed = () => {
                 display: none; /* Chrome, Safari, and Opera */
               }
               `}
-              //{" "}
             </style>
             {projectCards[0].members.map((item, index) => {
               const randomColor = getRandomColor();
@@ -118,18 +148,30 @@ const Feed = () => {
             <header className="font-semibold text-lg text-[#706D8A]">
               For you
             </header>
-            <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
-            <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
+            {/* Render posts */}
+            {/* {posts.map((post, index) => (
+              <Post
+                key={index}
+                avtrDets={avtrDets[0]}
+                text={post.content}
+                images={post.images?.[0]} // Assuming images is an array
+              />
+            ))} */}
+            {/* Render polls */}
+            {/* {polls.map((poll, index) => (
+              <Post key={index} avtrDets={avtrDets[0]} poll={poll} />
+            ))} */}
           </div>
         </section>
       </div>
 
       <section
-        className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
+        className={`flex justify-center bg-amber-500 md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
           showEvents ? "h-full" : ""
         }`}
       >
-        <div className="pt-5 space-y-3 h-fit  order-2 bg-white rounded-t-2xl w-full">
+        
+        <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full">
           <Calendar
             mode="single"
             selected={date}
@@ -185,15 +227,6 @@ const Feed = () => {
           </div>
         </div>
       </section>
-
-      <div
-        className={`w-fit md:hidden transition-all duration-300 ease-in ${
-          showEvents ? "rotate-180" : ""
-        }`}
-        onClick={() => setShowEvents(!showEvents)}
-      >
-        <ArrowIcon className="bg-white rounded-full shadow-md hover:shadow-gray-400 cursor-pointer" />
-      </div>
     </main>
   );
 };

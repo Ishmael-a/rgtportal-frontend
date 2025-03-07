@@ -2,7 +2,7 @@
 import { ClassNameValue } from "tailwind-merge";
 interface IProjectCard {
   id: string | number;
-  members: IProjectMembers[]| Employee[];
+  members: IProjectMembers[] | Employee[];
   name: string;
   leadName?: string;
   path: string;
@@ -33,18 +33,18 @@ interface IImage {
   alt?: string;
 }
 
-interface IAvtrBlock {
-  name: string;
-  role: string;
-  avatarUrl: string;
-  fallBack?: string;
-}
+// interface IAvtrBlock {
+//   name: string;
+//   role: string;
+//   avatarUrl: string;
+//   fallBack?: string;
+// }
 
 interface IPost {
-  avtrDets: IAvtrBlock;
+  avtrDets: Partial<IProjectMembers>;
   text: string;
   poll?: IPollUI[];
-  image?: IImage;
+  images?: IImage[];
 }
 
 interface IAnnouncementCard {
@@ -70,13 +70,13 @@ export interface Employee {
   annualDaysOff: number;
   vacationDaysBalance: number;
   contactDetails: Record<string, any> | null;
-  
+
   givenRecognitions?: EmployeeRecognition[];
   receivedRecognitions?: EmployeeRecognition[];
   user?: User;
   department: Department;
   departmentId: number | null;
-  
+
   ptoRequests?: PtoRequest[];
   projectAssignments?: ProjectAssignment[];
   posts?: Post[];
