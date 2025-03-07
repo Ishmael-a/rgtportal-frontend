@@ -65,9 +65,7 @@ const Feed = () => {
   };
 
   return (
-    <main
-      className={`flex flex-col-reverse gap-2 md:flex-row h-full px-5 sm:px-0 bg-blue-500`}
-    >
+    <main className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0`}>
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
         style={{
@@ -165,68 +163,76 @@ const Feed = () => {
         </section>
       </div>
 
-      <section
-        className={`flex justify-center bg-amber-500 md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
-          showEvents ? "h-full" : ""
-        }`}
-      >
-        
-        <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            initialFocus
-            classNames={{
-              day_selected:
-                "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
-              month: "flex flex-col space-y-3 flex-grow",
-              day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
-              head_cell: "w-8 sm:w-10 flex-grow",
-              cell: "flex items-center justify-center flex-grow",
-            }}
-            className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
+      <div className={`flex flex-col order-first`}>
+        <div className="w-fit" onClick={() => setShowEvents(!showEvents)}>
+          <ArrowIcon
+            className={`bg-white rounded-full shadow-md cursor-pointer md:hidden transition-all duration-300 ease-in ${
+              showEvents ? "rotate-180" : ""
+            }`}
           />
-
-          <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
-            <div className="flex items-center justify-between">
-              <p className="text-[#706D8A] font-[700] text-lg">
-                Special Events
-              </p>
-              <Link to="/events-calendar">
-                <img
-                  src="/Down 2.svg"
-                  className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
-                />
-              </Link>
-            </div>
-
-            {/* Events List */}
-            <div className="flex flex-col space-y-5">
-              {eventList.map((event, index) => (
-                <EventList
-                  key={index}
-                  {...event}
-                  className={`${
-                    eventList.length - 1 === index ? "border-b-0" : ""
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="p-4 bg-white rounded-lg space-y-2">
-            <div className="flex items-center justify-between pb-4">
-              <p className="font-[700] text-lg">Announcements</p>
-            </div>
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
-              {announcements.map((announcement, index) => (
-                <AnnouncementCard {...announcement} key={index} />
-              ))}
-            </div>
-          </div>
         </div>
-      </section>
+        <section
+          className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
+            showEvents ? "h-[500px]" : ""
+          }`}
+        >
+          <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              initialFocus
+              classNames={{
+                day_selected:
+                  "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
+                month: "flex flex-col space-y-3 flex-grow",
+                day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
+                head_cell: "w-8 sm:w-10 flex-grow",
+                cell: "flex items-center justify-center flex-grow",
+              }}
+              className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
+            />
+
+            <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
+              <div className="flex items-center justify-between">
+                <p className="text-[#706D8A] font-[700] text-lg">
+                  Special Events
+                </p>
+                <Link to="/events-calendar">
+                  <img
+                    src="/Down 2.svg"
+                    className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
+                  />
+                </Link>
+              </div>
+
+              {/* Events List */}
+              <div className="flex flex-col space-y-5">
+                {eventList.map((event, index) => (
+                  <EventList
+                    key={index}
+                    {...event}
+                    className={`${
+                      eventList.length - 1 === index ? "border-b-0" : ""
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 bg-white rounded-lg space-y-2">
+              <div className="flex items-center justify-between pb-4">
+                <p className="font-[700] text-lg">Announcements</p>
+              </div>
+              <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
+                {announcements.map((announcement, index) => (
+                  <AnnouncementCard {...announcement} key={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 };
