@@ -12,17 +12,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ClassNameValue } from "tailwind-merge";
 
 interface IDatePicker {
   placeholder?: string;
   value?: Date;
   onChange?: (val: Date | undefined) => void;
+  className?: ClassNameValue;
 }
 
 const DatePicker: React.FC<IDatePicker> = ({
   placeholder,
   value,
   onChange,
+  className,
 }) => {
   const [date, setDate] = React.useState<Date | undefined>(value);
   // Update Formik's state when the date changes
@@ -35,13 +38,13 @@ const DatePicker: React.FC<IDatePicker> = ({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className=" p-0 ">
         <Button
           variant={"outline"}
-          className={cn(
-            " w-full h-full justify-between text-left font-normal",
+          className={`${className || ""} ${cn(
+            "justify-between text-left font-normal",
             !date && "text-muted-foreground"
-          )}
+          )}`}
         >
           {date ? (
             format(date, "PPP")

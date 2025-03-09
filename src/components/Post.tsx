@@ -106,7 +106,7 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
   };
 
   return (
-    <div className="flex flex-col p-4 rounded-lg shadow-md max-w-[900px] bg-white">
+    <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
       <section className="w-full border-b py-3 flex justify-between">
         <AvtrBlock {...user} />
         <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
@@ -114,10 +114,8 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
 
       <section className="pt-3 space-y-3">
         <p className="text-sm">{formatText(text)}</p>
-        {poll && <PollUI poll={poll} />}
-
+        {poll && <PollUI pollId={poll.id} />}
         <div className="">{renderMedia()}</div>
-
         <FeedActions />
       </section>
 

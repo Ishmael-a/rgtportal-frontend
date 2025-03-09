@@ -1,58 +1,50 @@
 import AnnouncementCard from "@/components/AnnouncementCard";
-import CreatePost, {
-  // CreatePollDto,
-  CreatePostDto,
-} from "@/components/CreatePost";
+import CreatePost from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
-import {
-  announcements,
-  avtrDets,
-  eventList,
-  // imageUrl,
-  // poll,
-  // postText1,
-  // postText2,
-  projectCards,
-} from "@/constants";
+import { announcements, eventList, projectCards } from "@/constants";
 import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ArrowIcon from "@/assets/empNavCons/ArrowIcon";
-// import { PollService } from "@/api/services/poll.service";
+import { PollService } from "@/api/services/poll.service";
+import { useQuery } from "@tanstack/react-query";
+import { Poll } from "@/types/polls";
 import { PostService } from "@/api/services/posts.service";
 
 const Feed = () => {
-  
   const [date, setDate] = React.useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
-  // const [polls, setPolls] = useState<CreatePollDto[]>([]);
-  const [posts, setPosts] = useState<CreatePostDto[]>([]);
 
-  // Fetch polls and posts on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // // Fetch polls
-        // const pollsResponse = await PollService.getPolls();
-        // setPolls(pollsResponse.data);
+  const { data: polls } = useQuery({
+    queryKey: ["polls"],
+    queryFn: () =>
+      PollService.getPolls().then((res) => {
+        console.log("polls:", res.data);
+        return res.data as Poll[];
+      }),
+  });
 
-        // console.log("polls:", polls);
+  const { data: posts } = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
+  });
 
-        // Fetch posts
-        const postsResponse = await PostService.getPosts();
-        console.log("posts:", postsResponse);
-        setPosts(postsResponse.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const mergedFeed = useMemo(() => {
+    const postsWithType =
+      posts?.map((p) => ({ ...p, feedType: "post" as const })) || [];
+    const pollsWithType =
+      polls?.map((p) => ({ ...p, feedType: "poll" as const })) || [];
 
-    fetchData();
-  }, []);
+    return [...postsWithType, ...pollsWithType].sort((a, b) => {
+      const dateA = a.feedType === "post" ? a.publishDate : a.createdAt;
+      const dateB = b.feedType === "post" ? b.publishDate : b.createdAt;
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+  }, [posts, polls]);
 
   const colors = [
     { color: "#FFCFF2", name: "pink" },
@@ -148,18 +140,23 @@ const Feed = () => {
               For you
             </header>
             {/* Render posts */}
-            {posts.map((post, index) => (
+            {/* {posts?.map((post, index) => (
+              <Post key={index} text={post.content} media={post.media || []} />
+            ))} */}
+            {/* Render polls */}
+            {/* {polls?.map((poll, index) => (
+              <Post key={index} poll={poll} text={poll.description} />
+            ))} */}
+            {mergedFeed.map((item) => (
               <Post
-                key={index}
-                avtrDets={avtrDets[0]}
-                text={post.content}
-                media={post.media || []} // Assuming images is an array
+                key={item.id}
+                text={
+                  item.feedType === "post" ? item.content : item.description
+                }
+                media={item.feedType === "post" ? item.media || [] : undefined}
+                poll={item.feedType === "poll" ? item : undefined}
               />
             ))}
-            {/* Render polls */}
-            {/* {polls.map((poll, index) => (
-              <Post key={index} avtrDets={avtrDets[0]} poll={poll} />
-            ))} */}
           </div>
         </section>
       </div>

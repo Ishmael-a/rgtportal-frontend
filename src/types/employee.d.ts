@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ClassNameValue } from "tailwind-merge";
+import { Poll } from "./polls";
 interface IProjectCard {
   id: string | number;
   members: IProjectMembers[] | Employee[];
@@ -34,9 +35,8 @@ interface IMedia {
 }
 
 interface IPost {
-  avtrDets: Partial<IProjectMembers>;
   text: string;
-  poll?: IPollUI[];
+  poll?: Poll;
   media?: string[];
 }
 

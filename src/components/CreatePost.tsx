@@ -12,29 +12,12 @@ import SendIcon from "@/assets/empNavCons/SendIcon";
 import { PollService } from "@/api/services/poll.service";
 import CustomSelect from "./common/Select";
 import { authService } from "@/api/services/auth.service";
+import { CreatePollDto } from "@/types/polls";
+import DatePicker from "./common/DatePicker";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
   videos?: "idle" | "loading" | "success" | "error";
-}
-
-export interface CreatePostDto {
-  media?: string[];
-  content: string;
-  author?: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    profileImage?: string;
-  };
-}
-
-export interface CreatePollDto {
-  description: string;
-  options: { text: string }[];
-  isAnonymous: boolean;
-  type?: "single_choice" | "multiple_choice";
-  allowComments?: boolean;
 }
 
 const CreatePost = () => {
@@ -56,10 +39,12 @@ const CreatePost = () => {
 
   const initialPollData: CreatePollDto = {
     description: "",
-    options: [{ text: "" }],
+    options: [{ id: 0, text: "" }],
     isAnonymous: true,
     type: "single_choice",
     allowComments: true,
+    startDate: new Date(),
+    
   };
   const [pollInfo, setPollInfo] = useState<CreatePollDto>(initialPollData);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>({
@@ -160,14 +145,17 @@ const CreatePost = () => {
   };
 
   const addPollOption = () => {
-    setPollInfo({ ...pollInfo, options: [...pollInfo.options, { text: "" }] });
+    setPollInfo({
+      ...pollInfo,
+      options: [...pollInfo.options, { id: 0, text: "" }],
+    });
   };
 
   const handlePollOptionChange = (index: number, value: string) => {
     setPollInfo({
       ...pollInfo,
       options: pollInfo.options.map((option, i) =>
-        i === index ? { text: value } : option
+        i === index ? { id: i, text: value } : option
       ),
     });
   };
@@ -422,7 +410,7 @@ const CreatePost = () => {
               <label className="font-semibold text-sm">Question</label>
               <Input
                 placeholder="Write poll question..."
-                className="border shadow-none w-full h-12 "
+                className="border shadow-none w-full"
                 value={pollInfo.description}
                 onChange={(e) =>
                   setPollInfo({ ...pollInfo, description: e.target.value })
@@ -517,9 +505,11 @@ const CreatePost = () => {
                   </div>
                 </div>
               </div>
-              <div>
-                <label className="text-xs text-slate-500 font-semibold">
-                  Type
+              <div className="flex sm:justify-between space-y-3 sm:space-y-0 flex-col sm:flex-row">
+                <div className="flex w-1/2 flex-col">
+                  <label className="text-xs text-slate-500 font-semibold">
+                    Type
+                  </label>
                   <CustomSelect
                     selectLabel="Poll type"
                     placeholder="Choose poll type"
@@ -531,7 +521,7 @@ const CreatePost = () => {
                         ? "multiple choice"
                         : ""
                     }
-                    className="w-fit"
+                    className="w-fit h-full"
                     onChange={(value) =>
                       setPollInfo({
                         ...pollInfo,
@@ -542,7 +532,22 @@ const CreatePost = () => {
                       })
                     }
                   />
-                </label>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between gap-2 sm:w-1/2 sm:justify-end">
+                  <div className="flex-col flex">
+                    <label className="text-xs text-slate-500 font-semibold">
+                      From
+                    </label>
+                    <DatePicker className="bg-transparent" />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="text-xs text-slate-500 font-semibold">
+                      To
+                    </label>
+                    <DatePicker className="bg-transparent" />
+                  </div>
+                </div>
               </div>
             </section>
           </div>

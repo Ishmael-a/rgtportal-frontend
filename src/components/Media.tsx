@@ -1,10 +1,11 @@
-import {  IMedia } from "@/types/employee";
+import { IMedia } from "@/types/employee";
 import React from "react";
 
 const Media: React.FC<IMedia> = ({ url, alt = "Media" }) => {
   const [mediaError, setMediaError] = React.useState(false);
 
-  const isVideo = url?.endsWith(".mp4") || url?.endsWith(".mov");
+  const isVideo =
+    url.endsWith(".mp4") || url.endsWith(".mov") || url.includes("video");
 
   return (
     <section className="flex justify-center object-contain aspect-video">
