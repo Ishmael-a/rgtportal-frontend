@@ -29,16 +29,14 @@ interface IPollUI {
   totalVotes: number;
 }
 
-interface IMedia {
-  url: string;
-  alt?: string;
-}
 
-interface IPost {
-  id?: number;
-  text: string;
+
+interface IFeed {
+  // id?: number;
+  // text: string;
   poll?: Poll;
-  media?: string[];
+  post?: IPost;
+  // media?: string[];
 }
 
 interface IAnnouncementCard {

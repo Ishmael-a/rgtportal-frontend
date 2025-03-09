@@ -2,18 +2,38 @@ import axios from "axios";
 import { Bookmark, MessageSquareMore, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 
-const FeedActions = (postId: number) => {
+const FeedActions = ({ postId }: { postId: number }) => {
   const [liked, setLiked] = useState(false);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [commented, setCommented] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
 
-  const handleLike = () => {
-    axios.post(`${import.meta.env.VITE_API_URL}/${postId}/reactions`);
-    setLiked(!liked);
-  };
+  const handleLike = async () => {
+    if (isLikeLoading) return;
+    const newLikedState = !liked;
 
-  // useEffect(()=>{
-  // })
+    try {
+      setIsLikeLoading(true);
+      // Optimistic update
+      setLiked(newLikedState);
+
+      // Send actual request
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/posts/${postId}/likes`,
+        { isLike: newLikedState }
+      );
+
+      if (response.data?.success) {
+        setLiked(response.data.data.isLike);
+      }
+    } catch (error) {
+      console.error("Failed to update like:", error);
+      // Rollback on error
+      setLiked(!newLikedState);
+    } finally {
+      setIsLikeLoading(false);
+    }
+  };
 
   const handleComment = () => {
     setCommented(!commented);
@@ -34,8 +54,10 @@ const FeedActions = (postId: number) => {
             <ThumbsUp
               className={`text-[#94A3B8] ${
                 liked ? "fill-rgtpink stroke-0" : "fill-none"
-              }`}
+              } 
+              `}
             />
+            {/* ${isLikeLoading ? "opacity-50" : ""} */}
           </div>
           <p className="text-sm font-medium">12 Likes</p>
         </div>

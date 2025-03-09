@@ -1,16 +1,19 @@
 import AvtrBlock from "./AvtrBlock";
 import FeedActions from "./feedActions";
 import CommentBlck from "./CommentBlck";
-import { IPost } from "@/types/employee";
 import PollUI from "./PollUI";
 import { MoreVertical } from "lucide-react";
 import Media from "./Media";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
+import { IFeed } from "@/types/employee";
 
-const Post: React.FC<IPost> = ({ poll, media, text,id }) => {
+const Post: React.FC<IFeed> = ({ poll, post }) => {
   const { currentUser } = useAuthContextProvider();
 
-  const formatText = (text: string) => {
+  const formatText = (text: string | undefined) => {
+    if (!text) {
+      return;
+    }
     return text.split(" ").map((word, index) => {
       if (word.startsWith("#")) {
         return (
@@ -24,44 +27,44 @@ const Post: React.FC<IPost> = ({ poll, media, text,id }) => {
   };
 
   const renderMedia = () => {
-    if (!media || media.length === 0) return null;
+    if (!post?.media || post?.media.length === 0) return null;
 
-    if (media.length === 1) {
+    if (post?.media.length === 1) {
       // Single media item takes full width
       return (
         <div className="w-full">
-          <Media url={media[0]} />
+          <Media url={post.media[0]} />
         </div>
       );
-    } else if (media.length === 2) {
+    } else if (post.media.length === 2) {
       // Two items side by side
       return (
         <div className="grid grid-cols-2 gap-2">
-          {media.map((item, index) => (
+          {post.media.map((item, index) => (
             <Media key={index} url={item} />
           ))}
         </div>
       );
-    } else if (media.length === 3) {
+    } else if (post.media.length === 3) {
       // First Media takes half width, other two stacked in second column
       return (
         <div className="grid grid-cols-2 gap-2">
           <div className="row-span-2">
-            <Media url={media[0]} />
+            <Media url={post.media[0]} />
           </div>
           <div>
-            <Media url={media[1]} />
+            <Media url={post.media[1]} />
           </div>
           <div>
-            <Media url={media[2]} />
+            <Media url={post.media[2]} />
           </div>
         </div>
       );
-    } else if (media.length === 4) {
+    } else if (post.media.length === 4) {
       // Grid of 2x2
       return (
         <div className="grid grid-cols-2 gap-2">
-          {media.map((item, index) => (
+          {post.media.map((item, index) => (
             <Media key={index} url={item} />
           ))}
         </div>
@@ -70,13 +73,13 @@ const Post: React.FC<IPost> = ({ poll, media, text,id }) => {
       //5+ Medias, show first 4 and indicate there are more
       return (
         <div className="grid grid-cols-2 gap-2">
-          {media.slice(0, 4).map((item, index) => (
+          {post?.media.slice(0, 4).map((item, index) => (
             <div key={index} className="relative">
               <Media url={item} />
-              {index === 3 && media.length > 4 && (
+              {index === 3 && post?.media && post.media.length > 4 && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                   <span className="text-white text-xl font-bold">
-                    +{media.length - 4}
+                    +{post.media.length - 4}
                   </span>
                 </div>
               )}
@@ -95,10 +98,12 @@ const Post: React.FC<IPost> = ({ poll, media, text,id }) => {
       </section>
 
       <section className="pt-3 space-y-3">
-        <p className="text-sm">{formatText(text)}</p>
+        <p className="text-sm">
+          {formatText(post?.content || poll?.description)}
+        </p>
         {poll && <PollUI pollId={poll.id} />}
         <div className="">{renderMedia()}</div>
-        {/* <FeedActions postId={id} /> */}
+        <FeedActions postId={post?.id || poll?.id || 0} />
       </section>
 
       <div className="hidden sm:block">
