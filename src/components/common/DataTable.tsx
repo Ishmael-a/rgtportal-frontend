@@ -66,7 +66,7 @@ export function DataTable({
     : columns;
 
   return (
-    <div className="max-w-xs sm:max-w-[500px] flex flex-col md:max-w-full">
+    <div className=" sm:max-w-full flex flex-col ">
       <Table
         className={
           dividers ? "" : "border-none bg-white rounded-md min-h-60 space-y-6  "

@@ -55,9 +55,9 @@ export default function TimeOff() {
   };
 
   return (
-    <main>
+    <main className="px-4">
       <div className="bg-white p-4 rounded-md">
-        <header className="flex justify-between items-center">
+        <header className="flex sm:flex-row flex-col justify-between sm:items-center">
           <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
             Request Time List
           </h1>
@@ -70,8 +70,8 @@ export default function TimeOff() {
           </Button>
         </header>
 
-        <div className="grid grid-cols-3 gap-3 h-[50px] my-8">
-          <DatePicker className="h-full" />
+        <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:h-[50px] my-8">
+          <DatePicker className="sm:h-full" />
           <CustomSelect options={["plnt"]} />
           <CustomSelect options={["plnt"]} />
         </div>
