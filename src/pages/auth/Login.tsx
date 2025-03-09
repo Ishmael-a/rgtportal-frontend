@@ -1,13 +1,17 @@
-import { useState } from "react";
-import { Field, Form as FormikForm, Formik, FieldInputProps } from "formik";
-import rgtIcon from "../assets/images/RGT TRANSPARENT 1.png";
-import rgtPattern from "../assets/images/RGT PATTERN 1.png";
-import envato from "../assets/images/envato-labs-image-edit (5) 2.png";
-import * as Yup from "yup";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { GoogleAuthButton } from "../components/Login/GoogleAuthButton";
+import { Field, FieldInputProps, Formik, Form as FormikForm } from 'formik';
+import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { useState } from 'react';
+import { useLogin } from '@/api/query-hooks/auth.hooks';
+import rgtPattern from '@/assets/images/RGT PATTERN 1.png';
+import rgtIcon from '@/assets/images/RGT TRANSPARENT 1.png';
+import envato from '@/assets/images/envato-labs-image-edit (5) 2.png';
+import { GoogleAuthButton } from '@/components/Login/GoogleAuthButton';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface FormValues {
   email: string;
@@ -15,23 +19,51 @@ interface FormValues {
 }
 
 const LoginSchema = Yup.object({
-  email: Yup.string().email("Invalid email address").required("Required"),
-  password: Yup.string().required("Required"),
+  email: Yup.string().email('Invalid email address').required('Required'),
+  password: Yup.string().required('Required'),
 });
 
 const Login = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const { mutate, isPending } = useLogin({
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      if (data.requiresOtp) {
+        navigate('/verify-email', { state: { email: data.message, otpId: data.otpId, userId: data.userId } });
+      }
+
+      else {
+        navigate('/emp/feed', { replace: true });
+        toast({
+          title: 'Success',
+          description: 'Login successful',
+        });
+      }
+
+      // navigate('/emp/feed');
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        'Failed to login. Please check your credentials.';
+
+      toast({
+        title: 'Error',
+        description: errorMessage,
+      });
+    },
+  });
 
   const initialFormValues = {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   };
 
   const handleSubmit = (values: FormValues) => {
-    setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
+    mutate(values);
   };
 
   return (
@@ -75,8 +107,8 @@ const Login = () => {
                           {...field}
                           className={`w-full py-2 px-4 ${
                             touched.email && errors.email
-                              ? "border-red-500"
-                              : ""
+                              ? 'border-red-500'
+                              : ''
                           }`}
                         />
                         {touched.email && errors.email && (
@@ -107,13 +139,13 @@ const Login = () => {
                         <div className="relative">
                           <Input
                             id="password"
-                            type={isPasswordVisible ? "text" : "password"}
+                            type={isPasswordVisible ? 'text' : 'password'}
                             placeholder="••••••"
                             {...field}
                             className={`w-full py-2 px-4 ${
                               touched.password && errors.password
-                                ? "border-red-500"
-                                : ""
+                                ? 'border-red-500'
+                                : ''
                             }`}
                           />
                           <button
@@ -143,9 +175,9 @@ const Login = () => {
                 <Button
                   type="submit"
                   className="w-full py-2 px-4 bg-rgtpink hover:bg-pink-500 text-white rounded-md"
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
-                  {isLoading ? "Signing in..." : "Sign in"}
+                  {isPending ? 'Signing in...' : 'Sign in'}
                 </Button>
               </FormikForm>
             )}

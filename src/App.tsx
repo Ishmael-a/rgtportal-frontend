@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WithPermission } from "@/components/common/WithPermission";
 import { BaseLayout } from "./layouts/BaseLayout";
 import NotFoundPage from "./pages/NotFoundPage";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import Feed from "./pages/common/Feed";
 import { HRDashboard } from "./pages/HR/HRDashboard";
 import { AllDepartments } from "./pages/HR/AllDepartments";
@@ -14,6 +14,8 @@ import RecruitmentPage from "./pages/HR/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/ManageEmployees";
+import CreatePassword from "./pages/auth/CreatePassword";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/set-password" element={<CreatePassword />} />
 
         {/* Employee routes */}
         <Route path="/emp" element={<BaseLayout />}>
