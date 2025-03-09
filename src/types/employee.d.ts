@@ -35,6 +35,7 @@ interface IMedia {
 }
 
 interface IPost {
+  id?: number;
   text: string;
   poll?: Poll;
   media?: string[];

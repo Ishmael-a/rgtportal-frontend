@@ -18,131 +18,126 @@ export const usePoll = (pollId: number) => {
     });
   };
 
-  const voteMutation = useMutation({
-    mutationFn: (optionId: number) => PollService.votePoll(pollId, optionId),
-    onMutate: async (optionId) => {
-      await queryClient.cancelQueries({ queryKey: ["poll", pollId] });
+ const voteMutation = useMutation({
+   mutationFn: (optionId: number) => PollService.votePoll(pollId, optionId),
+   onMutate: async (optionId) => {
+     await queryClient.cancelQueries({ queryKey: ["poll", pollId] });
 
-      const previousPoll = queryClient.getQueryData<Poll>(["poll", pollId]);
-      if (!previousPoll) return;
+     const previousPoll = queryClient.getQueryData<Poll>(["poll", pollId]);
+     if (!previousPoll) return;
 
-      // Find existing vote for single-choice polls
-      const existingVote = previousPoll.options.find((o) => o.hasVoted);
-      const isSingleChoice = previousPoll.type === "single_choice";
+     const isSingleChoice = previousPoll.type === "single_choice";
+     const selectedOption = previousPoll.options.find((o) => o.id === optionId);
+     const existingVote = previousPoll.options.find((o) => o.hasVoted);
+     const wasAlreadyVoted = selectedOption?.hasVoted;
 
-      // Optimistic update
-      const updatedOptions = previousPoll.options.map((option) => {
-        // Reset previous vote for single-choice
-        if (isSingleChoice && existingVote?.id === option.id) {
-          const newVoteCount = Math.max(option.voteCount - 1, 0);
-          return {
-            ...option,
-            voteCount: newVoteCount,
-            hasVoted: false,
-            percentage: (newVoteCount / (previousPoll.voteCount || 1)) * 100,
-          };
-        }
+     // Calculate new totals and vote counts
+     let newTotal = previousPoll.voteCount;
+     const updatedOptions = previousPoll.options.map((option) => {
+       // Handle single-choice vote transfer
+       if (isSingleChoice && existingVote?.id === option.id) {
+         newTotal = previousPoll.voteCount; // Total remains same for vote transfer
+         return {
+           ...option,
+           voteCount: option.voteCount - 1,
+           hasVoted: false,
+           percentage: ((option.voteCount - 1) / newTotal) * 100,
+         };
+       }
 
-        // Update new option
-        if (option.id === optionId) {
-          const voteCountChange = isSingleChoice ? 0 : 1; // No net change for single-choice
-          const newVoteCount = option.voteCount + (option.hasVoted ? -1 : 1);
-          return {
-            ...option,
-            voteCount: newVoteCount,
-            hasVoted: !option.hasVoted,
-            percentage:
-              (newVoteCount / (previousPoll.voteCount + voteCountChange)) * 100,
-          };
-        }
+       // Handle selected option
+       if (option.id === optionId) {
+         const voteDelta = wasAlreadyVoted ? -1 : 1;
+         const newVoteCount = option.voteCount + voteDelta;
 
-        // Update percentages for other options
-        const totalVotes = isSingleChoice
-          ? previousPoll.voteCount
-          : previousPoll.voteCount + (option.hasVoted ? -1 : 1);
+         // Update total for multiple choice
+         if (!isSingleChoice) newTotal += voteDelta;
 
-        return {
-          ...option,
-          percentage:
-            totalVotes > 0 ? (option.voteCount / totalVotes) * 100 : 0,
-        };
-      });
+         return {
+           ...option,
+           voteCount: newVoteCount,
+           hasVoted: !wasAlreadyVoted,
+           percentage: newTotal > 0 ? (newVoteCount / newTotal) * 100 : 0,
+         };
+       }
 
-      const newVoteCount = isSingleChoice
-        ? previousPoll.voteCount
-        : previousPoll.voteCount + (existingVote ? 0 : 1);
+       // For single-choice, maintain other options' counts but update percentages
+       return {
+         ...option,
+         percentage: newTotal > 0 ? (option.voteCount / newTotal) * 100 : 0,
+       };
+     });
 
-      const newPoll = {
-        ...previousPoll,
-        voteCount: newVoteCount,
-        options: updatedOptions,
-        hasVoted: true,
-      };
+     const newPoll = {
+       ...previousPoll,
+       voteCount: newTotal,
+       options: updatedOptions,
+       hasVoted: isSingleChoice ? true : previousPoll.hasVoted,
+     };
 
-      updatePollData(newPoll);
-      return { previousPoll };
-    },
-    onError: (err, optionId, context) => {
-      if (context?.previousPoll) {
-        updatePollData(context.previousPoll);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["poll", pollId] });
-      queryClient.invalidateQueries({ queryKey: ["polls"] });
-    },
-  });
+     updatePollData(newPoll);
+     return { previousPoll };
+   },
+   onError: (err, optionId, context) => {
+     if (context?.previousPoll) {
+       updatePollData(context.previousPoll);
+     }
+   },
+   onSettled: () => {
+     queryClient.invalidateQueries({ queryKey: ["poll", pollId] });
+     queryClient.invalidateQueries({ queryKey: ["polls"] });
+   },
+ });
 
-  const removeVoteMutation = useMutation({
-    mutationFn: (optionId: number) => PollService.removeVote(pollId, optionId),
-    onMutate: async (optionId) => {
-      await queryClient.cancelQueries({ queryKey: ["poll", pollId] });
+ const removeVoteMutation = useMutation({
+   mutationFn: (optionId: number) => PollService.removeVote(pollId, optionId),
+   onMutate: async (optionId) => {
+     await queryClient.cancelQueries({ queryKey: ["poll", pollId] });
 
-      const previousPoll = queryClient.getQueryData<Poll>(["poll", pollId]);
-      if (!previousPoll) return;
+     const previousPoll = queryClient.getQueryData<Poll>(["poll", pollId]);
+     if (!previousPoll) return;
 
-      // Optimistic update
-      const updatedOptions = previousPoll.options.map((option) => {
-        if (option.id === optionId) {
-          const newVoteCount = option.voteCount - 1;
-          return {
-            ...option,
-            voteCount: newVoteCount,
-            hasVoted: false,
-            percentage:
-              previousPoll.voteCount > 1
-                ? (newVoteCount / (previousPoll.voteCount - 1)) * 100
-                : 0,
-          };
-        }
-        return {
-          ...option,
-          percentage:
-            previousPoll.voteCount > 1
-              ? (option.voteCount / (previousPoll.voteCount - 1)) * 100
-              : 0,
-        };
-      });
+     const isSingleChoice = previousPoll.type === "single_choice";
+     const newTotal = Math.max(previousPoll.voteCount - 1, 0);
 
-      const newPoll = {
-        ...previousPoll,
-        voteCount: previousPoll.voteCount - 1,
-        options: updatedOptions,
-      };
+     const updatedOptions = previousPoll.options.map((option) => {
+       if (option.id === optionId) {
+         return {
+           ...option,
+           voteCount: option.voteCount - 1,
+           hasVoted: false,
+           percentage:
+             newTotal > 0 ? ((option.voteCount - 1) / newTotal) * 100 : 0,
+         };
+       }
 
-      updatePollData(newPoll);
-      return { previousPoll };
-    },
-    onError: (err, optionId, context) => {
-      if (context?.previousPoll) {
-        updatePollData(context.previousPoll);
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["poll", pollId] });
-      queryClient.invalidateQueries({ queryKey: ["polls"] });
-    },
-  });
+       // For single-choice, update all percentages after vote removal
+       return {
+         ...option,
+         percentage: newTotal > 0 ? (option.voteCount / newTotal) * 100 : 0,
+       };
+     });
+
+     const newPoll = {
+       ...previousPoll,
+       voteCount: newTotal,
+       options: updatedOptions,
+       hasVoted: isSingleChoice ? false : previousPoll.hasVoted,
+     };
+
+     updatePollData(newPoll);
+     return { previousPoll };
+   },
+   onError: (err, optionId, context) => {
+     if (context?.previousPoll) {
+       updatePollData(context.previousPoll);
+     }
+   },
+   onSettled: () => {
+     queryClient.invalidateQueries({ queryKey: ["poll", pollId] });
+     queryClient.invalidateQueries({ queryKey: ["polls"] });
+   },
+ });
 
   const handleVote = (optionId: number) => {
     if (!poll) return;

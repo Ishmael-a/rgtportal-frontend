@@ -7,7 +7,7 @@ import { MoreVertical } from "lucide-react";
 import Media from "./Media";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
-const Post: React.FC<IPost> = ({ poll, media, text }) => {
+const Post: React.FC<IPost> = ({ poll, media, text,id }) => {
   const { currentUser } = useAuthContextProvider();
 
   const formatText = (text: string) => {
@@ -98,7 +98,7 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
         <p className="text-sm">{formatText(text)}</p>
         {poll && <PollUI pollId={poll.id} />}
         <div className="">{renderMedia()}</div>
-        <FeedActions />
+        {/* <FeedActions postId={id} /> */}
       </section>
 
       <div className="hidden sm:block">

@@ -1,14 +1,19 @@
+import axios from "axios";
 import { Bookmark, MessageSquareMore, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 
-const FeedActions = () => {
+const FeedActions = (postId: number) => {
   const [liked, setLiked] = useState(false);
   const [commented, setCommented] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
 
   const handleLike = () => {
+    axios.post(`${import.meta.env.VITE_API_URL}/${postId}/reactions`);
     setLiked(!liked);
   };
+
+  // useEffect(()=>{
+  // })
 
   const handleComment = () => {
     setCommented(!commented);
