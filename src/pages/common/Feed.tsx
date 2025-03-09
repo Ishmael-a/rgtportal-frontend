@@ -14,12 +14,13 @@ import { PollService } from "@/api/services/poll.service";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "@/types/polls";
 import { PostService } from "@/api/services/posts.service";
+import { FeedSkeleton } from "./FeedSkeleton";
 
 const Feed = () => {
   const [date, setDate] = React.useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
 
-  const { data: polls } = useQuery({
+  const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],
     queryFn: () =>
       PollService.getPolls().then((res) => {
@@ -28,7 +29,7 @@ const Feed = () => {
       }),
   });
 
-  const { data: posts } = useQuery({
+  const { data: posts, isLoading: postsLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
   });
@@ -56,6 +57,15 @@ const Feed = () => {
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
   };
+
+  if (pollsLoading || postsLoading) {
+    return (
+      <main className="flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0">
+        <FeedSkeleton />
+        {/* Keep the right sidebar skeleton if needed */}
+      </main>
+    );
+  }
 
   return (
     <main className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0`}>
@@ -139,14 +149,6 @@ const Feed = () => {
             <header className="font-semibold text-lg text-[#706D8A]">
               For you
             </header>
-            {/* Render posts */}
-            {/* {posts?.map((post, index) => (
-              <Post key={index} text={post.content} media={post.media || []} />
-            ))} */}
-            {/* Render polls */}
-            {/* {polls?.map((poll, index) => (
-              <Post key={index} poll={poll} text={poll.description} />
-            ))} */}
             {mergedFeed.map((item) => (
               <Post
                 key={item.id}
