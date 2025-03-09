@@ -71,7 +71,7 @@ export default function TimeOff() {
         </header>
 
         <div className="grid grid-cols-3 gap-3 h-[50px] my-8">
-          <DatePicker />
+          <DatePicker className="h-full" />
           <CustomSelect options={["plnt"]} />
           <CustomSelect options={["plnt"]} />
         </div>
@@ -211,7 +211,9 @@ export default function TimeOff() {
                 </label>
                 <textarea
                   {...field}
-                  className={`w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9] ${touched.reason && errors.reason ? "border-red-500" : ""}`}
+                  className={`w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9] ${
+                    touched.reason && errors.reason ? "border-red-500" : ""
+                  }`}
                   rows={3}
                   placeholder="Provide your reason"
                   maxLength={50}
