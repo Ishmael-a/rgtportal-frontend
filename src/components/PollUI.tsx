@@ -1,27 +1,15 @@
 import { usePoll } from "@/hooks/use-poll";
 
 const PollUI = ({ pollId }: { pollId: number }) => {
-  const { poll, isLoading, vote, removeVote, isVoting } = usePoll(pollId);
+  const { poll, isLoading, handleVote, isVoting } = usePoll(pollId);
 
   if (isLoading) return <div>Loading poll...</div>;
   if (!poll) return <div>Poll not found</div>;
 
-  const handleVote = (optionId: number) => {
+  const onVote = (id: number) => {
     if (isVoting) return;
-
-    const hasVotedOnOption = poll?.options.find(
-      (o) => o.id === optionId
-    )?.hasVoted;
-
-    console.log("hasVotedOnOption:", hasVotedOnOption);
-
-    if (hasVotedOnOption) {
-      removeVote(optionId);
-    } else {
-      vote(optionId);
-    }
+    handleVote(id);
   };
-
   const highestVoteCount = Math.max(...poll.options.map((o) => o.voteCount));
 
   return (
@@ -35,12 +23,12 @@ const PollUI = ({ pollId }: { pollId: number }) => {
         return (
           <div
             key={option.id}
-            onClick={() => handleVote(option.id)}
+            onClick={() => onVote(option.id)}
             className={`flex items-center justify-between gap-4 relative ${
               !poll.hasVoted
                 ? "cursor-pointer hover:bg-gray-50"
                 : "cursor-default"
-            } ${isVoting ? "opacity-50 pointer-events-none" : ""}`}
+            }`}
           >
             {/* Progress bar background */}
             <div
@@ -61,7 +49,7 @@ const PollUI = ({ pollId }: { pollId: number }) => {
                 {option.text}
               </p>
 
-              {/* Voting indicator */}
+              {/* highest Voted indicator */}
               {(option.hasVoted || isUniqueHighest) && (
                 <img
                   src="/CheckCircle.svg"
