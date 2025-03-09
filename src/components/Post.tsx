@@ -4,25 +4,11 @@ import CommentBlck from "./CommentBlck";
 import { IPost } from "@/types/employee";
 import PollUI from "./PollUI";
 import { MoreVertical } from "lucide-react";
-import { authService } from "@/api/services/auth.service";
-import { useEffect, useState } from "react";
 import Media from "./Media";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const Post: React.FC<IPost> = ({ poll, media, text }) => {
-  const [user, setUser] = useState<User>();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await authService.getCurrentUser();
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { currentUser } = useAuthContextProvider();
 
   const formatText = (text: string) => {
     return text.split(" ").map((word, index) => {
@@ -36,10 +22,6 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
       return <span key={index}>{word} </span>;
     });
   };
-
-  if (!user) {
-    return;
-  }
 
   const renderMedia = () => {
     if (!media || media.length === 0) return null;
@@ -108,7 +90,7 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
       <section className="w-full border-b py-3 flex justify-between">
-        <AvtrBlock {...user} />
+        <AvtrBlock user={currentUser} />
         <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
       </section>
 
@@ -120,7 +102,7 @@ const Post: React.FC<IPost> = ({ poll, media, text }) => {
       </section>
 
       <div className="hidden sm:block">
-        <CommentBlck {...user} />
+        <CommentBlck user={currentUser} />
       </div>
       <div className="sm:hidden pt-2 border-t">
         <p className="text-sm font-medium text-rgtpink">Reply Post</p>

@@ -1,17 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
 
-const CommentBlck: React.FC<User> = ({ profileImage, employee }) => {
-  // if (!userDets) {
-  //   console.log("userDets is not sett");
-  //   return;
-  // }
+const CommentBlck: React.FC<{ user: User | null }> = ({ user }) => {
+  if (!user) return;
 
   return (
     <section className="border-t px-2 pt-4 flex items-center space-x-2">
       <Avatar>
-        <AvatarImage src={profileImage} alt={employee.firstName} />
-        <AvatarFallback>{employee.firstName}</AvatarFallback>
+        <AvatarImage src={user.profileImage} alt={user.employee.firstName} />
+        <AvatarFallback>{user.employee.firstName}</AvatarFallback>
       </Avatar>
       <Input
         className="rounded-full p-6 max-w-[500px]"
