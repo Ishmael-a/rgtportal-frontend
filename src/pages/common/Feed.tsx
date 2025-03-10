@@ -27,14 +27,20 @@ const Feed = () => {
         console.log("polls:", res.data);
         return res.data as Poll[];
       }),
+    // placeholderData: (previousData) => {
+    //   return previousData;
+    // },
   });
 
   const { data: posts, isLoading: postsLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
+    // placeholderData: (previousData) => {
+    //   return previousData;
+    // },
   });
 
-  console.log("posts:", posts)
+  console.log("posts:", posts);
 
   const mergedFeed = useMemo(() => {
     const postsWithType =
@@ -154,10 +160,6 @@ const Feed = () => {
             {mergedFeed.map((item) => (
               <Post
                 key={item.id}
-                // text={
-                //   item.feedType === "post" ? item.content : item.description
-                // }
-                // media={item.feedType === "post" ? item.media || [] : undefined}
                 poll={item.feedType === "poll" ? item : undefined}
                 post={item.feedType === "post" ? item : undefined}
               />

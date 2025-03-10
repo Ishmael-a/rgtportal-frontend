@@ -90,7 +90,9 @@ export const ManageEmployees = () => {
                     type="text"
                     placeholder="Enter your department name"
                     {...field}
-                    className={`w-full py-2 px-4 ${touched.name && errors.name ? "border-red-500" : ""}`}
+                    className={`w-full py-2 px-4 ${
+                      touched.name && errors.name ? "border-red-500" : ""
+                    }`}
                   />
                   <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                     <Mail className="h-5 w-5 text-gray-500" />

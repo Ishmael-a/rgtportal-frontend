@@ -3,7 +3,7 @@ import Avtr from "../Avtr";
 import { avtrDets } from "@/constants";
 import { ChevronDown } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UsersIcon from "@/assets/empNavCons/UsersIcon";
 import FeedIcon from "@/assets/empNavCons/FeedIcon";
 import MessageIcon from "@/assets/empNavCons/MessageIcon";
@@ -11,19 +11,7 @@ import TimeIcon from "@/assets/empNavCons/TimeIcon";
 
 export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
-  const [indicator, setIndicator] = useState("");
   const [showProfile, setShowProfile] = useState(false);
-
-  const handleIndicator = (val: string) => {
-    setIndicator(val);
-    localStorage.setItem('indicator', val)
-    console.log("val:", val);
-  };
-
-  useEffect(()=>{
-    const indicator = localStorage.getItem('indicator') as string
-    setIndicator(indicator)
-  }, [indicator])
 
   const navItems = [
     { icon: FeedIcon, label: "Feed", path: "feed" },
@@ -38,7 +26,6 @@ export const SideBar = () => {
       label: "Time Off",
       path: "time-off",
     },
-    // { icon: ProfileIcon, label: "Profile", path: "profile" },
   ];
 
   return (
@@ -78,34 +65,29 @@ export const SideBar = () => {
       </div>
       <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[294px] bg-white py-4 flex flex-col space-y-4 shadow-md">
         {navItems.map((item) => (
-          <div
-            className="flex items-center justify-center w-full"
-            onClick={() => handleIndicator(item.path)}
-          >
-            {indicator === item.path && (
-              <div
-                className={`h-[35px] w-[5px] bg-[#E328AF] rounded-r-full transition-all duration-300 ease-in`}
-              />
-            )}
-
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `
-              flex items-center justify-center md:justify-start gap-3 px-4 py-2.5 rounded-lg
-              transition-colors duration-200 font-medium space-x-3 flex-1 text-[#706D8A]
+          <div className="w-full">
+            <NavLink key={item.path} to={item.path}>
+              {({ isActive }) => (
+                <div
+                  className={`
+              flex items-center  justify-center md:justify-start  py-2.5 rounded-lg
+              transition-colors duration-200 font-medium  flex-1 text-[#706D8A]
               ${isActive ? "text-[#E328AF]" : "hover:bg-gray-50"}
               `}
-            >
-              {indicator === item.path ? (
-                <item.icon color="#E328AF" />
-              ) : (
-                <item.icon />
+                >
+                  {isActive && (
+                    <div
+                      className={`h-[35px] w-[5px] bg-[#E328AF] rounded-r-full transition-all duration-300 ease-in`}
+                    />
+                  )}
+                  <div className="flex items-center gap-3 pl-4 transition-all duration-300 ease-in">
+                    {isActive ? <item.icon color="#E328AF" /> : <item.icon />}
+                    <span className="font-semibold text-lg hidden md:block">
+                      {item.label}
+                    </span>
+                  </div>
+                </div>
               )}
-
-              <span className="font-semibold text-lg hidden md:block">
-                {item.label}
-              </span>
             </NavLink>
           </div>
         ))}

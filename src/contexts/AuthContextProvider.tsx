@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import { useCurrentUser } from "@/api/query-hooks/auth.hooks";
 import { LOGOUT, SETCURRENTUSER } from "@/state/authState/authSlice";
-import LoadingSpinner from "@/components/common/LoadingSpinner"
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 // import {useNavigate} from "react-router-dom"
 
 // Define proper types for the context

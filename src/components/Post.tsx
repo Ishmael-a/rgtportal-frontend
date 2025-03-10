@@ -103,11 +103,15 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
         </p>
         {poll && <PollUI pollId={poll.id} />}
         <div className="">{renderMedia()}</div>
-        <FeedActions postId={post?.id || poll?.id || 0} />
+        <FeedActions
+          commentCount={post?.stats?.totalComments}
+          likeCount={post?.stats?.totalLikes}
+          postId={post?.id || poll?.id || 0}
+        />
       </section>
 
       <div className="hidden sm:block">
-        <CommentBlck user={currentUser} />
+        <CommentBlck user={currentUser} postId={post?.id} />
       </div>
       <div className="sm:hidden pt-2 border-t">
         <p className="text-sm font-medium text-rgtpink">Reply Post</p>

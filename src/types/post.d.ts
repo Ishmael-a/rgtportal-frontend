@@ -10,7 +10,7 @@ interface CreatePostDto {
 }
 
 interface IPost {
-  id:number;
+  id: number;
   media?: string[];
   content: string;
   author?: {
@@ -20,4 +20,22 @@ interface IPost {
     profileImage?: string;
   };
   publishDate: Date;
+  reactions?: string[];
+  stats?: { totalComments: number; totalLikes: number; totalDislikes: 0 };
+  comments: IComment[];
+  // reactionCounts:
+}
+
+interface IComment {
+  id: number;
+  content: string;
+  createdAt: Date;
+  author: {
+    id: id;
+    firstName: string;
+    lastName: string;
+    profileImage: string;
+  };
+  // likes: (comment as any).likes || [],
+  // reactions: (comment as any).reactions || [],
 }

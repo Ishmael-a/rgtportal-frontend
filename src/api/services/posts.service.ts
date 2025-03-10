@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// services/post.service.ts
+
 import axios from "axios";
 import { ApiResponse } from "../types";
-
-// interface CreatePostDto {
-//   content?: string;
-//   images?: string[];
-//   videos?: string[];
-//   poll?: string;
-// }
 
 export class PostService {
   // Store base URL as a static private property
@@ -42,7 +35,10 @@ export class PostService {
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error(
+        "Error fetching posts:",
+        error instanceof Error ? error.message : error
+      );
       throw error;
     }
   }
@@ -57,4 +53,5 @@ export class PostService {
       throw error;
     }
   }
+
 }
