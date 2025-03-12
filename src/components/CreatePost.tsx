@@ -8,7 +8,7 @@ import { PostService } from "@/api/services/posts.service";
 import { FileUploadService } from "@/api/services/file.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
-import SendIcon from "@/assets/empNavCons/SendIcon";
+import SendIcon from "@/assets/icons/SendIcon";
 import { PollService } from "@/api/services/poll.service";
 import CustomSelect from "./common/Select";
 import { authService } from "@/api/services/auth.service";
@@ -44,7 +44,6 @@ const CreatePost = () => {
     type: "single_choice",
     allowComments: true,
     startDate: new Date(),
-    
   };
   const [pollInfo, setPollInfo] = useState<CreatePollDto>(initialPollData);
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>({

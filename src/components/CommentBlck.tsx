@@ -4,7 +4,7 @@ import { Input } from "./ui/input";
 import { useInteraction } from "@/hooks/use-interaction";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { User } from "@/types/authUser";
-import SendIcon from "@/assets/empNavCons/SendIcon";
+import SendIcon from "@/assets/icons/SendIcon";
 
 const CommentBlck: React.FC<{
   user: User | null;

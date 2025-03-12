@@ -9,7 +9,7 @@ import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
 import React, { useMemo, useState } from "react";
-import ArrowIcon from "@/assets/empNavCons/ArrowIcon";
+import ArrowIcon from "@/assets/icons/ArrowIcon";
 import { PollService } from "@/api/services/poll.service";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "@/types/polls";
