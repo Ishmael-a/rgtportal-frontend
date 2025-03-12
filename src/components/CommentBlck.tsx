@@ -1,41 +1,37 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
-// import axios from "axios";
-import { useMutation } from "@tanstack/react-query";
-import { PostInteractionService } from "@/api/services/post-interaction.service";
-import { queryClient } from "@/features/data-access/rbacQuery";
-import { toast } from "@/hooks/use-toast";
+import { useInteraction } from "@/hooks/use-interaction";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
+import { User } from "@/types/authUser";
+import { Loader, Loader2 } from "lucide-react";
+import SendIcon from "@/assets/empNavCons/SendIcon";
 
 const CommentBlck: React.FC<{
   user: User | null;
   postId: number | undefined;
 }> = ({ user, postId }) => {
-  const [comment, setComment] = useState("");
+  const { currentUser } = useAuthContextProvider();
 
-  const commentMutation = useMutation({
-    mutationFn: (commentData: string) => {
-      return PostInteractionService.commentOnPost(postId, commentData);
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["comments"] });
-      toast({
-        title: "Success",
-        description: `Comment created successfully. ${data}`,
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: "Failed to create comment:" + error.message,
-        variant: "destructive",
-      });
+  const [comment, setComment] = useState<IComment>({
+    content: "",
+    author: {
+      id: currentUser?.employee?.id,
+      firstName: currentUser?.employee?.firstName ?? "",
+      lastName: currentUser?.employee?.lastName ?? "",
+      profileImage: currentUser?.profileImage ?? "",
     },
   });
 
+  const { addComment, isCommentLoading } = useInteraction(postId ?? 0);
+
   const handleSubmitComment = async () => {
     try {
-      await commentMutation.mutateAsync(comment);
+      if (!comment.content) {
+        return;
+      }
+      addComment(comment);
+      setComment({ ...comment, content: "" });
     } catch (err) {
       console.error("Error creating comment:", err);
     }
@@ -46,13 +42,18 @@ const CommentBlck: React.FC<{
   return (
     <section className="border-t px-2 pt-4 flex items-center space-x-2">
       <Avatar>
-        <AvatarImage src={user.profileImage} alt={user.employee.firstName} />
+        <AvatarImage
+          src={user.profileImage}
+          alt={user.employee.firstName ?? ""}
+        />
         <AvatarFallback>{user.employee.firstName}</AvatarFallback>
       </Avatar>
       <Input
         className="rounded-full p-6 max-w-[500px]"
         placeholder="Write your comment..."
-        onChange={(e) => setComment(e.target.value)}
+        onChange={(e) => setComment({ ...comment, content: e.target.value })}
+        value={comment.content}
+        disabled={isCommentLoading}
       />
 
       <div className="flex  min-w-[200px] justify-center space-x-">
@@ -74,10 +75,7 @@ const CommentBlck: React.FC<{
           className="px-[4px] py-[1px]  rounded-full flex items-center justify-center "
           onClick={handleSubmitComment}
         >
-          <img
-            src="/Send 3.svg"
-            className="border-rgtpink border-2 p-[2px] rounded-full hover:bg-pink-200  transition-colors duration-200 cursor-pointer"
-          />
+          <SendIcon className="border-rgtpink border-2 p-[2px] w-9 h-9 rounded-full hover:bg-pink-200 transition-all duration-200 cursor-pointer hover:fill-[#EA5E9C] fill-[#452667] " />
         </div>
       </div>
     </section>

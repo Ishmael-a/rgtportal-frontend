@@ -4,9 +4,14 @@ import axios from "axios";
 const API_URL = `${import.meta.env.VITE_API_URL}/posts`;
 
 export class PostInteractionService {
-  static async getStats(id: number): Promise<void> {
+  static async getStats(id: number): Promise<IStats> {
     try {
-      await axios.get(`${API_URL}/${id}/stats`);
+      const response = await axios.get(`${API_URL}/${id}/stats`);
+      console.log("responseStats:", response.data.data);
+      if (!response.data.success) {
+        throw new Error("Error fetching post stats");
+      }
+      return response.data.data;
     } catch (error) {
       console.error("Error getting post stats", error);
       throw error;
@@ -15,9 +20,11 @@ export class PostInteractionService {
 
   static async likePost(postId: number, liked: boolean): Promise<void> {
     try {
-      await axios.post(`${API_URL}/${postId}/likes`, {
-        isLiked: liked,
+      const response = await axios.post(`${API_URL}/${postId}/likes`, {
+        isLike: liked,
       });
+      console.log("responseLikes:", response.data);
+      // return response.data;
     } catch (error) {
       console.error("Error liking post:", error);
       throw error;

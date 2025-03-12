@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import Avtr from "../Avtr";
-import { avtrDets } from "@/constants";
 import { ChevronDown } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { useState } from "react";
@@ -40,13 +39,13 @@ export const SideBar = () => {
           </p>
         </header>
         <div className="flex bg-[#452667] text-white justify-start items-center px-4 md:p-[16px] space-x-2 md:space-x-4 rounded-lg md:w-[240px] h-[72px]">
-          {avtrDets[0].avtr && (
-            <Avtr
-              url={avtrDets[0].avtr.url}
-              name="Layla"
-              className="border-0"
-            />
-          )}
+          {/* {avtrDets[0].avtr && ( */}
+          <Avtr
+            url={user?.profileImage}
+            name={user?.username}
+            className="border-0"
+          />
+          {/* )} */}
           <div className="md:flex flex-col items-start justify-center hidden">
             <p className="font-bold text-[15px] text-nowrap w-32 truncate">
               {user?.username}

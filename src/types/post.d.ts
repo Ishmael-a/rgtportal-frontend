@@ -23,13 +23,18 @@ interface IPost {
   reactions?: string[];
   stats?: { totalComments: number; totalLikes: number; totalDislikes: 0 };
   comments: IComment[];
+  likes: {
+    id: number;
+    employeeId: number;
+    isLike: boolean;
+  }[];
   // reactionCounts:
 }
 
 interface IComment {
-  id: number;
+  // id: number;
   content: string;
-  createdAt: Date;
+  // createdAt: Date;
   author: {
     id: id;
     firstName: string;
@@ -38,4 +43,11 @@ interface IComment {
   };
   // likes: (comment as any).likes || [],
   // reactions: (comment as any).reactions || [],
+}
+
+interface IStats {
+  commentsCount: number;
+  likesCount: number;
+  disLikesCount: number;
+  // reactionsByEmoji: object;
 }

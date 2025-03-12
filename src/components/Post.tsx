@@ -103,11 +103,16 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
         </p>
         {poll && <PollUI pollId={poll.id} />}
         <div className="">{renderMedia()}</div>
-        <FeedActions
-          commentCount={post?.stats?.totalComments}
-          likeCount={post?.stats?.totalLikes}
-          postId={post?.id || poll?.id || 0}
-        />
+        {post && currentUser && (
+          <FeedActions
+            postId={post.id}
+            userPrevLiked={
+              post.likes.find(
+                (item) => item.employeeId === currentUser.employee.id
+              )?.isLike
+            }
+          />
+        )}
       </section>
 
       <div className="hidden sm:block">

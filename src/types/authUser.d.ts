@@ -1,3 +1,5 @@
+import { Employee } from "./employee";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type ROLE = "HR" | "MANAGER" | "EMPLOYEE" | "ADMIN" | "MODERATOR";
 type lROLE = "hr" | "manager" | "employee" | "admin" | "moderator";
@@ -19,7 +21,7 @@ interface User {
   email: string;
   username: string;
   profileImage: string;
-  employee: any | null;
+  employee: Employee;
   role: Role;
   createdAt: string;
   updatedAt: string;
