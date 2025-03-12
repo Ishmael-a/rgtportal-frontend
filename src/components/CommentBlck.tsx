@@ -4,7 +4,6 @@ import { Input } from "./ui/input";
 import { useInteraction } from "@/hooks/use-interaction";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { User } from "@/types/authUser";
-import { Loader, Loader2 } from "lucide-react";
 import SendIcon from "@/assets/empNavCons/SendIcon";
 
 const CommentBlck: React.FC<{
@@ -72,10 +71,10 @@ const CommentBlck: React.FC<{
         </div>
 
         <div
-          className="px-[4px] py-[1px]  rounded-full flex items-center justify-center "
+          className="px-[4px] py-1  border-rgtpink border-2  rounded-full flex items-center justify-center hover:text-blue-400 hover:bg-pink-200 cursor-pointer transition-all duration-200 "
           onClick={handleSubmitComment}
         >
-          <SendIcon className="border-rgtpink border-2 p-[2px] w-9 h-9 rounded-full hover:bg-pink-200 transition-all duration-200 cursor-pointer hover:fill-[#EA5E9C] fill-[#452667] " />
+          <SendIcon className=" w-8 h-7 rounded-full  fill-[#EA5E9C]" />
         </div>
       </div>
     </section>
