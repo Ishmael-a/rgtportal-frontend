@@ -12,12 +12,18 @@ export const ROLES: RolesWithPermissions = {
   MANAGER: {
     ptoRequests: {
       approve: (user: User, request?: PTORequest) => request?.department_id === user.employee?.department_id
+    },
+    employeeRecords: {
+      view: true
     }
   },
   EMPLOYEE: {
     ptoRequests: {
       create: true,
       view: (user: User, request?: PTORequest) => request?.employee_id === user.id.toString()
+    },
+    employeeRecords: {
+      view: true
     }
   },
   ADMIN: {

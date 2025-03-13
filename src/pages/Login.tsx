@@ -167,20 +167,24 @@ const Login = () => {
       </div>
 
       {/* Right Side: Pattern and Image - Hidden on mobile */}
-      <div className="hidden md:flex w-full lg:w-[675px] md:w-1/2 bg-purpleaccent2 text-center px-4 lg:px-20 pb-20 flex-col justify-center order-1 md:order-2">
-        <div className="relative flex justify-end lg:mr-8 md:mr-3">
+      <div className="hidden md:flex w-full md:w-1/2 lg:w-1/2 2xl:w-1/2 bg-purpleaccent2 text-center px-4 lg:px-20 2xl:px-32 pb-20 flex-col justify-center order-1 md:order-2">
+        <div className="relative flex justify-end lg:mr-8 md:mr-3  2xl:mr-16">
           <img
-            className="absolute w-[123px] h-[128px] top-[-75px]"
+            className="absolute w-[123px] h-[128px] max-2xl:w-[180px] max-2xl:h-[190px] top-[-75px] max-2xl:top-[-100px]"
             src={rgtPattern}
             alt="Pattern"
           />
-          <div className="w-[81px] h-[71px] rounded-[8px] bg-rgtpurple"></div>
+          <div className="w-[81px] h-[71px] max-2xl:w-[120px] max-2xl:h-[110px] rounded-[8px] max-2xl:rounded-[16px] bg-rgtpurple"></div>
         </div>
 
-        <div className="relative mt-2 md:mt-0 mx-auto">
-          <div className="bg-rgtpurpleaccent2 lg:w-[294px] lg:h-[342px] md:w-[260px] md:h-[320px] rounded-t-[426px]"></div>
-          <div className="w-full lg:w-[800px] md:w-[700px] absolute lg:top-[-150px] md:top-[-173px] md:left-[300px]  lg:left-[380px] -translate-x-1/2">
-            <img src={envato} className="max-w-full h-auto " alt="Envato" />
+        <div className="relative mt-2 md:mt-0 mx-auto max-2xl:scale-125">
+          <div className="bg-rgtpurpleaccent2 lg:w-[294px] lg:h-[342px] md:w-[260px] md:h-[320px] max-2xl:w-[400px] max-2xl:h-[450px] rounded-t-[426px]"></div>
+          <div className="w-full lg:w-[800px] max-md:w-[700px] max-2xl:w-[1000px] absolute lg:top-[-150px] md:top-[-173px] max-2xl:top-[-103px] md:left-[300px] lg:left-[380px] max-2xl:left-[500px] -translate-x-1/2">
+            <img 
+              src={envato} 
+              className="max-w-full h-auto max-2xl:scale-125" 
+              alt="Envato" 
+            />
           </div>
         </div>
       </div>

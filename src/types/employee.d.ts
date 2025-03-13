@@ -6,6 +6,7 @@ interface IProjectCard {
   name: string;
   leadName?: string;
   path: string;
+  includeBgImg?: boolean
 }
 interface IProjectType {
   id: string | number;
@@ -59,24 +60,51 @@ interface IAvtrComponent {
   name: string;
 }
 
+interface EmployeeCardType {
+  id: string;
+  name: string;
+  position: string;
+  phone: string;
+  email: string;
+  imgSrc: string;
+}
+
+
+export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp"
+
+type WorkType =  "hybrid" | "remote"
+
+
+
+
 export interface Employee {
   id: number;
   firstName: string | null;
   lastName: string | null;
   phone: string | null;
+  birthDate?: Date | null;
+  skills?: string[] | null;
+  photoUrl?: string | null;
+  role?: string | null;
+  employeeType?: EmployeeType | null;
+  workType?: WorkType | null;
   position: string | null;
+  agency?: string | null;
   hireDate: Date | null;
+  endDate?: Date | null;
   sickDaysBalance: number;
   annualDaysOff: number;
   vacationDaysBalance: number;
+  leaveType?: string | null;
+  leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
-  
+
   givenRecognitions?: EmployeeRecognition[];
   receivedRecognitions?: EmployeeRecognition[];
   user?: User;
   department: Department;
   departmentId: number | null;
-  
+
   ptoRequests?: PtoRequest[];
   projectAssignments?: ProjectAssignment[];
   posts?: Post[];

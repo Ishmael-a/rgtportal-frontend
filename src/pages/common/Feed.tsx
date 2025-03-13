@@ -12,11 +12,11 @@ import {
   postText2,
   projectCards,
 } from "@/constants";
+import { Calendar } from "@/components/ui/calendar";
 import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
-import { Calendar } from "@/components/ui/calendar";
 import React from "react";
 
 const Feed = () => {

@@ -70,7 +70,7 @@ interface StatusUpdateDto {
   failReason?: string;
 }
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/recruitment`;
+const API_URL = `${import.meta.env.VITE_API_URL}/recruitment`;
 axios.defaults.withCredentials = true;
 
 export const useRecruitments = (
@@ -208,7 +208,7 @@ export const useRecruitment = (id: number | null, enabled = true) => {
 
 export const useUpdateRecruitmentStatus = () => {
   const queryClient = useQueryClient();
-  const API_URL = `${import.meta.env.VITE_API_BASE_URL}/api/recruitment`;
+  const API_URL = `${import.meta.env.VITE_API_URL}/recruitment`;
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: StatusUpdateDto }) => {

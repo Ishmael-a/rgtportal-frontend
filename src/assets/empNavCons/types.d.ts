@@ -1,1 +1,0 @@
-type IconTypes = { color?: string };

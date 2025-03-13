@@ -1,37 +1,49 @@
 import { NavDropdown } from "./NavDropdown";
 import { NavLink } from "react-router-dom";
+import FeedIcon from "@/assets/icons/FeedIcon"
+import MessageIcon from "@/assets/icons/MessageIcon"
+import TimeIcon from "@/assets/icons/TimeIcon"
+import CalendarIcon from "@/assets/icons/CalendarIcon"
+import ChartIcon from "@/assets/icons/ChartIcon"
+import EmployeesIcon from "@/assets/icons/EmployeesIcon"
+import ProfileAdd2 from "@/assets/icons/ProfileAdd2"
 
 export const HrSideBar = () => {
   const navItems = [
-    { icon: "/Feed.svg", label: "Feed", path: "feed" },
+    { icon: FeedIcon, label: "Feed", path: "feed" },
     {
-      icon: "/Employees.svg",
+      icon: EmployeesIcon,
       label: "Employees",
+      labelClassName: "ml-4",
       path: "/employees",
       items: [
         { label: "Manage Employees", path: "manageemployees" },
-        { label: "Employee Card", path: "employeecard" },
+        { label: "Employee Cards", path: "employeecards" },
         { label: "All Departments", path: "alldepartments" },
       ],
     },
     {
-      icon: "/Time.svg",
+      icon: TimeIcon,
       label: "Time Off",
+      labelClassName: "ml-4",
       path: "/time-off",
       items: [
-        { label: "Settings", path: "/settings" },
-        { label: "Help", path: "/help" },
+        { label: "My Time Off", path: "time-off" },
+        { label: "Employee Time Off", path: "emp-time-off" },
       ],
     },
-    { icon: "/AddProfile.svg", label: 'Recruitment', path: '/hr/recruitment',
+    { icon: ProfileAdd2, 
+      label: 'Recruitment',
+      labelClassName: "ml-3",
+      path: '/hr/recruitment',
       items: [
         { label: 'FullTime', path: '/hr/recruitment/employee' },
         { label: 'NSS', path: '/hr/recruitment/nss' }
       ] 
     },
-    { icon: "/Message28.svg", label: "Messages", path: "/messages" },
-    { icon: "/Calender2.svg", label: "Events", path: "/events" },
-    { icon: "/Chart.svg", label: "Reports", path: "/reports" },
+    { icon: MessageIcon, label: "Messages", path: "messages" },
+    { icon: CalendarIcon, label: "Events", path: "events" },
+    { icon: ChartIcon, label: "Reports", path: "reports" },
   ];
 
   return (
@@ -72,10 +84,10 @@ export const HrSideBar = () => {
             <NavDropdown
               items={item.items}
               label={item.label}
-              iconPath={item.icon}
+              icon={item.icon}
               className="w-48 "
-              iconClassName="mr-4"
-              itemlabelClassName="ml-4 text-sm"
+              labelClassName={item.labelClassName}
+              itemlabelClassName="ml-6 text-sm"
             />
           ) : (
             <NavLink
@@ -95,11 +107,12 @@ export const HrSideBar = () => {
                 <>
                   {/* Left accent bar */}
                   <span
-                    className={`absolute left-0 top-0 h-full w-[5px] rounded-r-xl transition-all
+                    className={`absolute left-0 top-0 h-full w-[5px] rounded-r-xl transition-all 
                     ${isActive ? "bg-purple-600" : "bg-transparent"}`}
                   />
-                  <img src={item.icon} className="h-6 w-6 mr-4" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  {/* <img src={item.icon} className="h-6 w-6 mr-4" /> */}
+                  {isActive ? <item.icon color="#9810fa" /> : <item.icon />}
+                  <span className="text-sm font-medium ml-4">{item.label}</span>
                 </>
               )}
             </NavLink>
