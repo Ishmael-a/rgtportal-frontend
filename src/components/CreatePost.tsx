@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Loader, Plus, Vote, X } from "lucide-react";
+import { Loader, Plus, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { PostService } from "@/api/services/posts.service";
@@ -14,6 +14,9 @@ import CustomSelect from "./common/Select";
 import { authService } from "@/api/services/auth.service";
 import { CreatePollDto } from "@/types/polls";
 import DatePicker from "./common/DatePicker";
+import PollIcon from "@/assets/icons/PollIcon";
+import VideoIcon from "@/assets/icons/VideoIcon";
+import PhotoIcon from "@/assets/icons/PhotoIcon";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
@@ -634,11 +637,11 @@ const CreatePost = () => {
 
       <div className="flex">
         {/* Creating actions */}
-        <div className="bg-rgtpink w-11/12 p-4 rounded-bl-2xl flex items-center justify-evenly text-white font-medium">
+        <div className="bg-rgtpink w-[75%] sm:w-[85%] p-4 rounded-bl-2xl flex items-center justify-evenly text-white font-medium">
           <div className="flex space-x-1 cursor-pointer transition-colors duration-300 ease-in  hover:bg-[#d55991] p-2 rounded-lg">
             <label htmlFor="image-upload" className="cursor-pointer flex gap-2">
-              <img src="/Image.svg" />
-              <p>Photo</p>
+              <PhotoIcon />
+              <p className="hidden sm:block">Photo</p>
             </label>
             <input
               id="image-upload"
@@ -651,8 +654,8 @@ const CreatePost = () => {
           </div>
           <div className="flex space-x-1 cursor-pointer transition-colors duration-300 ease-in  hover:bg-[#d55991] p-2 rounded-lg">
             <label htmlFor="video-upload" className="cursor-pointer flex gap-2">
-              <img src="/Video.svg" />
-              <p>Video</p>
+              <VideoIcon />
+              <p className="hidden sm:block">Video</p>
             </label>
             <input
               id="video-upload"
@@ -667,8 +670,8 @@ const CreatePost = () => {
             className="flex space-x-1 cursor-pointer transition-colors duration-300 ease-in  hover:bg-[#d55991] p-2 rounded-lg"
             onClick={handlePollClick}
           >
-            <Vote />
-            <p>Poll</p>
+            <PollIcon />
+            <p className="hidden sm:block">Poll</p>
           </div>
         </div>
         <button
@@ -680,7 +683,7 @@ const CreatePost = () => {
           {isSubmitting ? (
             <Loader size={20} className="animate-spin text-slate-500" />
           ) : (
-            <SendIcon className="p-4 rounded-br-2xl cursor-pointer  w-full h-full hover:fill-rgtpink transition-all duration-300 ease-in fill-[#2D264B]" />
+            <SendIcon className="p-4 rounded-br-2xl cursor-pointer w-16 h-16  hover:fill-rgtpink transition-all duration-300 ease-in fill-[#2D264B]" />
           )}
         </button>
       </div>
