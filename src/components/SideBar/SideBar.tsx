@@ -72,7 +72,7 @@ export const SideBar = () => {
                 {({ isActive }) => (
                   <div
                     className={`
-              flex items-center  justify-center md:justify-start  py-2.5 rounded-lg
+              flex items-center justify-start  py-2.5 rounded-lg
               transition-colors duration-200 font-medium  flex-1 text-[#706D8A]
               ${isActive ? "text-[#E328AF]" : "hover:bg-gray-50"}
               `}
@@ -82,7 +82,7 @@ export const SideBar = () => {
                         className={`h-[35px] w-[5px] bg-[#E328AF] rounded-r-full transition-all duration-300 ease-in`}
                       />
                     )}
-                    <div className="flex items-center gap-3 pl-4 transition-all duration-300 ease-in">
+                    <div className="flex items-center gap-3 w-full justify-center sm:justify-start sm:pl-5 transition-all duration-300 ease-in">
                       {isActive ? <item.icon color="#E328AF" /> : <item.icon />}
                       <span className="font-semibold text-lg hidden md:block">
                         {item.label}
