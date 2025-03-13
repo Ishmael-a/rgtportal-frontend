@@ -5,6 +5,7 @@ import { useInteraction } from "@/hooks/use-interaction";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { User } from "@/types/authUser";
 import SendIcon from "@/assets/icons/SendIcon";
+import EmojiIcon from "@/assets/icons/EmojiIcon";
 
 const CommentBlck: React.FC<{
   user: User | null;
@@ -20,9 +21,12 @@ const CommentBlck: React.FC<{
       lastName: currentUser?.employee?.lastName ?? "",
       profileImage: currentUser?.profileImage ?? "",
     },
+    createdAt: new Date(),
   });
 
-  const { addComment, isCommentLoading } = useInteraction(postId ?? 0);
+  const { addComment, isCommentLoading } = useInteraction(postId);
+
+  // console.log("statsCommnets:", stats);
 
   const handleSubmitComment = async () => {
     try {
@@ -36,10 +40,12 @@ const CommentBlck: React.FC<{
     }
   };
 
+ 
+
   if (!user) return;
 
   return (
-    <section className="border-t px-2 pt-4 flex items-center space-x-2">
+    <section className="border-t pt-4 flex items-center space-x-2">
       <Avatar>
         <AvatarImage
           src={user.profileImage}
@@ -64,10 +70,12 @@ const CommentBlck: React.FC<{
         </div>
 
         <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
-          <img
+          {/* <img
             src="/Smile.svg"
             className=" border-2 p-[8px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
-          />
+          /> */}
+
+          <EmojiIcon />
         </div>
 
         <div

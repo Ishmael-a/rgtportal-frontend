@@ -26,6 +26,7 @@ interface IProjectMembers {
 interface IFeed {
   poll?: Poll;
   post?: IPost;
+  postId?:number
 }
 
 interface IAnnouncementCard {

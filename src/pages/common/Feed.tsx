@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Poll } from "@/types/polls";
 import { PostService } from "@/api/services/posts.service";
 import { FeedSkeleton } from "./FeedSkeleton";
+import PollUI from "@/components/PollUI";
 
 const Feed = () => {
   const [date, setDate] = React.useState<Date>();
@@ -76,7 +77,9 @@ const Feed = () => {
   }
 
   return (
-    <main className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0`}>
+    <main
+      className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0 pb-10`}
+    >
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
         style={{
@@ -157,13 +160,19 @@ const Feed = () => {
             <header className="font-semibold text-lg text-[#706D8A]">
               For you
             </header>
-            {mergedFeed.map((item) => (
-              <Post
-                key={item.id}
-                poll={item.feedType === "poll" ? item : undefined}
-                post={item.feedType === "post" ? item : undefined}
-              />
-            ))}
+            <div className="space-y-5">
+              {mergedFeed.map((item) => (
+                <React.Fragment key={item.id}>
+                  {item.feedType === "post" ? (
+                    <Post post={item} postId={item.id} />
+                  ) : item.feedType === "poll" ? (
+                    <PollUI pollId={item.id} /> // Render PollUI directly for polls
+                  ) : (
+                    <div>No post or poll data available</div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
         </section>
       </div>

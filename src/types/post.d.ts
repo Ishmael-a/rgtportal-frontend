@@ -32,9 +32,9 @@ interface IPost {
 }
 
 interface IComment {
-  // id: number;
+  id?: number;
   content: string;
-  // createdAt: Date;
+  createdAt: Date;
   author: {
     id: id;
     firstName: string;
@@ -49,5 +49,6 @@ interface IStats {
   commentsCount: number;
   likesCount: number;
   disLikesCount: number;
+  comments:IComment[]
   // reactionsByEmoji: object;
 }

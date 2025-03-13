@@ -1,14 +1,23 @@
 import AvtrBlock from "./AvtrBlock";
 import FeedActions from "./feedActions";
 import CommentBlck from "./CommentBlck";
-import PollUI from "./PollUI";
 import { MoreVertical } from "lucide-react";
 import Media from "./Media";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { IFeed } from "@/types/employee";
+import { useInteraction } from "@/hooks/use-interaction";
+import Comments from "./Feed/Comments";
+import { useState } from "react";
 
-const Post: React.FC<IFeed> = ({ poll, post }) => {
+const Post: React.FC<IFeed> = ({ post }) => {
   const { currentUser } = useAuthContextProvider();
+  const { stats } = useInteraction(post?.id);
+
+  const [isComments, setIsComments] = useState(false);
+
+  const handleIsComments = (val: boolean) => {
+    setIsComments(val);
+  };
 
   const formatText = (text: string | undefined) => {
     if (!text) {
@@ -89,6 +98,18 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
       );
     }
   };
+  let recentlyPostedComment;
+
+  if (stats.comments.length > 0) {
+    console.log("commentsShow:", stats.comments);
+    recentlyPostedComment = stats.comments
+      .filter((item) => item.author.id === currentUser?.employee?.id)
+      .sort(
+        (a, b) =>
+          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
+      )[0];
+    console.log("recentlyPostedComment:", recentlyPostedComment);
+  }
 
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
@@ -98,10 +119,7 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
       </section>
 
       <section className="pt-3 space-y-3">
-        <p className="text-sm">
-          {formatText(post?.content || poll?.description)}
-        </p>
-        {poll && <PollUI pollId={poll.id} />}
+        <p className="text-sm">{formatText(post?.content)}</p>
         <div className="">{renderMedia()}</div>
         {post && currentUser && (
           <FeedActions
@@ -111,6 +129,7 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
                 (item) => item.employeeId === currentUser.employee.id
               )?.isLike
             }
+            onComments={handleIsComments}
           />
         )}
       </section>
@@ -121,6 +140,18 @@ const Post: React.FC<IFeed> = ({ poll, post }) => {
       <div className="sm:hidden pt-2 border-t">
         <p className="text-sm font-medium text-rgtpink">Reply Post</p>
       </div>
+
+      <section className="space-y-6">
+        <div className="w-full border-t mt-5 pt-4 flex gap-3">
+          {recentlyPostedComment && <Comments {...recentlyPostedComment} />}
+        </div>
+        {isComments &&
+          stats.comments.map((item, index) => (
+            <div className="w-full flex gap-3">
+              <Comments {...item} key={index} />
+            </div>
+          ))}
+      </section>
     </div>
   );
 };

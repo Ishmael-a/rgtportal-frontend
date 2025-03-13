@@ -5,9 +5,12 @@ import { useState } from "react";
 const FeedActions = ({
   postId,
   userPrevLiked,
+  onComments,
 }: {
   postId: number;
   userPrevLiked: boolean | undefined;
+  onComments: (val: boolean) => void;
+  // setIsComments: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [liked, setLiked] = useState(userPrevLiked || false);
   const [commented, setCommented] = useState(false);
@@ -24,20 +27,10 @@ const FeedActions = ({
     toggleLike(!liked);
   };
 
-  // const handleComment = () => {
-  //   const newComment: IComment = {
-  //     id: Date.now(),
-  //     content: "New comment",
-  //     author: {
-  //       id: Date.now(),
-  //       firstName: "Theo",
-  //       lastName: "Frimpong",
-  //       profileImage: "http//:mattter",
-  //     },
-  //     createdAt: new Date(),
-  //   };
-  //   addComment(newComment);
-  // };
+  const showComments = () => {
+    setCommented(!commented);
+    onComments(!commented);
+  };
 
   const handleBookmark = () => {
     setBookmarked(!bookmarked);
@@ -64,7 +57,7 @@ const FeedActions = ({
         <div className="flex items-center">
           <div
             className="p-[6px] rounded-full hover:bg-purple-100 transition-colors duration-200 cursor-pointer"
-            onClick={() => setCommented(!commented)}
+            onClick={showComments}
           >
             <MessageSquareMore
               className={`text-[#94A3B8] ${

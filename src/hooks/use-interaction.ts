@@ -1,8 +1,12 @@
 import { PostInteractionService } from "@/api/services/post-interaction.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useInteraction = (postId: number) => {
+export const useInteraction = (postId: number | undefined) => {
   const queryClient = useQueryClient();
+
+  if (postId === undefined) {
+    throw new Error("postId is undefined");
+  }
 
   const { data: stats, refetch: refetchStats } = useQuery({
     queryKey: ["postStats", postId],
@@ -22,7 +26,12 @@ export const useInteraction = (postId: number) => {
       queryClient.setQueryData(
         ["postStats", postId],
         (old: IStats | undefined) => ({
-          ...(old || { commentsCount: 0, likesCount: 0, disLikesCount: 0 }),
+          ...(old || {
+            commentsCount: 0,
+            likesCount: 0,
+            disLikesCount: 0,
+            comments: [],
+          }),
           commentsCount: (old?.commentsCount || 0) + 1,
         })
       );
@@ -37,8 +46,7 @@ export const useInteraction = (postId: number) => {
   });
 
   const likeToggleMutation = useMutation({
-    mutationFn: (liked: boolean) =>
-      PostInteractionService.likePost(postId, liked),
+    mutationFn: (liked: boolean) => PostInteractionService.likePost(postId, liked),
     onMutate: async (liked: boolean) => {
       await queryClient.cancelQueries({ queryKey: ["postStats", postId] });
       const previousStats = queryClient.getQueryData<IStats>([
@@ -48,7 +56,12 @@ export const useInteraction = (postId: number) => {
       queryClient.setQueryData(
         ["postStats", postId],
         (old: IStats | undefined) => ({
-          ...(old || { commentsCount: 0, likesCount: 0, disLikesCount: 0 }),
+          ...(old || {
+            commentsCount: 0,
+            likesCount: 0,
+            disLikesCount: 0,
+            comments: [],
+          }),
           likesCount: (old?.likesCount || 0) + (liked ? 1 : -1),
         })
       );
@@ -71,7 +84,12 @@ export const useInteraction = (postId: number) => {
   };
 
   return {
-    stats: stats || { commentsCount: 0, likesCount: 0, disLikesCount: 0 },
+    stats: stats || {
+      commentsCount: 0,
+      likesCount: 0,
+      disLikesCount: 0,
+      comments: [],
+    },
     addComment,
     isCommentLoading: commentMutation.isPending,
     toggleLike,
