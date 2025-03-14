@@ -171,22 +171,17 @@ const Login = () => {
 
       {/* Right Side: Pattern and Image - Hidden on mobile */}
       <div className="hidden px-auto md:flex w-full  md:w-1/2 lg:w-1/2  xl:w-1/2 2xl:w-1/2 bg-purpleaccent2 text-center pb-20 flex-col justify-center order-1 md:order-2">
-        <div className="h-full bg-yellow-400 items-center md:flex mx-auto ">
-          <div className="bg-green-500 ">
-            <img 
-              src={loginMainImg} 
-              alt="MainLogin Image"
-              className="xl:scale-125 2xl:scale-150"
-            />
-          </div>
-
-          <div className="h-full pt-30">
-            <img 
-              src={rgtpatternimg1}
-              className="lg:scale-125"
+            <div className="relative  flex justify-center h-fit ">
+              <img 
+                src={loginMainImg} 
+                alt="MainLogin Image"
+                className="xl:scale-130"
               />
-          </div>
-        </div>
+              <img 
+                src={rgtpatternimg1}
+                className="absolute right-1/5 md:right-1/8 top-0"
+              />
+            </div>
       </div>
 
     </div>
