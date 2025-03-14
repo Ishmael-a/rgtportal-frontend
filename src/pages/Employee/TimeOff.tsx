@@ -6,7 +6,7 @@ import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {  timeOffTableColumns } from "@/constants";
+import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
@@ -18,6 +18,15 @@ export default function TimeOff() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { createPto, ptoData } = useRequestPto();
+
+  const formattedPtoData = ptoData?.map((item) => ({
+    ...item,
+    total: `${Math.ceil(
+      (new Date(item.endDate as Date).getTime() -
+        new Date(item.startDate as Date).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )} days`,
+  }));
 
   const initialFormValues = {
     type: "vacation",
@@ -84,7 +93,7 @@ export default function TimeOff() {
         <DataTable
           columns={timeOffTableColumns}
           // data={timeOffDummy}
-          data={ptoData}
+          data={formattedPtoData}
           actionBool={true}
           actionObj={[
             { name: "view", action: () => setAppRej(!appRej) },

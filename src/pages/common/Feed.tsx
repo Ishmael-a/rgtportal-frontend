@@ -14,13 +14,13 @@ import { PollService } from "@/api/services/poll.service";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "@/types/polls";
 import { PostService } from "@/api/services/posts.service";
-import { FeedSkeleton } from "./FeedSkeleton";
+import { FeedSkeleton } from "../../FeedSkeleton";
 import PollUI from "@/components/PollUI";
 import WithRole from "@/common/WithRole";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const Feed = () => {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
   const { currentUser: user } = useAuthContextProvider();
 
@@ -229,7 +229,7 @@ const Feed = () => {
                 </Link>
               </div>
 
-              {/* Events List */}
+            
               <div className="flex flex-col space-y-5">
                 {eventList.map((event, index) => (
                   <EventList
