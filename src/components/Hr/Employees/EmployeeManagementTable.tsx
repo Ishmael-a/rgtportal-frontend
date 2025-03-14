@@ -149,7 +149,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
           </div>
           <div>
             <div className="font-medium">{row.firstName} {row.lastName}</div>
-            <div className="text-xs text-gray-500">{row.role || "N/A"}</div>
+            <div className="text-xs text-gray-500">{row.user?.role?.name || "N/A"}</div>
           </div>
         </div>
       ),
@@ -167,7 +167,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     {
       key: "email",
       header: "Email",
-      render: (row) => <div>{row.email || "N/A"}</div>,
+      render: (row) => <div>{row.user?.email || "N/A"}</div>,
     },
     {
       key: "phoneNumber",

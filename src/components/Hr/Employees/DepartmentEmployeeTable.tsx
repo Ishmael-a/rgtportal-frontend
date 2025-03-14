@@ -109,8 +109,8 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
       : []),
     ...(hasAccess("employeeRecords", 'edit')
       ? [{
-        name: 'edit',
-        action: () => console.log('Edit clicked')
+        name: 'delete',
+        action: () => console.log('Delete clicked')
       }]
       : [])
   ];

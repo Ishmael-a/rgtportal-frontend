@@ -9,8 +9,8 @@ interface Role {
 }
 
 interface ResponseUserRole {
-  id: number;
   name: lRole;
+  id: number;
   description: string;
 }
 
