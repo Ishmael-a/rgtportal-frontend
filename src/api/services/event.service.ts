@@ -12,8 +12,8 @@ const eventApiClient = createApiClient(
 
 export const eventService =  {
 
-    getAllEvents: async (): Promise<ApiResponse<Event>> => {
-        const response = await eventApiClient.post<ApiResponse<Event>>("/");
+    getAllEvents: async (): Promise<ApiResponse<Event[]>> => {
+        const response = await eventApiClient.get<ApiResponse<Event[]>>("/");
         return response.data;
     },
 

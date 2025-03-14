@@ -45,7 +45,6 @@ export const SideFormModal = <T extends FormikValues>({
   validationSchema,
   buttonClassName,
   formClassName,
-  enableReinitialize = false,
   onSubmit,
   submitBtnText = "Create",
   isSubmitting,
@@ -72,7 +71,6 @@ export const SideFormModal = <T extends FormikValues>({
         <Formik
           initialValues={initialFormValues}
           validationSchema={validationSchema}
-          enableReinitialize ={enableReinitialize}
           onSubmit={(values, helpers) => {
             if (onSubmit) onSubmit(values as T, helpers as FormikHelpers<T>);
           }}

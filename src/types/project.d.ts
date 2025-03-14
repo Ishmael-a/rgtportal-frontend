@@ -1,4 +1,4 @@
-interface Project {
+export interface Project {
   id: number;
   leadId: number;
   name: string;
@@ -18,4 +18,8 @@ interface ProjectAssignment {
   role: string;
   project: Project;
   employee: Employee;
+}
+
+interface ProjectQueryParams {
+  includeAssignment?: boolean;
 }

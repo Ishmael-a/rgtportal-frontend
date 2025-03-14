@@ -1,12 +1,13 @@
 import { eventService } from "../services/event.service"
 import { useMutation, useQuery, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
-import { CreateEventDto } from "@/types/events";
 import { toast } from '@/hooks/use-toast';
+import { ApiResponse } from '../types';
+import { CreateEventDto, Event } from '@/types/events';
 
 
-export const useGetAllEvents = () => {
+export const useAllEvents = () => {
 
-  return useQuery({
+  return useQuery<ApiResponse<Event[]>>({
    queryKey: ['events'],
    queryFn: () => eventService.getAllEvents(),
   });

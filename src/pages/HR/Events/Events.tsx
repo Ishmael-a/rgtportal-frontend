@@ -11,9 +11,7 @@ import { Plus, Trash } from "lucide-react";
 import {
   hrannouncements,
   announcements,
-  events,
   eventList,
-  dummyProjects,
   EventType
 } from "@/constants";
 
@@ -48,16 +46,23 @@ import {
 
 import { Employee } from "@/types/employee";
 import { Event, CreateEventDto } from "@/types/events";
+import { CreateRecognitionDto, EmployeeRecognition } from "@/types/recognition";
 import { getApiErrorMessage } from "@/api/errorHandler";
 
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
-import { useCreateEvent } from "@/api/query-hooks/event.hooks";
+import { useCreateEvent, useAllEvents } from "@/api/query-hooks/event.hooks";
+import { useAllProjects } from "@/api/query-hooks/project.hooks";
+import { useCreateMultipleRecognitions, useCreateSingleRecognition } from "@/api/query-hooks/recognition.hooks";
 import { toast } from "@/hooks/use-toast";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 
 interface CreateEventResult { success: boolean; response: Event | null; error: Error | null  }
-
+interface CreateRecognitionResult {
+  success: boolean;
+  response: EmployeeRecognition | EmployeeRecognition[] | null;
+  error: Error | null;
+}
 
 interface ISpecialEventTypes {
   id: "1" | "2";
@@ -89,7 +94,7 @@ interface SpecialEventFormValues {
   formType: '1';
   eventType: string;
   holidayName?: string;
-  employeeName?: string;
+  employeeId?: string;
   date: Date;
 }
 
@@ -104,8 +109,8 @@ interface RecognitionFormValues {
   formType: '3';
   title: string;
   recognitionList: {
-    employeeName: string;
-    projectName: string;
+    employeeId: string;
+    projectId: string;
   }[];
 }
 
@@ -125,6 +130,10 @@ const Events = () => {
   const [projectPopoverOpenStates, setProjectPopoverOpenStates] = useState<PopoverStates>({});
 
   const createEventMutation = useCreateEvent();
+  const multiRecognitionMutation = useCreateMultipleRecognitions();
+  const singleRecognitionMutation = useCreateSingleRecognition();
+
+
 
   const handlePopoverOpenChange = (index: number, open: boolean) => {
     setPopoverOpenStates((prevStates) => ({
@@ -141,6 +150,14 @@ const Events = () => {
   };
 
   const {
+    data: eventsData, 
+    isLoading: isEventsLoading,
+    isError: isEventsError,
+    error: eventsError,
+  } = useAllEvents();
+
+
+  const {
     data: users = [], 
     isLoading: isEmployeesLoading,
     isError: isEmployeesError
@@ -151,16 +168,28 @@ const Events = () => {
     }
   );
 
-//   const {
-//     data: projects = [],
-//     isLoading: isProjectsLoading,
-//     isError: isProjectsError
-//   } = useAllProjects(
-//     {},
-//     {
-//         enabled: isModalOpen
-//     }
-//     );
+
+    const {
+      data,
+      isLoading: isProjectsLoading,
+      isError: isProjectsError
+    } = useAllProjects(
+      {},
+      {
+          enabled: isModalOpen
+      }
+    );
+
+    const projects = data?.data || [];
+
+    if(!eventsData || !eventsData.success || eventsError){
+      console.log("Events Data", eventsData)
+      console.log("Error Fetching Events", eventsError)
+      return null;
+    }
+
+    const events = eventsData?.data || [];
+
 
   const getEventInitialValues = () => {
     switch (selectedSpecialEventType) {
@@ -173,13 +202,13 @@ const Events = () => {
       case "2":
         return {
           eventType: specialEventTypes[1].label, 
-          employeeName: "",
+          employeeId: "",
           date: new Date()
         };
       default:
         return {
           eventType: specialEventTypes[0].label,
-          employeeName: "",
+          employeeId: "",
           date: new Date()
         };
     }
@@ -199,13 +228,13 @@ const Events = () => {
       case "2":
         return Yup.object({
           eventType: Yup.string().required('Event type is required'),
-          employeeName: Yup.string().required('Employee name is required'),
+          employeeId: Yup.string().required('Employee name is required'),
           date: Yup.date().required('Date of event is required'),
         });
       default:
         return Yup.object({
           eventType: Yup.string().required('Event type is required'),
-          employeeName: Yup.string().required('Employee name is required'),
+          employeeId: Yup.string().required('Employee name is required'),
           date: Yup.date().required('Date of event is required'),
         });
     }
@@ -231,8 +260,8 @@ const Events = () => {
           title: '',
           recognitionList: [
             {
-              employeeName: "",
-              projectName: ""
+              employeeId: "",
+              projectId: ""
             }
           ]
         };
@@ -267,14 +296,12 @@ const Events = () => {
           recognitionList: Yup.array()
             .of(
               Yup.object().shape({
-                employeeName: Yup.string()
+                employeeId: Yup.string()
                   .trim()
                   .required('Employee name is required'),
-                projectName: Yup.string()
+                projectId: Yup.string()
                   .trim()
                   .required('Project name is required')
-                  .min(2, 'Project name must be at least 2 characters')
-                  .max(200, 'Project name cannot exceed 200 characters')
               })
             )
             .min(1, 'At least one recognition list is required')
@@ -367,43 +394,30 @@ const Events = () => {
       case "2":
         return (
           <div className="space-y-4">
-          <Field name="employeeName">
-            {({ field, form: { values, touched, errors, setFieldValue } }: { field: FieldInputProps<string>; form: any }) => {
-              // Get the current field value
-              const employeeNameValue = values.employeeName || '';
-              
-              // Find the selected employee from the users array
-              const selectedEmployee = users.find(emp => 
-                emp.id.toString() === employeeNameValue?.toString() // Ensure string comparison
-              );
-
-              console.log('Form value:', values.employeeName, 'Type:', typeof employeeNameValue);
-              
-              // Create the display name for the input
-              const displayName = selectedEmployee 
-                ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}`
-                : ''; // Empty string when no employee is selected
-
-              return (
+            <Field name="employeeId">
+              {({ field, form: { values, touched, errors, setFieldValue } }: { field: FieldInputProps<string>; form: any }) => 
+              { 
+                console.log("Form Value For employeeId", values.employeeId);
+                return (
                 <div className="flex flex-col space-y-2">
-                  <label htmlFor="employeeName" className="text-sm font-semibold text-gray-700 mb-1 block">
+                  <label htmlFor="employeeId" className="text-sm font-semibold text-gray-700 mb-1 block">
                     Employee
                   </label>
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <div className="relative">
                         <Input
-                          id="employeeName"
-                          value={displayName}
+                          id="employeeId"
+                          value={selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}` : ''}
                           onChange={(e) => {
                             setOpen(true);
                           }}
                           onClick={() => setOpen(true)}
                           placeholder="Select employee"
-                          className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${touched.employeeName && errors.employeeName ? "border-red-500" : ""}`}
+                          className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${touched.employeeId && errors.employeeId ? "border-red-500" : ""}`}
                         />
-                        {touched.employeeName && errors.employeeName && (
-                          <div className="text-red-500 text-sm mt-1">{errors.employeeName}</div>
+                        {touched.employeeId && errors.employeeId && (
+                          <div className="text-red-500 text-sm mt-1">{errors.employeeId}</div>
                         )}
                       </div>
                     </PopoverTrigger>
@@ -419,6 +433,7 @@ const Events = () => {
                                 value={`${employee.firstName} ${employee.lastName}`}
                                 onSelect={() => {
                                   setFieldValue(field.name, employee.id.toString());
+                                  setSelectedEmployee(employee); 
                                   setOpen(false);
                                 }}
                               >
@@ -441,9 +456,8 @@ const Events = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
-              );
-            }}
-          </Field>
+              )}}
+            </Field>
 
             <Field name="date">
               {({ field, form }: { field: FieldInputProps<string>; form: any }) => (
@@ -515,6 +529,7 @@ const Events = () => {
                     key={eventType.id}
                     type="button"
                     onClick={() => {
+                      setSelectedEmployee(null);
                       setSelectedSpecialEventType(eventType.id);
                     }}
                     className={`
@@ -659,13 +674,13 @@ const Events = () => {
                   {(form.values.recognitionList || []).map((_: any, index: number) => (
                     <div key={index} className=" space-y-4">
                       <div className="flex gap-1 items-center">
-                        <Field name={`recognitionList.${index}.employeeName`}>
+                        <Field name={`recognitionList.${index}.employeeId`}>
                           {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
                             const [hasOpened, setHasOpened] = useState(false);
-                            const employeeNameValue = values.employeeName || '';
-                            // const selectedEmployee = users.find(emp => emp.id === employeeNameValue);
+                            const employeeIdValue = values.employeeId || '';
+                            // const selectedEmployee = users.find(emp => emp.id === employeeIdValue);
                             // const displayName = selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}` : '';
-                            const employeeError = touched.recognitionList?.[index]?.employeeName && errors.recognitionList?.[index]?.employeeName;
+                            const employeeError = touched.recognitionList?.[index]?.employeeId && errors.recognitionList?.[index]?.employeeId;
 
                             return (
                               <div className="w-full">
@@ -677,9 +692,9 @@ const Events = () => {
                                     <div className="relative">
                                       <Input
                                         {...field}
-                                        id={`recognitionList.${index}.employeeName`}
-                                        value={values.recognitionList[index].employeeName ? 
-                                          `${users.find(u => u.id === values.recognitionList[index].employeeName)?.firstName} ${users.find(u => u.id === values.recognitionList[index].employeeName)?.lastName}` : 
+                                        id={`recognitionList.${index}.employeeId`}
+                                        value={values.recognitionList[index].employeeId ? 
+                                          `${users.find(u => u.id === values.recognitionList[index].employeeId)?.firstName} ${users.find(u => u.id === values.recognitionList[index].employeeId)?.lastName}` : 
                                           ''}
                                         onClick={() => {
                                           handlePopoverOpenChange(index, true);
@@ -689,7 +704,7 @@ const Events = () => {
                                         className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${employeeError ? "border-red-500" : ""}`}
                                         onBlur={() => {
                                           if (!hasOpened) {
-                                            setFieldTouched(`recognitionList.${index}.employeeName`, true);
+                                            setFieldTouched(`recognitionList.${index}.employeeId`, true);
                                           }
                                         }}
                                       />
@@ -708,7 +723,7 @@ const Events = () => {
                                               .filter((employee) => {
                                                 // Check if the employee is already selected in recognitionList
                                                 return !values.recognitionList.some(
-                                                  (item: any) => item.employeeName === employee.id
+                                                  (item: any) => item.employeeId === employee.id
                                                 );
                                               })
                                               .map((employee) => (
@@ -743,10 +758,10 @@ const Events = () => {
                           }}
                         </Field>
 
-                        <Field name={`recognitionList.${index}.projectName`}>
+                        <Field name={`recognitionList.${index}.projectId`}>
                           {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
                             const [hasOpenedProject, setHasOpenedProject] = useState(false);
-                            const projectError = touched.recognitionList?.[index]?.projectName && errors.recognitionList?.[index]?.projectName;
+                            const projectError = touched.recognitionList?.[index]?.projectId && errors.recognitionList?.[index]?.projectId;
 
                             return (
                               <div className="w-full">
@@ -758,9 +773,9 @@ const Events = () => {
                                     <div className="relative">
                                       <Input
                                         {...field}
-                                        id={`recognitionList.${index}.projectName`}
-                                        value={values.recognitionList[index].projectName ? 
-                                          dummyProjects.find(p => p.id === values.recognitionList[index].projectName)?.name : 
+                                        id={`recognitionList.${index}.projectId`}
+                                        value={values.recognitionList[index].projectId ? 
+                                          projects.find(p => p.id === values.recognitionList[index].projectId)?.name : 
                                           ''}
                                         onClick={() => {
                                           handleProjectPopoverOpenChange(index, true);
@@ -770,7 +785,7 @@ const Events = () => {
                                         className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${projectError ? "border-red-500" : ""}`}
                                         onBlur={() => {
                                           if (!hasOpenedProject) {
-                                            setFieldTouched(`recognitionList.${index}.projectName`, true);
+                                            setFieldTouched(`recognitionList.${index}.projectId`, true);
                                           }
                                         }}
                                       />
@@ -785,25 +800,33 @@ const Events = () => {
                                       <CommandList>
                                         <CommandEmpty>No projects found.</CommandEmpty>
                                         <CommandGroup>
-                                          {dummyProjects.map((project) => (
-                                            <CommandItem
-                                              key={project.id}
-                                              value={project.name}
-                                              onSelect={() => {
-                                                setFieldValue(`recognitionList.${index}.projectName`, project.id);
-                                                handleProjectPopoverOpenChange(index, false);
-                                              }}
-                                            >
-                                              <div className="flex justify-between w-full py-[13px]">
-                                                <div className="flex gap-2 items-center">
-                                                  <span className="flex">{project.name}</span>
-                                                </div>
-                                                <span className="text-muted-foreground text-sm">
-                                                  {project.status}
-                                                </span>
+                                        {projects.length > 0 ? (
+                                        projects.map((project) => (
+                                          <CommandItem
+                                            key={project.id}
+                                            value={project.name}
+                                            onSelect={() => {
+                                              setFieldValue(`recognitionList.${index}.projectId`, project.id);
+                                              handleProjectPopoverOpenChange(index, false);
+                                            }}
+                                          >
+                                            <div className="flex justify-between w-full py-[13px]">
+                                              <div className="flex gap-2 items-center">
+                                                <span className="flex">{project.name}</span>
                                               </div>
-                                            </CommandItem>
-                                          ))}
+                                              <span className="text-muted-foreground text-sm">
+                                                {project.status}
+                                              </span>
+                                            </div>
+                                          </CommandItem>
+                                        ))
+                                        ) : (
+                                        <div className="flex justify-between w-full py-[13px]">
+                                          <div className="flex gap-2 items-center">
+                                            <span className="flex">No Projects To Show</span>
+                                          </div>
+                                        </div>
+                                        )}
                                         </CommandGroup>
                                       </CommandList>
                                     </Command>
@@ -832,7 +855,7 @@ const Events = () => {
                     <Button
                       type="button"
                       variant="link"
-                      onClick={() => push({ employeeName: '', projectName: '' })}
+                      onClick={() => push({ employeeId: '', projectId: '' })}
                       className="text-rgtpurpleaccent2 text-sm py-2 items-center justify-start hover:underline"
                     >
                       <Plus />
@@ -850,64 +873,109 @@ const Events = () => {
   };
 
 
-const handleSubmit = async (
-  values: FormValues, 
-  { 
-    setSubmitting, 
-    setErrors, 
-    resetForm 
-  }: FormikHelpers<FormValues>
-) => {
-  try {
-    setSubmitting(true);
-
-    const createEventPayload = transformFormValuesToEventDto(values);
-
-    const result = await createEvent(createEventPayload);
-
-    if (!result.success) {
-      throw result.error;
-    }
-
-    toast({
-      title: "Success",
-      description: "Event created successfully",
-      variant: "default"
-    });
-
-    resetForm();
-    setIsModalOpen(false);
-
-  } catch (error) {
-    if (error instanceof Yup.ValidationError) {
-      const validationErrors: { [key: string]: string } = {};
+  const handleSubmit = async (
+    values: FormValues, 
+    { 
+      setSubmitting, 
+      setErrors, 
+      resetForm 
+    }: FormikHelpers<FormValues>
+  ) => {
+    try {
+      setSubmitting(true);
+      console.log("Before Submiting");
       
-      error.inner.forEach((err) => {
-        if (err.path) {
-          validationErrors[err.path] = err.message;
-        }
-      });
-      
-      setErrors(validationErrors);
-    } 
-    else {
-      const errorMessage = getApiErrorMessage(error);
-      
+
+      const transformedData = transformFormValuesToEventDto(      
+        values, 
+        currentUser, 
+        users
+      );
+
+      let result;
+
+
+      if (values.formType === '3') {
+        console.log("About to create recognition");
+        result = await createRecognition(transformedData as CreateRecognitionDto|CreateRecognitionDto[]);
+      } else {
+        result = await createEvent(transformedData as CreateEventDto);
+      }
+
+      if (!result.success) {
+        throw result.error;
+      }
+
       toast({
-        title: "Error",
-        description: errorMessage.message,
-        variant: "destructive"
+        title: "Success",
+        description: `${values.formType === '3'? "Recognition":"Event"} created successfully`,
+        variant: "default"
       });
+
+      resetForm();
+      setIsModalOpen(false);
+
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        const validationErrors: { [key: string]: string } = {};
+        
+        error.inner.forEach((err) => {
+          if (err.path) {
+            validationErrors[err.path] = err.message;
+          }
+        });
+        
+        setErrors(validationErrors);
+      } 
+      else {
+        const errorMessage = getApiErrorMessage(error);
+        
+        toast({
+          title: "Error",
+          description: errorMessage.message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setSubmitting(false);
+      setSelectedEmployee(null);
     }
-  } finally {
-    setSubmitting(false);
-  }
-};
-
-
+  };
 
   // Transform form values to CreateEventDto
-  const transformFormValuesToEventDto = (values: FormValues): CreateEventDto => {
+  const transformFormValuesToEventDto = (
+    values: FormValues, 
+    currentUser: User | null, 
+    users: Employee[])
+    : CreateEventDto|CreateRecognitionDto|CreateRecognitionDto[] => {
+
+      const getCurrentUserId = (): number => {
+        if (!currentUser) {
+          throw new Error('No authenticated user found');
+        }
+        
+        const user = users.find(u => u.user?.id === currentUser.id);
+        if (!user) {
+          throw new Error('Current user not found in user list');
+        }
+        
+        return user.id;
+      };
+
+      // Validate project and employee IDs
+      const validateNumericId = (id: string | number | undefined, fieldName: string): number => {
+        if (id === undefined || id === null) {
+          throw new Error(`${fieldName} is required`);
+        }
+        
+        const numericId = Number(id);
+        if (isNaN(numericId) || numericId <= 0) {
+          throw new Error(`Invalid ${fieldName}`);
+        }
+        
+        return numericId;
+      };
+
 
     switch (values.formType) {
       case '1': {
@@ -922,7 +990,7 @@ const handleSubmit = async (
         return {
           title: specialEvent.eventType === 'Holiday' 
             ? specialEvent.holidayName || 'Holiday Event' 
-            : `${specialEvent.employeeName || 'Employee'} Birthday`,
+            : `${specialEvent.employeeId || 'Employee'} Birthday`,
           description: specialEvent.eventType,
           startTime: startOfDay,
           endTime: endOfDay,
@@ -951,20 +1019,35 @@ const handleSubmit = async (
       case '3': {
         // Recognition
         const recognition = values as RecognitionFormValues;
-        const today = new Date();
-        const startOfToday = new Date(today.setHours(0, 0, 0, 0)); 
-        const endOfWeek = new Date(today.setDate(today.getDate() + 7));
-        endOfWeek.setHours(23, 59, 59, 999); 
-
-        return {
-          title: recognition.title,
-          description: recognition.recognitionList
-            .map(item => `${item.employeeName} - ${item.projectName}`)
-            .join('; '),
-          startTime: startOfToday, 
-          endTime: endOfWeek,
-          type: EventType.OTHER,
-        };
+        
+        
+        if (!recognition.title || recognition.title.trim() === '') {
+          throw new Error('Recognition message is required');
+        }
+        
+        if (!recognition.recognitionList || recognition.recognitionList.length === 0) {
+          throw new Error('No recognition details provided');
+        }
+        
+        console.log("Recognition Title", recognition.title, "Recognition", recognition)
+        
+        const currentUserId = getCurrentUserId();
+        console.log("CurrentUserId", currentUserId)
+        
+        const recognitionDtos: CreateRecognitionDto[] = recognition.recognitionList.map(item => {
+          const projectId = validateNumericId(item.projectId, 'Project ID');
+          const employeeId = validateNumericId(item.employeeId, 'Employee ID');
+          
+          return {
+            message: recognition.title,
+            projectId,
+            recognizedById: currentUserId,
+            recognizedEmployeeId: employeeId,
+          };
+        });
+        
+        console.log("Recognition", recognitionDtos);
+        return recognitionDtos.length === 1 ? recognitionDtos[0] : recognitionDtos;
       }
       default:
         throw new Error('Invalid form type');
@@ -977,7 +1060,7 @@ const handleSubmit = async (
     console.log("Calling Create event Submit", data)
     
     const response = await createEventMutation.mutateAsync({ data: data });
-    console.log("Loffing Create event response", response)
+    console.log("Logging Create event response", response)
 
       if (!response.success) {
         return { 
@@ -1000,6 +1083,44 @@ const handleSubmit = async (
       };
     }
   }
+
+  const createRecognition = async (
+    data: CreateRecognitionDto | CreateRecognitionDto[]
+  ): Promise<CreateRecognitionResult> => {
+    try {
+      console.log("Creating Recognition(s):", data);
+
+      let response: EmployeeRecognition | EmployeeRecognition[];
+      
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
+          throw new Error('No recognition details provided for creating recognition');
+        }
+
+        response = await multiRecognitionMutation.mutateAsync({ data });
+      } else {
+
+        response = await singleRecognitionMutation.mutateAsync({ data });
+      }
+
+
+      return {
+        success: true,
+        response: response!,
+        error: null
+      };
+
+    } catch (error) {
+      console.error('Recognition Creation Error:', error);
+
+      return {
+        success: false,
+        response: null,
+        error: getApiErrorMessage(error)
+      };
+    }
+  };
+
     
 
   return (
@@ -1088,7 +1209,7 @@ const handleSubmit = async (
 
           {/* Manage Employees Table Section */}
           <div className="flex flex-grow w-full h-full">
-            <EventsCalendar events={events} announcements={hrannouncements} />
+            <EventsCalendar events={events} />
           </div>
         </section>
       </div>
@@ -1099,10 +1220,12 @@ const handleSubmit = async (
           initialFormValues={getInitialValues(selectedFormType)}
           validationSchema={getValidationSchema(selectedFormType)}
           onSubmit={handleSubmit}
-          enableReinitialize={true}
           title="New Event"
           back={true}
-          backFn={() => setIsModalOpen(false)}
+          backFn={() => {
+            setSelectedEmployee(null);
+            setIsModalOpen(false)
+          }}
           formClassName="flex flex-col my-8 gap-6  "
         >
           {({ values, errors, touched, setFieldValue }) => (
@@ -1116,7 +1239,12 @@ const handleSubmit = async (
                     <div className="relative">
                       <Select
                         onValueChange={(value) => {
+                          // Reset form with new initial values for the selected type
+                          const newInitialValues = getInitialValues(value);
+                          form.resetForm({ values: newInitialValues });
+                          
                           setSelectedFormType(value);
+                          setSelectedEmployee(null);
                           form.setFieldValue(field.name, value);
                         }}
                         defaultValue={field.value}
@@ -1124,14 +1252,15 @@ const handleSubmit = async (
                         <SelectTrigger className="w-full bg-gray-100 py-6 rounded-b-none focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 ">
                           <SelectValue placeholder="Select Event Type" />
                         </SelectTrigger>
-                        <SelectContent
-                          position="popper"
-                          className="z-[2000]"
-                        >
+                        <SelectContent position="popper" className="z-[2000]">
                           <SelectGroup className="">
                             <SelectLabel>Select an event type</SelectLabel>
                             {formTypes.map((item) => (
-                              <SelectItem className="py-[12px] px-[24px] focus:bg-rgtpurpleaccent3" value={item.id} key={item.id}>
+                              <SelectItem 
+                                className="py-[12px] px-[24px] focus:bg-rgtpurpleaccent3" 
+                                value={item.id} 
+                                key={item.id}
+                              >
                                 {item.label}
                               </SelectItem>
                             ))}

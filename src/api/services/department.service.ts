@@ -3,9 +3,6 @@ import { createApiClient } from '../axios';
 import { ApiResponse } from '../types';
 
 
-
-
-
 const departmentApiClient = createApiClient(
   `${import.meta.env.VITE_API_URL}/departments`
 );
