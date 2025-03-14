@@ -12,13 +12,13 @@ export interface DataTableProps {
   data: Record<string, any>[];
   dividers?: boolean;
   actionBool?: boolean;
-  actionObj: { name: string; action: () => void }[];
+  actionObj: { name: string; action: (id?: number, row?: T) => void  }[];
 }
 
 
 export interface ActionObject {
   name: "view" | "edit" | "delete" | "approve" | "reject";  // Allowed action types
-  action: (id?: number) => void;  // Handler function that receives optional id
+  action: (id?: number, row?: T) => void ;  // Handler function that receives optional id
   icon?: React.ReactNode;  // Optional custom icon
   tooltip?: string;  // Optional tooltip text
   disabled?: boolean | ((row: any) => boolean);  // Whether action is disabled (static or per-row)

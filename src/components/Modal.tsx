@@ -1,23 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  Formik,
+  Form as FormikForm,
+  FormikHelpers,
+  FormikProps,
+  FormikValues,
+} from 'formik';
 import { ClassNameValue } from "tailwind-merge";
-import { Button } from "@/components/ui/button";
-import {  Form as FormikForm, Formik, FormikHelpers, FormikValues } from 'formik';
 import * as Yup from "yup";
+
+
+
+import { Button } from "@/components/ui/button";
+
+
+
+
+
+// Ensure Yup is imported for validation
 
 
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
-  validationSchema?: Yup.ObjectSchema<any, Yup.AnyObject, any, "">;
+  validationSchema?: Yup.ObjectSchema<any, Yup.AnyObject, any, ''>;
   initialFormValues: T;
   buttonClassName?: ClassNameValue;
   formClassName?: string;
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((formikProps: FormikProps<T>) => React.ReactNode);
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
   submitBtnText?: string;
   isSubmitting?: boolean;
   back: boolean;
   backFn: () => void;
+  enableReinitialize?: boolean;
 }
 
 export const SideFormModal = <T extends FormikValues>({
@@ -57,28 +75,32 @@ export const SideFormModal = <T extends FormikValues>({
             if (onSubmit) onSubmit(values as T, helpers as FormikHelpers<T>);
           }}
         >
-
+          {(formikProps) => (
           <FormikForm
             className="flex flex-col justify-start h-full"
           >
             {/* Form fields container */}
-            <div className={`flex-grow ${formClassName}`}>{children}</div>
-            <div className="flex w-full mt-auto h-14 gap-[20px]">
+            <div className={`flex-grow ${formClassName}`}>
+              {typeof children === 'function' ? children(formikProps) : children}
+            </div>
+
+            {/* Buttons */}
+            <div className=" flex w-full mt-4 h-14 gap-[20px]">
+              {/* Cancel Button */}
               <Button onClick={backFn} key={"Cancel"} variant="outline" className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100">
                 Cancel
               </Button>
 
               {/* Create Button */}
-              <Button type={"submit"}  key={"Create"} disabled={isSubmitting} className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white` }>
+              <Button type={"submit"}  key={"Create"} disabled={formikProps.isSubmitting || isSubmitting} className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white` }>
                 {submitBtnText}
               </Button>
 
             </div>
           </FormikForm>
-          
+          )}
         </Formik>
       </div>
     </div>
   );
 };
-

@@ -5,15 +5,19 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Login from "./pages/Login";
 import Feed from "./pages/common/Feed";
 import { HRDashboard } from "./pages/HR/HRDashboard";
-import { AllDepartments } from "./pages/HR/AllDepartments";
+import { AllDepartments } from "./pages/HR/Employees/AllDepartments";
 import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Projects from "./pages/Employee/Projects";
 import ProjectDetails from "./pages/Employee/ProjectDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import RecruitmentPage from "./pages/HR/Recruitment";
+import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
+import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/CandidateDetailed";
-import { ManageEmployees } from "./pages/HR/ManageEmployees";
+import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
+import EmployeeDirectory from "./pages/HR/Employees/EmployeeDirectory";
+import Events from "./pages/HR/Events/Events";
+import DepartmentPage from "@/pages/HR/Employees/DepartmentPage"
 
 function App() {
   return (
@@ -34,9 +38,7 @@ function App() {
         {/* HR routes */}
         <Route path="/hr" element={<BaseLayout />}>
           <Route index path="dashboard" element={<HRDashboard />} />
-          <Route
-            path="alldepartments"
-            element={
+          <Route path="alldepartments"  element={
               <WithPermission
                 resource="employeeRecords"
                 action="view"
@@ -44,8 +46,14 @@ function App() {
               >
                 <AllDepartments />
               </WithPermission>
-            }
-          />
+          }/>
+
+
+          <Route path={`alldepartments/department/:id`}  element={
+            <DepartmentPage />
+          }/>
+
+
           <Route  path="manageemployees"  element={
               <WithPermission 
                 resource="employeeRecords" 
@@ -56,8 +64,22 @@ function App() {
               </WithPermission>
             }
           />
+          <Route  path="employeecards"  element={
+              <WithPermission 
+                resource="employeeRecords" 
+                action="view" 
+                redirectTo="/hr/dashboard"
+              >
+                <EmployeeDirectory/>
+              </WithPermission>
+            }
+          />
 
           <Route path="feed" element={<Feed />} />
+          <Route path="time-off" element={<TimeOff />} />
+          <Route path="emp-time-off" element={<EmployeeTimeOff />} />
+          <Route path="events" element={<Events />} />
+
           <Route path="recruitment">
             <Route
               path="employee"

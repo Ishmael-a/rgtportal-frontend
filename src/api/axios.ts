@@ -31,6 +31,10 @@ export const createApiClient = (
   return axiosInstance;
 };
 
+
+
 export const defaultApiClient = createApiClient();
 
 export default defaultApiClient;
+
+

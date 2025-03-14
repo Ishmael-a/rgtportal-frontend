@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const sideModalVariants = cva(
-  "fixed z-50 bg-white shadow-lg overflow-auto transition-transform duration-300 ease-in-out",
+  "fixed z-2000 bg-white shadow-lg overflow-auto transition-transform duration-300 ease-in-out",
   {
     variants: {
       position: {
@@ -83,7 +83,7 @@ export const SideModal = ({
       <Dialog.Portal>
         {showOverlay && (
           <Dialog.Overlay
-            className={`fixed inset-0 backdrop-blur-mdd bg-black/30 z-40 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
+            className={`fixed inset-0 backdrop-blur-mdd bg-black/30 z-1999 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
               isOpen ? "opacity-100" : "opacity-0"
             }`}
             onClick={() => closeOnClickOutside && onOpenChange(false)}

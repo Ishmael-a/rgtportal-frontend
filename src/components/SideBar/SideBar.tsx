@@ -3,11 +3,12 @@ import Avtr from "../Avtr";
 import { avtrDets } from "@/constants";
 import { ChevronDown } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-import { useEffect, useState } from "react";
-import UsersIcon from "@/assets/empNavCons/UsersIcon";
-import FeedIcon from "@/assets/empNavCons/FeedIcon";
-import MessageIcon from "@/assets/empNavCons/MessageIcon";
-import TimeIcon from "@/assets/empNavCons/TimeIcon";
+import { useState } from "react";
+import UsersIcon from "@/assets/icons/UsersIcon";
+import FeedIcon from "@/assets/icons/FeedIcon";
+import MessageIcon from "@/assets/icons/MessageIcon";
+import ProfileIcon from "@/assets/icons/ProfileIcon";
+import TimeIcon from "@/assets/icons/TimeIcon";
 
 export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
