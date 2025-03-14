@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Table,
   TableBody,
@@ -85,34 +86,40 @@ export function DataTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((row, rowIndex) => (
-            <TableRow
-              key={rowIndex}
-              className={` ${dividers ? "" : " border-none"}`}
-            >
-              {tableColumns.map((column) => (
-                <TableCell
-                  key={column.key}
-                  className={`${
-                    dividers
-                      ? ""
-                      : "border-none text-xs font-semibold text-[#898989] text-nowrap"
-                  }
+          {data &&
+            data.length > 0 &&
+            data.map((row: { [key: string]: any }, rowIndex) => (
+              <TableRow
+                key={rowIndex}
+                className={` ${dividers ? "" : " border-none"}`}
+              >
+                {tableColumns.map((column) => (
+                  <TableCell
+                    key={column.key}
+                    className={`${
+                      dividers
+                        ? ""
+                        : "border-none text-xs font-semibold text-[#898989] text-nowrap"
+                    }
                   `}
-                >
-                  <div
-                    className={`  w-fit ${
-                      typeof column.cellClassName === "function"
-                        ? column.cellClassName(row) // Call the function with row data
-                        : column.cellClassName ?? ""
-                    } ${column.render ? "flex gap-2 px-4 py-4 space-x-4" : "p-2 px-4 text-center"} `}
                   >
-                    {column.render ? column.render(row) : row[column.key]}
-                  </div>
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
+                    <div
+                      className={`  w-fit ${
+                        typeof column.cellClassName === "function"
+                          ? column.cellClassName(row) // Call the function with row data
+                          : column.cellClassName ?? ""
+                      } ${
+                        column.render
+                          ? "flex gap-2 px-4 py-4 space-x-4"
+                          : "p-2 px-4 text-center"
+                      } `}
+                    >
+                      {column.render ? column.render(row) : row[column.key]}
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </div>

@@ -16,10 +16,13 @@ import { Poll } from "@/types/polls";
 import { PostService } from "@/api/services/posts.service";
 import { FeedSkeleton } from "./FeedSkeleton";
 import PollUI from "@/components/PollUI";
+import WithRole from "@/common/WithRole";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const Feed = () => {
   const [date, setDate] = React.useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
+  const { currentUser: user } = useAuthContextProvider();
 
   const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],
@@ -78,7 +81,7 @@ const Feed = () => {
 
   return (
     <main
-      className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0 pb-10`}
+      className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0 pb-5`}
     >
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
@@ -155,7 +158,13 @@ const Feed = () => {
 
         {/* Posts section */}
         <section className="space-y-7">
-          <CreatePost />
+          <WithRole
+            roles={["hr", "markerter", "admin"]}
+            userRole={user?.role.name as string}
+          >
+            <CreatePost />
+          </WithRole>
+
           <div className="space-y-3">
             <header className="font-semibold text-lg text-[#706D8A]">
               For you

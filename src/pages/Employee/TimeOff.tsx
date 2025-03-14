@@ -6,7 +6,8 @@ import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { timeOffDummy, timeOffTableColumns } from "@/constants";
+import {  timeOffTableColumns } from "@/constants";
+import { useRequestPto } from "@/hooks/usePtoRequests";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -16,26 +17,28 @@ export default function TimeOff() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { createPto, ptoData } = useRequestPto();
+
   const initialFormValues = {
-    leaveType: "pto",
+    type: "vacation",
     reason: "",
-    fromDate: undefined,
-    toDate: undefined,
+    startDate: undefined,
+    endDate: undefined,
   };
 
   const ptoFormSchema = Yup.object({
-    leaveType: Yup.string()
-      .oneOf(["pto", "sickLeave"], "Invalid leave type")
+    type: Yup.string()
+      .oneOf(["vacation", "sick"], "Invalid leave type")
       .required("Leave type is required"),
     reason: Yup.string()
-      .max(50, "Reason must be at most 50 characters")
-      .required("Reason is required"),
-    fromDate: Yup.date()
+      .max(50, "reason must be at most 50 characters")
+      .required("reason is required"),
+    startDate: Yup.date()
       .required("From date is required")
       .typeError("Invalid date"),
-    toDate: Yup.date()
+    endDate: Yup.date()
       .required("To date is required")
-      .min(Yup.ref("fromDate"), "To date must be after From date")
+      .min(Yup.ref("startDate"), "To date must be after From date")
       .typeError("Invalid date"),
   });
 
@@ -44,9 +47,10 @@ export default function TimeOff() {
     { setSubmitting }: FormikHelpers<typeof initialFormValues>
   ) => {
     console.log("Submmitting Form", values);
+    createPto(values as PtoLeave);
     setSubmitting(false);
     setIsModalOpen(false);
-    setIsSuccess(true);
+    // setIsSuccess(true);
   };
 
   const handleCheckNow = () => {
@@ -79,7 +83,8 @@ export default function TimeOff() {
         {/* Table with custom cell styles */}
         <DataTable
           columns={timeOffTableColumns}
-          data={timeOffDummy}
+          // data={timeOffDummy}
+          data={ptoData}
           actionBool={true}
           actionObj={[
             { name: "view", action: () => setAppRej(!appRej) },
@@ -100,7 +105,7 @@ export default function TimeOff() {
           submitBtnText="Create"
           buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
-          <Field name="leaveType">
+          <Field name="type">
             {({
               field,
               form: { touched, errors },
@@ -117,34 +122,32 @@ export default function TimeOff() {
                     <input
                       type="radio"
                       {...field}
-                      value="pto"
-                      checked={field.value === "pto"}
+                      value="vacation"
+                      checked={field.value === "vacation"}
                       className="mr-2"
                     />
-                    PTO
+                    Vacation
                   </label>
                   <label className="flex items-center text-[#737276] text-xs font-medium">
                     <input
                       type="radio"
                       {...field}
-                      value="sickLeave"
-                      checked={field.value === "sickLeave"}
+                      value="sick"
+                      checked={field.value === "sick"}
                       className="mr-2"
                     />
-                    Sick Leave
+                    Sick
                   </label>
                 </div>
-                {touched.leaveType && errors.leaveType && (
-                  <div className="text-red-500 text-xs mt-1">
-                    {errors.leaveType}
-                  </div>
+                {touched.type && errors.type && (
+                  <div className="text-red-500 text-xs mt-1">{errors.type}</div>
                 )}
               </div>
             )}
           </Field>
 
           <div className="flex w-full gap-4 pt-2">
-            <Field name="fromDate">
+            <Field name="startDate">
               {({
                 field,
                 form: { setFieldValue, touched, errors },
@@ -159,18 +162,18 @@ export default function TimeOff() {
                   <DatePicker
                     placeholder="From"
                     value={field.value}
-                    onChange={(val) => setFieldValue("fromDate", val)}
+                    onChange={(val) => setFieldValue("startDate", val)}
                   />
-                  {touched.fromDate && errors.fromDate && (
+                  {touched.startDate && errors.startDate && (
                     <div className="text-red-500 text-xs mt-1">
-                      {errors.fromDate}
+                      {errors.startDate}
                     </div>
                   )}
                 </div>
               )}
             </Field>
 
-            <Field name="toDate">
+            <Field name="endDate">
               {({
                 field,
                 form: { setFieldValue, touched, errors },
@@ -185,11 +188,11 @@ export default function TimeOff() {
                   <DatePicker
                     placeholder="To"
                     value={field.value}
-                    onChange={(val) => setFieldValue("toDate", val)}
+                    onChange={(val) => setFieldValue("endDate", val)}
                   />
-                  {touched.toDate && errors.toDate && (
+                  {touched.endDate && errors.endDate && (
                     <div className="text-red-500 text-xs mt-1">
-                      {errors.toDate}
+                      {errors.endDate}
                     </div>
                   )}
                 </div>
@@ -207,7 +210,7 @@ export default function TimeOff() {
             }) => (
               <div className="pt-5">
                 <label className="block text-xs font-medium pb-1 text-[#737276]">
-                  Reason
+                  reason
                 </label>
                 <textarea
                   {...field}
@@ -262,7 +265,7 @@ export default function TimeOff() {
           <section className="space-y-5 pt-3">
             <div className="flex flex-col gap-1">
               <label className="text-[#73727675] font-semibold text-sm">
-                Reason
+                reason
               </label>
               <textarea
                 className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
@@ -273,7 +276,7 @@ export default function TimeOff() {
 
             <div className="flex flex-col gap-1">
               <label className="text-[#73727675] font-semibold text-sm">
-                HR Reason
+                HR reason
               </label>
               <textarea
                 className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
