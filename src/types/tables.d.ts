@@ -8,11 +8,10 @@ export interface Column {
 
 export interface DataTableProps {
   columns: Column[];
-  // data: Record<string, any>[];
   data: PtoLeave[] | undefined;
   dividers?: boolean;
   actionBool?: boolean;
-  actionObj: { name: string; action: () => void }[];
+  actionObj: { name: string; action: (id?: number) => void }[];
 }
 
 export interface ActionObject {

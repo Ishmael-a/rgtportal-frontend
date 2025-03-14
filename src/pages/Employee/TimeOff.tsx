@@ -17,7 +17,7 @@ export default function TimeOff() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { createPto, ptoData } = useRequestPto();
+  const { createPto, ptoData, deletePto } = useRequestPto();
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
@@ -67,6 +67,13 @@ export default function TimeOff() {
     setIsSuccess(false);
   };
 
+  // const handleDelete =()=>{
+  //   if(!ptoData){
+  //     if
+  //     deletePto()
+  //   }
+  // }
+
   return (
     <main className="px-4">
       <div className="bg-white p-4 rounded-md">
@@ -92,12 +99,18 @@ export default function TimeOff() {
         {/* Table with custom cell styles */}
         <DataTable
           columns={timeOffTableColumns}
-          // data={timeOffDummy}
           data={formattedPtoData}
           actionBool={true}
           actionObj={[
             { name: "view", action: () => setAppRej(!appRej) },
-            { name: "delete", action: () => console.log("delete") },
+            {
+              name: "delete",
+              action: (id) => {
+                if (id !== undefined) {
+                  deletePto(id);
+                }
+              },
+            },
           ]}
         />
       </div>

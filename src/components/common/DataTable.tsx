@@ -22,7 +22,7 @@ export function DataTable({
         {
           key: "actions",
           header: "Actions",
-          render: () => (
+          render: (row) => (
             <div className="space-x-1">
               {actionObj.map((action) => {
                 switch (action.name) {
@@ -51,7 +51,7 @@ export function DataTable({
                       <button
                         key="delete"
                         className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors"
-                        onClick={() => action.action()}
+                        onClick={() => action.action(row.id)}
                       >
                         <img src="/Delete.svg" alt="delete" />
                       </button>

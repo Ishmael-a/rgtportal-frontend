@@ -9,7 +9,7 @@ export const useRequestPto = () => {
     queryFn: () => PtoRequestService.fetchUserPtoRequest(),
   });
 
-  const ptoRequestMutation = useMutation({
+  const createPtoRequestMutation = useMutation({
     mutationFn: (newPto: PtoLeave) =>
       PtoRequestService.createPtoRequest(newPto),
     onSuccess: () => {
@@ -17,13 +17,25 @@ export const useRequestPto = () => {
     },
   });
 
+  const deletePtoRequestMutation = useMutation({
+    mutationFn: (ptoId: number) => PtoRequestService.deletePtoRequest(ptoId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ptoData"] });
+    },
+  });
+
   const createPto = (newPto: PtoLeave) => {
-    ptoRequestMutation.mutate(newPto);
+    createPtoRequestMutation.mutate(newPto);
+  };
+
+  const deletePto = (ptoId: number) => {
+    deletePtoRequestMutation.mutate(ptoId);
   };
 
   return {
     createPto,
-    isPtoLoading: ptoRequestMutation.isPending,
+    deletePto,
+    isPtoLoading: createPtoRequestMutation.isPending,
     ptoData,
   };
 };

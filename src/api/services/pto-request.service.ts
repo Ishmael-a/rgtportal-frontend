@@ -10,7 +10,7 @@ export class PtoRequestService {
       const response = await axios.post(`${API_URL}/`, {
         ...ptoData,
       });
-      
+
       if (!response.data.success) {
         throw new Error("Pto data post not successful");
       }
@@ -30,6 +30,19 @@ export class PtoRequestService {
       return response.data.data;
     } catch (error) {
       console.error("Error fetching pto data:", error);
+    }
+  }
+
+  static async deletePtoRequest(id: number) {
+    try {
+      const response = await axios.delete(`${API_URL}/${id}`);
+
+      if (!response.data.success) {
+        throw new Error("Pto data post not successful");
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error posting pto data", error);
     }
   }
 }
