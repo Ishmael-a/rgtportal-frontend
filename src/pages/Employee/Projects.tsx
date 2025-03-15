@@ -11,7 +11,7 @@ const Projects = () => {
 
       <section className="pt-6 flex flex-wrap gap-4 justify-center sm:justify-start ">
         {projectCards.map((item, index) => (
-          <ProjectCard {...item} key={index} path={`all-projects/${item.id}`}/>
+          <ProjectCard {...item} key={index} path={`${item.id}`}/>
         ))}
       </section>
 

@@ -455,8 +455,8 @@ export const timeOffDummy = [
 ];
 
 export const timeOffTableColumns: Column[] = [
-  { key: "from", header: "From" },
-  { key: "to", header: "To" },
+  // { key: "startDate", header: "From" },
+  // { key: "endDate", header: "To" },
   { key: "total", header: "Total" },
   { key: "reason", header: "Reason" },
   {
@@ -465,11 +465,11 @@ export const timeOffTableColumns: Column[] = [
     cellClassName: (row: Record<string, any>) => {
       const status = row.status; // Access the status value from the row
       return `${
-        status === "Pending"
+        status === "pending"
           ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
-          : status === "Approved"
+          : status === "approved" || status === "manager_approved"
           ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
-          : status === "Rejected"
+          : status === "declined" || status === "manager_declined"
           ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
           : ""
       }`;
@@ -481,9 +481,9 @@ export const timeOffTableColumns: Column[] = [
     cellClassName: (row: Record<string, any>) => {
       const type = row.type; // Access the type value from the row
       return `${
-        type === "Sick Leave"
+        type === "vacation"
           ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
-          : type === "PTO"
+          : type === "sick"
           ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
           : ""
       }`;

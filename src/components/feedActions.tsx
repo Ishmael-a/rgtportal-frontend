@@ -1,17 +1,35 @@
+import { useInteraction } from "@/hooks/use-interaction";
 import { Bookmark, MessageSquareMore, ThumbsUp } from "lucide-react";
 import { useState } from "react";
 
-const FeedActions = () => {
-  const [liked, setLiked] = useState(false);
+const FeedActions = ({
+  postId,
+  userPrevLiked,
+  onComments,
+}: {
+  postId: number;
+  userPrevLiked: boolean | undefined;
+  onComments: (val: boolean) => void;
+  // setIsComments: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const [liked, setLiked] = useState(userPrevLiked || false);
   const [commented, setCommented] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
 
+  console.log("postId from FeedActions:", postId);
+
+  const { stats, toggleLike } = useInteraction(postId);
+
+  console.log("stats.comments:", stats?.commentsCount);
+
   const handleLike = () => {
     setLiked(!liked);
+    toggleLike(!liked);
   };
 
-  const handleComment = () => {
+  const showComments = () => {
     setCommented(!commented);
+    onComments(!commented);
   };
 
   const handleBookmark = () => {
@@ -29,16 +47,17 @@ const FeedActions = () => {
             <ThumbsUp
               className={`text-[#94A3B8] ${
                 liked ? "fill-rgtpink stroke-0" : "fill-none"
-              }`}
+              } 
+              `}
             />
           </div>
-          <p className="text-sm font-medium">12 Likes</p>
+          <p className="text-sm font-medium">{stats?.likesCount} Likes</p>
         </div>
 
         <div className="flex items-center">
           <div
             className="p-[6px] rounded-full hover:bg-purple-100 transition-colors duration-200 cursor-pointer"
-            onClick={handleComment}
+            onClick={showComments}
           >
             <MessageSquareMore
               className={`text-[#94A3B8] ${
@@ -46,7 +65,7 @@ const FeedActions = () => {
               }`}
             />
           </div>
-          <p className="text-sm font-medium">3 Comments</p>
+          <p className="text-sm font-medium">{stats?.commentsCount} Comments</p>
         </div>
       </div>
       <div

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ClassNameValue } from "tailwind-merge";
+// import { ClassNameValue } from "tailwind-merge";
+import { Poll } from "./polls";
 interface IProjectCard {
   id: string | number;
-  members: IProjectMembers[]| Employee[];
+  members: IProjectMembers[] | Employee[];
   name: string;
   leadName?: string;
   path: string;
@@ -23,29 +24,10 @@ interface IProjectMembers {
   role: string;
 }
 
-interface IPollUI {
-  pollOption: string;
-  percentage: number;
-  totalVotes: number;
-}
-
-interface IImage {
-  url: string;
-  alt?: string;
-}
-
-interface IAvtrBlock {
-  name: string;
-  role: string;
-  avatarUrl: string;
-  fallBack?: string;
-}
-
-interface IPost {
-  avtrDets: IAvtrBlock;
-  text: string;
-  poll?: IPollUI[];
-  image?: IImage;
+interface IFeed {
+  poll?: Poll;
+  post?: IPost;
+  postId?:number
 }
 
 interface IAnnouncementCard {
@@ -53,12 +35,12 @@ interface IAnnouncementCard {
   date: Date;
 }
 
-interface IAvtrComponent {
-  className?: ClassNameValue;
-  index?: number;
-  url: string;
-  name: string;
-}
+// interface IAvtrComponent {
+//   className?: ClassNameValue;
+//   index?: number;
+//   url: string;
+//   name: string;
+// }
 
 interface EmployeeCardType {
   id: string;

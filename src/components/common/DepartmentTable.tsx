@@ -1,4 +1,4 @@
-import { IProjectCard, IProjectType } from "@/types/employee";
+import { IProjectType } from "@/types/employee";
 import Avtr from "../Avtr";
 
 const DepartmentTable = ({ details }: { details: IProjectType | null }) => {

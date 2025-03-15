@@ -38,7 +38,7 @@ export const authService = {
 
   getCurrentUser: async (): Promise<ResponseUser> => {
     const response = await defaultApiClient.get("/user");
-    console.log("User data", response.data);
+    // console.log("User data", response.data);
     return response.data;
   },
 };

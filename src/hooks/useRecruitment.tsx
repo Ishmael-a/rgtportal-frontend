@@ -107,7 +107,7 @@ export const useRecruitments = (
     enabled, 
     retry: 1, 
   });
-};
+}; 
 
 export const useUpdateRecruitment = () => {
   const queryClient = useQueryClient();

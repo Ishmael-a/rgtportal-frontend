@@ -28,7 +28,7 @@ interface UploadResult {
 export const CreateRecruitment: React.FC<CreateRecruitmentProps> = ({
   isOpen,
   onOpenChange,
-    title = "New NSS Candidate",
+  title = "New NSS Candidate",
   type,
   fields = recruitmentSchema,
   onSubmit = (values) => console.log("Form submitted with values:", values),
