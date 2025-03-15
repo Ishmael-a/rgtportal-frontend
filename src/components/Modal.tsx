@@ -8,17 +8,7 @@ import {
 } from 'formik';
 import { ClassNameValue } from "tailwind-merge";
 import * as Yup from "yup";
-
-
-
 import { Button } from "@/components/ui/button";
-
-
-
-
-
-// Ensure Yup is imported for validation
-
 
 
 interface ISideFormModal<T extends FormikValues> {
@@ -35,7 +25,6 @@ interface ISideFormModal<T extends FormikValues> {
   isSubmitting?: boolean;
   back: boolean;
   backFn: () => void;
-  enableReinitialize?: boolean;
 }
 
 export const SideFormModal = <T extends FormikValues>({

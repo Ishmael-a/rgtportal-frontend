@@ -1,1136 +1,66 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Field, FieldArray, FieldInputProps, FormikHelpers, FieldProps, FormikErrors, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { format } from "date-fns";
-
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Plus, Trash } from "lucide-react";
-
-import {
-  hrannouncements,
-  announcements,
-  eventList,
-  EventType
-} from "@/constants";
-
-import UserIcon from "@/assets/icons/UserIcon"
-
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import AnnouncementCard from "@/components/AnnouncementCard";
-import EventList from "@/components/EventList";
+import React, { useState } from "react";
+import { EventModal } from "@/components/Hr/Events/EventModal";
 import EventsCalendar from "@/components/Hr/Events/EventsCalendar";
-import { SideFormModal } from "@/components/Modal";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList
-} from "@/components/ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import EnhancedCalendar from "@/components/Hr/Events/EnhancedCalendar";
+import { Button } from "@/components/ui/button";
+import { useAllEvents } from "@/api/query-hooks/event.hooks";
+import { Calendar } from "@/components/ui/calendar";
+import EventList from "@/components/EventList";
+import AnnouncementCard from "@/components/AnnouncementCard";
+import { Link } from "react-router-dom";
+import ErrorMessage from "@/components/common/ErrorMessage"
 
-import { Employee } from "@/types/employee";
-import { Event, CreateEventDto } from "@/types/events";
-import { CreateRecognitionDto, EmployeeRecognition } from "@/types/recognition";
-import { getApiErrorMessage } from "@/api/errorHandler";
-
-import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
-import { useCreateEvent, useAllEvents } from "@/api/query-hooks/event.hooks";
-import { useAllProjects } from "@/api/query-hooks/project.hooks";
-import { useCreateMultipleRecognitions, useCreateSingleRecognition } from "@/api/query-hooks/recognition.hooks";
-import { toast } from "@/hooks/use-toast";
-import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-
-
-interface CreateEventResult { success: boolean; response: Event | null; error: Error | null  }
-interface CreateRecognitionResult {
-  success: boolean;
-  response: EmployeeRecognition | EmployeeRecognition[] | null;
-  error: Error | null;
-}
-
-interface ISpecialEventTypes {
-  id: "1" | "2";
-  label: string;
-}
-
-const formTypes = [
-  { id: '1', label: 'Special Event' },
-  { id: '2', label: 'Anouncement' },
-  { id: '3', label: 'Recognition' }
-];
-
-const specialEventTypes: ISpecialEventTypes[] = [
-  { id: '1', label: 'Holiday' },
-  { id: '2', label: 'Birthday' },
-];
-
-interface PopoverStates {
-  [index: number]: boolean;
-}
-
-type FormValues = 
-  | SpecialEventFormValues 
-  | AnnouncementFormValues 
-  | RecognitionFormValues;
-
-// Specific interfaces for each form type
-interface SpecialEventFormValues {
-  formType: '1';
-  eventType: string;
-  holidayName?: string;
-  employeeId?: string;
-  date: Date;
-}
-
-interface AnnouncementFormValues {
-  formType: '2';
-  title: string;
-  description: string;
-  date: Date;
-}
-
-interface RecognitionFormValues {
-  formType: '3';
-  title: string;
-  recognitionList: {
-    employeeId: string;
-    projectId: string;
-  }[];
-}
 
 const Events = () => {
-  const {currentUser} = useAuthContextProvider();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [date, setDate] = useState<Date>();
-  const [open, setOpen] = useState(false);
-  const [selectedFormType, setSelectedFormType] = useState('1');
-  const [selectedSpecialEventType, setSelectedSpecialEventType] = useState<"1" | "2">('1');
-  
-  const [projectOpen, setProjectOpen] = useState<boolean>(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-
-  const [popoverOpenStates, setPopoverOpenStates] = useState<PopoverStates>({});
-  const [projectPopoverOpenStates, setProjectPopoverOpenStates] = useState<PopoverStates>({});
-
-  const createEventMutation = useCreateEvent();
-  const multiRecognitionMutation = useCreateMultipleRecognitions();
-  const singleRecognitionMutation = useCreateSingleRecognition();
-
-
-
-  const handlePopoverOpenChange = (index: number, open: boolean) => {
-    setPopoverOpenStates((prevStates) => ({
-      ...prevStates,
-      [index]: open,
-    }));
-  };
-
-  const handleProjectPopoverOpenChange = (index: number, open: boolean) => {
-    setProjectPopoverOpenStates((prevStates) => ({
-      ...prevStates,
-      [index]: open,
-    }));
-  };
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
   const {
     data: eventsData, 
     isLoading: isEventsLoading,
     isError: isEventsError,
     error: eventsError,
+    refetch: refetchEvents
   } = useAllEvents();
 
-
-  const {
-    data: users = [], 
-    isLoading: isEmployeesLoading,
-    isError: isEmployeesError
-  } = useAllEmployees(
-    {},
-    {
-      enabled: isModalOpen
-    }
-  );
-
-
-    const {
-      data,
-      isLoading: isProjectsLoading,
-      isError: isProjectsError
-    } = useAllProjects(
-      {},
-      {
-          enabled: isModalOpen
-      }
-    );
-
-    const projects = data?.data || [];
-
-    if(!eventsData || !eventsData.success || eventsError){
-      console.log("Events Data", eventsData)
-      console.log("Error Fetching Events", eventsError)
-      return null;
-    }
-
-    const events = eventsData?.data || [];
-
-
-  const getEventInitialValues = () => {
-    switch (selectedSpecialEventType) {
-      case "1":
-        return {
-          eventType: specialEventTypes[0].label, 
-          holidayName: "",
-          date: new Date()
-        };
-      case "2":
-        return {
-          eventType: specialEventTypes[1].label, 
-          employeeId: "",
-          date: new Date()
-        };
-      default:
-        return {
-          eventType: specialEventTypes[0].label,
-          employeeId: "",
-          date: new Date()
-        };
-    }
-  };
-
-  const getEventValidationSchema = () => {
-    switch (selectedSpecialEventType) {
-      case "1":
-        return Yup.object({
-          eventType: Yup.string().required('Event type is required'),
-          holidayName: Yup.string()
-            .min(3, "A minimum of three characters is required")
-            .max(100, "A max of 100 characters is required")
-            .required('Holiday name is required'),
-          date: Yup.date().required('Date of holiday is required'),
-        });
-      case "2":
-        return Yup.object({
-          eventType: Yup.string().required('Event type is required'),
-          employeeId: Yup.string().required('Employee name is required'),
-          date: Yup.date().required('Date of event is required'),
-        });
-      default:
-        return Yup.object({
-          eventType: Yup.string().required('Event type is required'),
-          employeeId: Yup.string().required('Employee name is required'),
-          date: Yup.date().required('Date of event is required'),
-        });
-    }
-  };
-
-  const getInitialValues = (formType: string): FormValues => {
-    switch (formType) {
-      case '1':
-        return {
-          formType: '1',
-          ...getEventInitialValues(),
-        };
-      case '2':
-        return {
-          formType: '2',
-          title: "",
-          description: "",
-          date: new Date(),
-        };
-      case '3':
-        return {
-          formType: '3',
-          title: '',
-          recognitionList: [
-            {
-              employeeId: "",
-              projectId: ""
-            }
-          ]
-        };
-      default:
-        return {
-          formType: '1',
-          ...getEventInitialValues(),
-        };
-    }
-  };
-
-  const getValidationSchema = (formType: string) => {
-    switch (formType) {
-      case '1':
-        return Yup.object({
-          formType: Yup.string().required("Form Type is required"),
-          ...getEventValidationSchema().fields
-        });
-      case '2':
-        return Yup.object({
-          formType: Yup.string().required(),
-          title: Yup.string().required('Announcement name is required'),
-          description: Yup.string()
-            .min(3, "A minimum of three characters is required")
-            .required('Description is required'),
-          date: Yup.date().required('Date of event is required'),
-        });
-      case '3':
-        return Yup.object({
-          formType: Yup.string().required(),
-          title: Yup.string().required('Recognition title is required'),
-          recognitionList: Yup.array()
-            .of(
-              Yup.object().shape({
-                employeeId: Yup.string()
-                  .trim()
-                  .required('Employee name is required'),
-                projectId: Yup.string()
-                  .trim()
-                  .required('Project name is required')
-              })
-            )
-            .min(1, 'At least one recognition list is required')
-            .required('Recognition list is required') 
-        });
-      default:
-        return Yup.object({});
-    }
-  };
-
-  const renderEventTypeFields = (selectedSpecialEventType: string) => {
-    switch (selectedSpecialEventType) {
-      case "1":
-        return (
-          <div className="space-y-4">
-            <Field name="holidayName">
-              {({ field, form: { touched, errors } }: { field: FieldInputProps<string>; form: any }) => (
-                <div className="">
-                  <label htmlFor="holidayName" className="text-sm font-semibold text-gray-700 mb-1 block">
-                    Holiday Name
-                  </label>
-                  <Input
-                    id="holidayName"
-                    type="text"
-                    placeholder="Enter the holiday name"
-                    {...field}
-                    className={` w-full bg-gray-100 placeholder:text-gray-400  focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3  py-6 px-4 ${touched.holidayName && errors.holidayName ? "border-red-500" : ""}`}
-                  />
-                  {touched.holidayName && errors.holidayName && 
-                    <div className="text-red-500 text-sm mt-1">{errors.holidayName}</div>
-                  }
-                </div>
-              )}
-            </Field>
-
-            <Field name="date">
-              {({ field, form }: { field: FieldInputProps<string>; form: any }) => (
-                <div className="flex flex-col space-y-2">
-                  <label
-                    htmlFor="date"
-                    className="text-sm font-semibold text-gray-700"
-                  >
-                    Pick the Date
-                  </label>
-
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left  font-normal py-6 px-4 bg-gray-100",
-                          !form.values.date && "text-muted-foreground"
-                        )}
-                      >
-                        {form.values.date ? (
-                          format(form.values.date, "PPP")
-                        ) : (
-                          <span className="text-gray-500 font-semibold mx-1">Select date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 text-gray-500 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-
-                    <PopoverContent className="w-auto p-0 z-[2000]" align="start">
-                      <Calendar
-                        className="w-full"
-                        mode="single"
-                        selected={form.values.date}
-                        onSelect={(date) => {
-                          form.setFieldValue(field.name, date);
-                        }}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-
-                  {form.touched.date && form.errors.date && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {form.errors.date}
-                    </div>
-                  )}
-                </div>
-              )}
-            </Field>
-          </div>
-        );
-      case "2":
-        return (
-          <div className="space-y-4">
-            <Field name="employeeId">
-              {({ field, form: { values, touched, errors, setFieldValue } }: { field: FieldInputProps<string>; form: any }) => 
-              { 
-                console.log("Form Value For employeeId", values.employeeId);
-                return (
-                <div className="flex flex-col space-y-2">
-                  <label htmlFor="employeeId" className="text-sm font-semibold text-gray-700 mb-1 block">
-                    Employee
-                  </label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <div className="relative">
-                        <Input
-                          id="employeeId"
-                          value={selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}` : ''}
-                          onChange={(e) => {
-                            setOpen(true);
-                          }}
-                          onClick={() => setOpen(true)}
-                          placeholder="Select employee"
-                          className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${touched.employeeId && errors.employeeId ? "border-red-500" : ""}`}
-                        />
-                        {touched.employeeId && errors.employeeId && (
-                          <div className="text-red-500 text-sm mt-1">{errors.employeeId}</div>
-                        )}
-                      </div>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[370px] p-0 z-[2000]" align="start">
-                      <Command>
-                        <CommandInput placeholder="Search employees..." />
-                        <CommandList>
-                          <CommandEmpty>No employees found.</CommandEmpty>
-                          <CommandGroup>
-                            {users.map((employee) => (
-                              <CommandItem
-                                key={employee.id}
-                                value={`${employee.firstName} ${employee.lastName}`}
-                                onSelect={() => {
-                                  setFieldValue(field.name, employee.id.toString());
-                                  setSelectedEmployee(employee); 
-                                  setOpen(false);
-                                }}
-                              >
-                                <div className="flex justify-between w-full py-[13px]">
-                                  <div className="flex gap-2 items-center">
-                                    <UserIcon />
-                                    <span className="flex">
-                                      {employee.firstName} {employee.lastName}
-                                    </span>
-                                  </div>
-                                  <span className="text-muted-foreground text-sm">
-                                    {employee.department?.name || "No Department"}
-                                  </span>
-                                </div>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              )}}
-            </Field>
-
-            <Field name="date">
-              {({ field, form }: { field: FieldInputProps<string>; form: any }) => (
-                <div className="flex flex-col space-y-2">
-                  <label
-                    htmlFor="date"
-                    className="text-sm font-semibold text-gray-700  block"
-                  >
-                    Pick the Date
-                  </label>
-
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left  font-normal py-6 px-4 bg-gray-100 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3",
-                          !form.values.date && "text-muted-foreground"
-                        )}
-                      >
-                        {form.values.date ? (
-                          format(form.values.date, "PPP")
-                        ) : (
-                          <span className="text-gray-500 font-semibold mx-1">Select date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 text-gray-400" />
-                      </Button>
-                    </PopoverTrigger>
-
-                    <PopoverContent className="w-auto p-0 z-[2000]" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={form.values.date}
-                        onSelect={(date) => {
-                          form.setFieldValue(field.name, date);
-                        }}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-
-                  {form.touched.date && form.errors.date && (
-                    <div className="text-red-500 text-sm mt-1">
-                      {form.errors.date}
-                    </div>
-                  )}
-                </div>
-              )}
-            </Field>
-          </div>
-        );
-      default:
-        return (<div>No Special Event type Selected</div>);
-    }
-  };
-
-  const renderFormFields = (formType: string) => {
-    switch (formType) {
-      case '1':
-        return (
-          <>
-            <div className="mb-4">
-              <div className="flex space-x-2">
-                {specialEventTypes.map((eventType) => (
-                  <Button
-                    key={eventType.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedEmployee(null);
-                      setSelectedSpecialEventType(eventType.id);
-                    }}
-                    className={`
-                      ${selectedSpecialEventType === eventType.id
-                        ? 'bg-pinkaccentsharp text-white hover:bg-pinkaccentsharp'
-                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}
-                      px-4 py-[10px] rounded-[8px] transition-colors 
-                    `}
-                  >
-                    {eventType.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              {renderEventTypeFields(selectedSpecialEventType)}
-            </div>
-          </>
-        );
-      case '2':
-        return (
-          <>
-            <div className="space-y-4">
-              <Field name="title">
-                {({ field, form: { touched, errors } }: { field: FieldInputProps<string>; form: any }) => (
-                  <div>
-                    <label htmlFor="title" className="text-sm font-semibold text-gray-700 mb-1 block">
-                      Title
-                    </label>
-                    <Input
-                      id="title"
-                      type="text"
-                      placeholder="Enter announcement title"
-                      {...field}
-                      className={` w-full bg-gray-100 placeholder:text-gray-400  focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3  py-6 px-4 ${touched.title && errors.title ? "border-red-500" : ""}`}
-                    />
-                    {touched.title && errors.title && (
-                      <div className="text-red-500 text-sm mt-1">{errors.title}</div>
-                    )}
-                  </div>
-                )}
-              </Field>
-
-              <Field name="description">
-                {({ field, form: { touched, errors } }: { field: FieldInputProps<string>; form: any }) => (
-                  <div>
-                    <label htmlFor="description" className="text-sm font-semibold text-gray-700 mb-1 block">
-                      Description
-                    </label>
-                    <Textarea
-                      id="description"
-                      placeholder="Enter announcement description"
-                      {...field}
-                      className={` w-full h-[88px] bg-gray-100 placeholder:text-gray-400  focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3  py-4 px-4 border rounded ${touched.description && errors.description ? "border-red-500" : ""}`}
-                      rows={4}
-                    />
-                    {touched.description && errors.description && (
-                      <div className="text-red-500 text-sm mt-1">{errors.description}</div>
-                    )}
-                  </div>
-                )}
-              </Field>
-
-              <Field name="date">
-                {({ field, form }: { field: FieldInputProps<string>; form: any }) => (
-                  <div className="flex flex-col space-y-2">
-                    <label htmlFor="date" className="text-sm font-semibold text-gray-700 mb-1 block">
-                      Announcement Date
-                    </label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-full justify-start text-left  font-normal py-6 px-4 bg-gray-100 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3",
-                            !form.values.date && "text-muted-foreground"
-                          )}
-                        >
-                          {form.values.date ? (
-                            format(form.values.date, "PPP")
-                          ) : (
-                            <span className="text-gray-500 font-semibold mx-1">Select date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 z-[2000]" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={form.values.date}
-                          onSelect={(date) => {
-                            form.setFieldValue(field.name, date);
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {form.touched.date && form.errors.date && (
-                      <div className="text-red-500 text-sm mt-1">{form.errors.date}</div>
-                    )}
-                  </div>
-                )}
-              </Field>
-            </div>
-          </>
-        );
-      case '3':
-        return (
-          <>
-            <Field name="title">
-              {({ field, form: { touched, errors } }: { field: FieldInputProps<string>; form: any }) => (
-                <div className="mb-4">
-                  <label htmlFor="title" className="text-sm font-semibold text-gray-700 mb-1 block">
-                    Recognition Title
-                  </label>
-                  <Input
-                    id="title"
-                    type="text"
-                    placeholder="Dedicated...Let's Lock In"
-                    {...field}
-                    className={` w-full bg-gray-100 placeholder:text-gray-400  focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3  py-6 px-4 ${touched.title && errors.title ? "border-red-500" : ""}`}
-                  />
-                  {touched.title && errors.title && (
-                    <div className="text-red-500 text-sm mt-1">{errors.title}</div>
-                  )}
-                </div>
-              )}
-            </Field>
-
-            <FieldArray name="recognitionList">
-              {({ remove, push, form }: any) => (
-                <div className="space-y-4">
-                  <div className="flex flex-col gap-4 ">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-1 block">Make The List For The Week</h3>
-                    <div className="w-full text-left flex">
-                      <p className="w-1/2  text-sm font-medium">Project Name</p>
-                      <p className="w-1/2  text-sm font-medium">Project Name</p>
-                    </div>
-                  </div>
-
-                  {(form.values.recognitionList || []).map((_: any, index: number) => (
-                    <div key={index} className=" space-y-4">
-                      <div className="flex gap-1 items-center">
-                        <Field name={`recognitionList.${index}.employeeId`}>
-                          {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
-                            const [hasOpened, setHasOpened] = useState(false);
-                            const employeeIdValue = values.employeeId || '';
-                            // const selectedEmployee = users.find(emp => emp.id === employeeIdValue);
-                            // const displayName = selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}` : '';
-                            const employeeError = touched.recognitionList?.[index]?.employeeId && errors.recognitionList?.[index]?.employeeId;
-
-                            return (
-                              <div className="w-full">
-                                <Popover
-                                  open={popoverOpenStates[index] || false}
-                                  onOpenChange={(open) => handlePopoverOpenChange(index, open)}
-                                >
-                                  <PopoverTrigger asChild>
-                                    <div className="relative">
-                                      <Input
-                                        {...field}
-                                        id={`recognitionList.${index}.employeeId`}
-                                        value={values.recognitionList[index].employeeId ? 
-                                          `${users.find(u => u.id === values.recognitionList[index].employeeId)?.firstName} ${users.find(u => u.id === values.recognitionList[index].employeeId)?.lastName}` : 
-                                          ''}
-                                        onClick={() => {
-                                          handlePopoverOpenChange(index, true);
-                                          setHasOpened(true);
-                                        }}
-                                        placeholder="Select employee"
-                                        className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${employeeError ? "border-red-500" : ""}`}
-                                        onBlur={() => {
-                                          if (!hasOpened) {
-                                            setFieldTouched(`recognitionList.${index}.employeeId`, true);
-                                          }
-                                        }}
-                                      />
-                                      {employeeError && (
-                                        <div className="text-red-500 text-sm mt-1">{employeeError}</div>
-                                      )}
-                                    </div>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-[370px] p-0 z-[2000]" align="start">
-                                    <Command>
-                                      <CommandInput placeholder="Search employees..." />
-                                      <CommandList>
-                                        <CommandEmpty>No employees found.</CommandEmpty>
-                                        <CommandGroup>
-                                          {users
-                                              .filter((employee) => {
-                                                // Check if the employee is already selected in recognitionList
-                                                return !values.recognitionList.some(
-                                                  (item: any) => item.employeeId === employee.id
-                                                );
-                                              })
-                                              .map((employee) => (
-                                                <CommandItem
-                                                  key={employee.id}
-                                                  value={`${employee.firstName} ${employee.lastName}`}
-                                                  onSelect={() => {
-                                                    setFieldValue(field.name, employee.id);
-                                                    handlePopoverOpenChange(index, false);
-                                                  }}
-                                                >
-                                                  <div className="flex justify-between w-full py-[13px]">
-                                                    <div className="flex gap-2 items-center">
-                                                      <UserIcon />
-                                                      <span className="flex">
-                                                        {employee.firstName} {employee.lastName}
-                                                      </span>
-                                                    </div>
-                                                    <span className="text-muted-foreground text-sm">
-                                                      {employee.department?.name || "No Department"}
-                                                    </span>
-                                                  </div>
-                                                </CommandItem>
-                                              ))}
-                                        </CommandGroup>
-                                      </CommandList>
-                                    </Command>
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
-                            );
-                          }}
-                        </Field>
-
-                        <Field name={`recognitionList.${index}.projectId`}>
-                          {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
-                            const [hasOpenedProject, setHasOpenedProject] = useState(false);
-                            const projectError = touched.recognitionList?.[index]?.projectId && errors.recognitionList?.[index]?.projectId;
-
-                            return (
-                              <div className="w-full">
-                                <Popover
-                                  open={projectPopoverOpenStates[index] || false}
-                                  onOpenChange={(open) => handleProjectPopoverOpenChange(index, open)}
-                                >
-                                  <PopoverTrigger asChild>
-                                    <div className="relative">
-                                      <Input
-                                        {...field}
-                                        id={`recognitionList.${index}.projectId`}
-                                        value={values.recognitionList[index].projectId ? 
-                                          projects.find(p => p.id === values.recognitionList[index].projectId)?.name : 
-                                          ''}
-                                        onClick={() => {
-                                          handleProjectPopoverOpenChange(index, true);
-                                          setHasOpenedProject(true);
-                                        }}
-                                        placeholder="Select project"
-                                        className={`w-full bg-gray-100 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 py-6 px-4 ${projectError ? "border-red-500" : ""}`}
-                                        onBlur={() => {
-                                          if (!hasOpenedProject) {
-                                            setFieldTouched(`recognitionList.${index}.projectId`, true);
-                                          }
-                                        }}
-                                      />
-                                      {projectError && (
-                                        <div className="text-red-500 text-sm mt-1">{projectError}</div>
-                                      )}
-                                    </div>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-[370px] p-0 z-[2000]" align="start">
-                                    <Command>
-                                      <CommandInput placeholder="Search projects..." />
-                                      <CommandList>
-                                        <CommandEmpty>No projects found.</CommandEmpty>
-                                        <CommandGroup>
-                                        {projects.length > 0 ? (
-                                        projects.map((project) => (
-                                          <CommandItem
-                                            key={project.id}
-                                            value={project.name}
-                                            onSelect={() => {
-                                              setFieldValue(`recognitionList.${index}.projectId`, project.id);
-                                              handleProjectPopoverOpenChange(index, false);
-                                            }}
-                                          >
-                                            <div className="flex justify-between w-full py-[13px]">
-                                              <div className="flex gap-2 items-center">
-                                                <span className="flex">{project.name}</span>
-                                              </div>
-                                              <span className="text-muted-foreground text-sm">
-                                                {project.status}
-                                              </span>
-                                            </div>
-                                          </CommandItem>
-                                        ))
-                                        ) : (
-                                        <div className="flex justify-between w-full py-[13px]">
-                                          <div className="flex gap-2 items-center">
-                                            <span className="flex">No Projects To Show</span>
-                                          </div>
-                                        </div>
-                                        )}
-                                        </CommandGroup>
-                                      </CommandList>
-                                    </Command>
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
-                            );
-                          }}
-                        </Field>
-
-                        {form.values.recognitionList.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => remove(index)}
-                            className="text-red-500 hover:bg-white hover:text-red-700 py-6"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-
-                  <div>
-                    <Button
-                      type="button"
-                      variant="link"
-                      onClick={() => push({ employeeId: '', projectId: '' })}
-                      className="text-rgtpurpleaccent2 text-sm py-2 items-center justify-start hover:underline"
-                    >
-                      <Plus />
-                      Add Another
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </FieldArray>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
-
-  const handleSubmit = async (
-    values: FormValues, 
-    { 
-      setSubmitting, 
-      setErrors, 
-      resetForm 
-    }: FormikHelpers<FormValues>
-  ) => {
-    try {
-      setSubmitting(true);
-      console.log("Before Submiting");
-      
-
-      const transformedData = transformFormValuesToEventDto(      
-        values, 
-        currentUser, 
-        users
-      );
-
-      let result;
-
-
-      if (values.formType === '3') {
-        console.log("About to create recognition");
-        result = await createRecognition(transformedData as CreateRecognitionDto|CreateRecognitionDto[]);
-      } else {
-        result = await createEvent(transformedData as CreateEventDto);
-      }
-
-      if (!result.success) {
-        throw result.error;
-      }
-
-      toast({
-        title: "Success",
-        description: `${values.formType === '3'? "Recognition":"Event"} created successfully`,
-        variant: "default"
-      });
-
-      resetForm();
-      setIsModalOpen(false);
-
-    } catch (error) {
-      if (error instanceof Yup.ValidationError) {
-        const validationErrors: { [key: string]: string } = {};
-        
-        error.inner.forEach((err) => {
-          if (err.path) {
-            validationErrors[err.path] = err.message;
-          }
-        });
-        
-        setErrors(validationErrors);
-      } 
-      else {
-        const errorMessage = getApiErrorMessage(error);
-        
-        toast({
-          title: "Error",
-          description: errorMessage.message,
-          variant: "destructive"
-        });
-      }
-    } finally {
-      setSubmitting(false);
-      setSelectedEmployee(null);
-    }
-  };
-
-  // Transform form values to CreateEventDto
-  const transformFormValuesToEventDto = (
-    values: FormValues, 
-    currentUser: User | null, 
-    users: Employee[])
-    : CreateEventDto|CreateRecognitionDto|CreateRecognitionDto[] => {
-
-      const getCurrentUserId = (): number => {
-        if (!currentUser) {
-          throw new Error('No authenticated user found');
-        }
-        
-        const user = users.find(u => u.user?.id === currentUser.id);
-        if (!user) {
-          throw new Error('Current user not found in user list');
-        }
-        
-        return user.id;
-      };
-
-      // Validate project and employee IDs
-      const validateNumericId = (id: string | number | undefined, fieldName: string): number => {
-        if (id === undefined || id === null) {
-          throw new Error(`${fieldName} is required`);
-        }
-        
-        const numericId = Number(id);
-        if (isNaN(numericId) || numericId <= 0) {
-          throw new Error(`Invalid ${fieldName}`);
-        }
-        
-        return numericId;
-      };
-
-
-    switch (values.formType) {
-      case '1': {
-        // Special Event (Holiday or Birthday)
-        const specialEvent = values as SpecialEventFormValues;
-        const startOfDay = new Date(specialEvent.date);
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const endOfDay = new Date(specialEvent.date);
-        endOfDay.setHours(23, 59, 59, 999);
-
-        return {
-          title: specialEvent.eventType === 'Holiday' 
-            ? specialEvent.holidayName || 'Holiday Event' 
-            : `${specialEvent.employeeId || 'Employee'} Birthday`,
-          description: specialEvent.eventType,
-          startTime: startOfDay,
-          endTime: endOfDay,
-          type: specialEvent.eventType === 'Holiday' 
-            ? EventType.HOLIDAY 
-            : EventType.BIRTHDAY,
-             
-        };
-      }
-      case '2': {
-        // Announcement
-        const announcement = values as AnnouncementFormValues;
-        const startOfDay = new Date(announcement.date);
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const endOfDay = new Date(announcement.date);
-        endOfDay.setHours(23, 59, 59, 999);
-        return {
-          title: announcement.title,
-          description: announcement.description,
-          startTime: startOfDay,
-          endTime: endOfDay,
-          type: EventType.ANNOUNCEMENT,
-        };
-      }
-      case '3': {
-        // Recognition
-        const recognition = values as RecognitionFormValues;
-        
-        
-        if (!recognition.title || recognition.title.trim() === '') {
-          throw new Error('Recognition message is required');
-        }
-        
-        if (!recognition.recognitionList || recognition.recognitionList.length === 0) {
-          throw new Error('No recognition details provided');
-        }
-        
-        console.log("Recognition Title", recognition.title, "Recognition", recognition)
-        
-        const currentUserId = getCurrentUserId();
-        console.log("CurrentUserId", currentUserId)
-        
-        const recognitionDtos: CreateRecognitionDto[] = recognition.recognitionList.map(item => {
-          const projectId = validateNumericId(item.projectId, 'Project ID');
-          const employeeId = validateNumericId(item.employeeId, 'Employee ID');
-          
-          return {
-            message: recognition.title,
-            projectId,
-            recognizedById: currentUserId,
-            recognizedEmployeeId: employeeId,
-          };
-        });
-        
-        console.log("Recognition", recognitionDtos);
-        return recognitionDtos.length === 1 ? recognitionDtos[0] : recognitionDtos;
-      }
-      default:
-        throw new Error('Invalid form type');
-    }
-  };
-
-
-  const createEvent = async (data: CreateEventDto): Promise<CreateEventResult> => {
-    try {
-    console.log("Calling Create event Submit", data)
-    
-    const response = await createEventMutation.mutateAsync({ data: data });
-    console.log("Logging Create event response", response)
-
-      if (!response.success) {
-        return { 
-          success: false,
-          response: null, 
-          error: new Error(response.message || 'An unknown error occurred') 
-        };
-      }
-
-      return { 
-        success: true,
-        response: response.data!, 
-        error: null 
-      };
-    } catch (error) {
-      return { 
-        success: false,
-        response: null, 
-        error: getApiErrorMessage(error) 
-      };
-    }
+  if(isEventsLoading) {
+    return <div>Loading events...</div>;
   }
 
-  const createRecognition = async (
-    data: CreateRecognitionDto | CreateRecognitionDto[]
-  ): Promise<CreateRecognitionResult> => {
-    try {
-      console.log("Creating Recognition(s):", data);
+  if(!eventsData || !eventsData.success || isEventsError){
+    console.error("Events Data Error", eventsError);
+    return (      
+    <ErrorMessage
+        title="Error Loading Events Data"
+        error={eventsError}
+        refetchFn={refetchEvents}
+    />)
+  }
 
-      let response: EmployeeRecognition | EmployeeRecognition[];
-      
-      if (Array.isArray(data)) {
-        if (data.length === 0) {
-          throw new Error('No recognition details provided for creating recognition');
-        }
+  const processedEvents = eventsData.data.map(event => ({
+    ...event,
+    startTime: new Date(event.startTime),
+    endTime: new Date(event.endTime)
+  }));
 
-        response = await multiRecognitionMutation.mutateAsync({ data });
-      } else {
+  // Separate events by type
+  const specialEvents = processedEvents.filter(event => 
+    event.type === 'holiday' || event.type === 'birthday'
+  );
 
-        response = await singleRecognitionMutation.mutateAsync({ data });
-      }
-
-
-      return {
-        success: true,
-        response: response!,
-        error: null
-      };
-
-    } catch (error) {
-      console.error('Recognition Creation Error:', error);
-
-      return {
-        success: false,
-        response: null,
-        error: getApiErrorMessage(error)
-      };
-    }
-  };
-
-    
+  const announcements = processedEvents.filter(event => 
+    event.type === 'announcement'
+  );
 
   return (
     <>
       <div className="flex flex-col gap-[15px] pt-[10px] h-full px-4">
         <section className="h-[62px] flex justify-between w-full items-center py-1">
-          {/* Title */}
           <div className="text-left flex flex-col gap-2">
             <h1 className="text-2xl font-medium text-gray-600">Events</h1>
-            <h1 className="text-sm font-medium text-gray-400">These are your events so far</h1>
+            <h1 className="text-sm font-medium text-gray-400">
+              These are your events so far
+            </h1>
           </div>
 
           <div className="md:flex md:flex-row items-center h-full">
@@ -1150,22 +80,11 @@ const Events = () => {
               <div className="px-4 flex items-center justify-between pb-4">
                 <p className="text-[#706D8A] font-[700] text-2xl">Upcoming Events</p>
               </div>
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
-                classNames={{
-                  day_selected:
-                    "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
-                  month: "flex flex-col space-y-3 flex-grow",
-                  day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
-                  head_cell: "w-8 sm:w-10 flex-grow",
-                  cell: "flex items-center justify-center flex-grow",
-                }}
-                className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
-              />
-
+              <EnhancedCalendar 
+                    events={processedEvents}
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                />
               <div className="p-4 bg-white rounded-lg space-y-5">
                 <div className="flex items-center justify-between">
                   <p className="text-[#706D8A] font-[700] text-lg">
@@ -1180,17 +99,20 @@ const Events = () => {
                   </Link>
                 </div>
 
-                {/* Events List */}
+                {/* Special Events List */}
                 <div className="flex flex-col space-y-5">
-                  {eventList.map((event, index) => (
-                    <EventList
-                      key={index}
-                      {...event}
-                      className={`${
-                        eventList.length - 1 === index ? "border-b-0" : ""
-                      }`}
-                    />
-                  ))}
+                  {specialEvents.length > 0 ? (
+                    specialEvents.map((event) => (
+                      <EventList
+                        key={event.id}
+                        event={event.type === 'holiday' ? 'holiday' : 'birthday'}
+                        date={event.startTime.toLocaleDateString()}
+                        title={event.title}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center">No special events</p>
+                  )}
                 </div>
               </div>
 
@@ -1199,88 +121,36 @@ const Events = () => {
                   <p className="text-[#706D8A] font-[700] text-lg">Announcements</p>
                 </div>
                 <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3">
-                  {announcements.map((announcement, index) => (
-                    <AnnouncementCard {...announcement} key={index} />
-                  ))}
+                  {announcements.length > 0 ? (
+                    announcements.map((announcement) => (
+                      <AnnouncementCard
+                        key={announcement.id}
+                        date={new Date(announcement.startTime)}
+                        title={announcement.title}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center col-span-full">
+                      No announcements
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Manage Employees Table Section */}
+          {/* Events Calendar Section */}
           <div className="flex flex-grow w-full h-full">
-            <EventsCalendar events={events} />
+            <EventsCalendar events={processedEvents} />
           </div>
         </section>
       </div>
 
-      {/* Modal for a new Event request */}
       {isModalOpen && (
-        <SideFormModal
-          initialFormValues={getInitialValues(selectedFormType)}
-          validationSchema={getValidationSchema(selectedFormType)}
-          onSubmit={handleSubmit}
-          title="New Event"
-          back={true}
-          backFn={() => {
-            setSelectedEmployee(null);
-            setIsModalOpen(false)
-          }}
-          formClassName="flex flex-col my-8 gap-6  "
-        >
-          {({ values, errors, touched, setFieldValue }) => (
-            <>
-              <div className="mb-6">
-                <label htmlFor="formType" className="block mb-2 font-medium text-gray-700">
-                  Event Type
-                </label>
-                <Field name="formType">
-                  {({ field, form, meta }: FieldProps) => (
-                    <div className="relative">
-                      <Select
-                        onValueChange={(value) => {
-                          // Reset form with new initial values for the selected type
-                          const newInitialValues = getInitialValues(value);
-                          form.resetForm({ values: newInitialValues });
-                          
-                          setSelectedFormType(value);
-                          setSelectedEmployee(null);
-                          form.setFieldValue(field.name, value);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-full bg-gray-100 py-6 rounded-b-none focus-visible:ring-1 focus-visible:ring-rgtpurpleaccent3 ">
-                          <SelectValue placeholder="Select Event Type" />
-                        </SelectTrigger>
-                        <SelectContent position="popper" className="z-[2000]">
-                          <SelectGroup className="">
-                            <SelectLabel>Select an event type</SelectLabel>
-                            {formTypes.map((item) => (
-                              <SelectItem 
-                                className="py-[12px] px-[24px] focus:bg-rgtpurpleaccent3" 
-                                value={item.id} 
-                                key={item.id}
-                              >
-                                {item.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      {meta.touched && meta.error && (
-                        <div className="text-red-500 text-sm mt-1">{meta.error}</div>
-                      )}
-                    </div>
-                  )}
-                </Field>
-
-                <div className=" mt-6 overflow-y-auto max-h-[500px]">
-                  {renderFormFields(values.formType)}
-                </div>
-              </div>
-            </>
-          )}
-        </SideFormModal>
+        <EventModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+        />
       )}
     </>
   );

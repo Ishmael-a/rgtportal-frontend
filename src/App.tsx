@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WithPermission } from "@/components/common/WithPermission";
+import  ProtectedRoute  from "@/components/common/ProtectedRoute";
 import { BaseLayout } from "./layouts/BaseLayout";
 import NotFoundPage from "./pages/NotFoundPage";
 import Login from "./pages/Login";
@@ -21,24 +22,27 @@ import DepartmentPage from "@/pages/HR/Employees/DepartmentPage"
 
 function App() {
   return (
-    <BrowserRouter>
+<BrowserRouter>
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
-
-        {/* Employee routes */}
-        <Route path="/emp" element={<BaseLayout />}>
-          <Route index path="feed" element={<Feed />} />
-          <Route path="events-calendar" element={<EventsCalendar />} />
-          <Route path="all-projects/" element={<Projects />} />
-          <Route path="all-projects/:id" element={<ProjectDetails />} />
-          <Route path="time-off" element={<TimeOff />} />
+        
+        {/* Employee routes - accessible by all roles */}
+        <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "MANAGER", "HR", "ADMIN", "MODERATOR"]} />}>
+          <Route path="/emp" element={<BaseLayout />}>
+            <Route index path="feed" element={<Feed />} />
+            <Route path="events-calendar" element={<EventsCalendar />} />
+            <Route path="all-projects/" element={<Projects />} />
+            <Route path="all-projects/:id" element={<ProjectDetails />} />
+            <Route path="time-off" element={<TimeOff />} />
+          </Route>
         </Route>
-
-        {/* HR routes */}
-        <Route path="/hr" element={<BaseLayout />}>
-          <Route index path="dashboard" element={<HRDashboard />} />
-          <Route path="alldepartments"  element={
+        
+        {/* HR routes - accessible by HR and ADMIN only */}
+        <Route element={<ProtectedRoute allowedRoles={["HR", "ADMIN"]} />}>
+          <Route path="/hr" element={<BaseLayout />}>
+            <Route index path="dashboard" element={<HRDashboard />} />
+            <Route path="alldepartments" element={
               <WithPermission
                 resource="employeeRecords"
                 action="view"
@@ -46,56 +50,40 @@ function App() {
               >
                 <AllDepartments />
               </WithPermission>
-          }/>
-
-
-          <Route path={`alldepartments/department/:id`}  element={
-            <DepartmentPage />
-          }/>
-
-
-          <Route  path="manageemployees"  element={
-              <WithPermission 
-                resource="employeeRecords" 
-                action="edit" 
+            }/>
+            <Route path={`alldepartments/department/:id`} element={<DepartmentPage />} />
+            <Route path="manageemployees" element={
+              <WithPermission
+                resource="employeeRecords"
+                action="edit"
                 redirectTo="/hr/dashboard"
               >
                 <ManageEmployees/>
               </WithPermission>
-            }
-          />
-          <Route  path="employeecards"  element={
-              <WithPermission 
-                resource="employeeRecords" 
-                action="view" 
+            }/>
+            <Route path="employeecards" element={
+              <WithPermission
+                resource="employeeRecords"
+                action="view"
                 redirectTo="/hr/dashboard"
               >
                 <EmployeeDirectory/>
               </WithPermission>
-            }
-          />
-
-          <Route path="feed" element={<Feed />} />
-          <Route path="time-off" element={<TimeOff />} />
-          <Route path="emp-time-off" element={<EmployeeTimeOff />} />
-          <Route path="events" element={<Events />} />
-
-          <Route path="recruitment">
-            <Route
-              path="employee"
-              element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />}
-            />
-            <Route
-              path="nss"
-              element={<RecruitmentPage type={RecruitmentType.NSS} />}
-            />
-            <Route
-              path="candidate/:id"
-              element={<CandidateDetailView />}
-            />
+            }/>
+            <Route path="feed" element={<Feed />} />
+            <Route path="time-off" element={<TimeOff />} />
+            <Route path="emp-time-off" element={<EmployeeTimeOff />} />
+            <Route path="events" element={<Events />} />
+            
+            {/* Recruitment routes - accessible by HR and ADMIN */}
+            <Route path="recruitment">
+              <Route path="employee" element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />} />
+              <Route path="nss" element={<RecruitmentPage type={RecruitmentType.NSS} />} />
+              <Route path="candidate/:id" element={<CandidateDetailView />} />
+            </Route>
           </Route>
         </Route>
-
+        
         {/* 404 route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

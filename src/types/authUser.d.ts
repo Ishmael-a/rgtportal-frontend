@@ -2,6 +2,13 @@
 type ROLE = "HR" | "MANAGER" | "EMPLOYEE" | "ADMIN" | "MODERATOR";
 type lROLE = "hr" | "manager" | "employee" | "admin" | "moderator";
 
+export enum RoleType {
+  HR = "hr",
+  EMPLOYEE = "emp",
+  MANAGER = "manager", 
+  ADMIN = "admin",
+}
+
 interface Role {
   id: number;
   name: ROLE;
@@ -14,7 +21,7 @@ interface ResponseUserRole {
   description: string;
 }
 
-interface User {
+export interface User {
   id: number;
   email: string;
   username: string;
