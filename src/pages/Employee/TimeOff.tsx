@@ -277,6 +277,7 @@ export default function TimeOff() {
           title="Approve or Reject Request"
           back={true}
           backFn={() => setAppRej(false)}
+          initialFormValues={{}}
         >
           {viewPtoData && (
             <>

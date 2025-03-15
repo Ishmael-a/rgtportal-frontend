@@ -1,22 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { ClassNameValue } from "tailwind-merge";
+import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 import {
   Form as FormikForm,
   Formik,
   FormikHelpers,
   FormikValues,
+  FormikProps,
 } from "formik";
-import * as Yup from "yup";
 import { Loader } from "lucide-react";
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
   validationSchema?: Yup.ObjectSchema<any, Yup.AnyObject, any, "">;
-  initialFormValues?: T;
+  initialFormValues: T;
   buttonClassName?: ClassNameValue;
   formClassName?: string;
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((formikProps: FormikProps<T>) => React.ReactNode);
   onSubmit?: (values: T, formikHelpers: FormikHelpers<T>) => void;
   submitBtnText?: string;
   isSubmitting?: boolean;
@@ -61,38 +65,44 @@ export const SideFormModal = <T extends FormikValues>({
             if (onSubmit) onSubmit(values as T, helpers as FormikHelpers<T>);
           }}
         >
-          <FormikForm className="flex flex-col justify-start h-full">
-            {/* Form fields container */}
-            <div className={`flex-grow ${formClassName}`}>{children}</div>
-            {submitBtnText && (
-              <div className="flex w-full mt-auto h-14 gap-[20px]">
-                <Button
-                  type="button"
-                  onClick={backFn}
-                  key={"Cancel"}
-                  variant="outline"
-                  className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100 cursor-pointer"
-                >
-                  Cancel
-                </Button>
-
-                {/* Create Button */}
-                <Button
-                  type={"submit"}
-                  key={"Create"}
-                  disabled={isSubmitting}
-                  className={`w-1/2 h-full rounded-[12px] bg-rgtpink  text-white cursor-pointer
-                    ${isSubmitting ? "opacity-45" : "hover:bg-pink-500"}`}
-                >
-                  {isSubmitting ? (
-                    <Loader className="animate-spin" size={20} />
-                  ) : (
-                    submitBtnText
-                  )}
-                </Button>
+          {(formikProps) => (
+            <FormikForm className="flex flex-col justify-start h-full">
+              {/* Form fields container */}
+              <div className={`flex-grow ${formClassName}`}>
+                {typeof children === "function"
+                  ? children(formikProps)
+                  : children}
               </div>
-            )}
-          </FormikForm>
+              {submitBtnText && (
+                <div className=" flex w-full mt-4 h-14 gap-[20px]">
+                  <Button
+                    type="button"
+                    onClick={backFn}
+                    key={"Cancel"}
+                    variant="outline"
+                    className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100 cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+
+                  {/* Create Button */}
+                  <Button
+                    type={"submit"}
+                    key={"Create"}
+                    disabled={formikProps.isSubmitting || isSubmitting}
+                    className={`w-1/2 h-full rounded-[12px] bg-rgtpink  text-white cursor-pointer
+                    ${isSubmitting ? "opacity-45" : "hover:bg-pink-500"}`}
+                  >
+                    {isSubmitting ? (
+                      <Loader className="animate-spin" size={20} />
+                    ) : (
+                      submitBtnText
+                    )}
+                  </Button>
+                </div>
+              )}
+            </FormikForm>
+          )}
         </Formik>
       </div>
     </div>

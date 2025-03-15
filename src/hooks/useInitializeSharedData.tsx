@@ -14,7 +14,7 @@ export const useInitializeSharedData = () => {
     isLoading: isDepartmentsLoading, 
     isError: isDepartmentsError,
     error: departmentsError 
-  } = useDepartments();
+  } = useDepartments({includeEmployees: true});
 
   useEffect(() => {
 

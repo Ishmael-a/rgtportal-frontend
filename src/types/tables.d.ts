@@ -11,7 +11,7 @@ export interface DataTableProps {
   data: PtoLeave[] | undefined;
   dividers?: boolean;
   actionBool?: boolean;
-  actionObj: { name: string; action: (id?: number) => void }[];
+  actionObj: { name: string; action: (id?: number, row?: T) => void }[];
   showDelete?: boolean;
   onDelete?: (id: number) => Promise<void>;
   setShowDelete?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,7 +21,7 @@ export interface DataTableProps {
 
 export interface ActionObject {
   name: "view" | "edit" | "delete" | "approve" | "reject";
-  action: (id?: number) => void;
+  action: (id?: number, row?: T) => void;
   icon?: React.ReactNode;
   tooltip?: string;
   disabled?: boolean | ((row: any) => boolean);

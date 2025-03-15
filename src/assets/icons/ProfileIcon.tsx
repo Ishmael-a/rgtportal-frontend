@@ -24,3 +24,5 @@ const ProfileIcon: React.FC<IconTypes> = ({ color }) => {
 };
 
 export default ProfileIcon;
+
+

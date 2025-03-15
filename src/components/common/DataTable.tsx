@@ -59,7 +59,7 @@ export function DataTable({
                       <button
                         key="edit"
                         className="bg-[#C0AFFF] text-white p-1 rounded-md hover:bg-purple-300 duration-300 ease-in transition-colors cursor-pointer"
-                        onClick={() => action.action()}
+                        onClick={() =>action.action(row.id, row)}
                       >
                         <img src="/Edit 2.svg" alt="edit" />
                       </button>
