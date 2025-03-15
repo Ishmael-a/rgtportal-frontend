@@ -1,3 +1,4 @@
+import { PtoLeave } from "@/types/PTOS";
 import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/leave`;

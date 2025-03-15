@@ -6,6 +6,7 @@ import {
   IProjectMembers,
   EmployeeCardType,
 } from "./types/employee";
+import { Project } from "./types/project";
 import { Column } from "./types/tables";
 
 export enum ParticipantStatus {
