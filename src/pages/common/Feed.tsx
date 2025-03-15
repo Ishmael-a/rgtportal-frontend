@@ -2,25 +2,62 @@ import AnnouncementCard from "@/components/AnnouncementCard";
 import CreatePost from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
-import {
-  announcements,
-  avtrDets,
-  eventList,
-  imageUrl,
-  poll,
-  postText1,
-  postText2,
-  projectCards,
-} from "@/constants";
+import { announcements, eventList, projectCards } from "@/constants";
 import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
 import Avtr from "@/components/Avtr";
 import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import ArrowIcon from "@/assets/icons/ArrowIcon";
+import { PollService } from "@/api/services/poll.service";
+import { useQuery } from "@tanstack/react-query";
+import { Poll } from "@/types/polls";
+import { PostService } from "@/api/services/posts.service";
+import { FeedSkeleton } from "../../FeedSkeleton";
+import PollUI from "@/components/PollUI";
+import WithRole from "@/common/WithRole";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const Feed = () => {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>();
+  const [showEvents, setShowEvents] = useState(false);
+  const { currentUser: user } = useAuthContextProvider();
+
+  const { data: polls, isLoading: pollsLoading } = useQuery({
+    queryKey: ["polls"],
+    queryFn: () =>
+      PollService.getPolls().then((res) => {
+        console.log("polls:", res.data);
+        return res.data as Poll[];
+      }),
+    // placeholderData: (previousData) => {
+    //   return previousData;
+    // },
+  });
+
+  const { data: posts, isLoading: postsLoading } = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
+    // placeholderData: (previousData) => {
+    //   return previousData;
+    // },
+  });
+
+  console.log("posts:", posts);
+
+  const mergedFeed = useMemo(() => {
+    const postsWithType =
+      posts?.map((p) => ({ ...p, feedType: "post" as const })) || [];
+    const pollsWithType =
+      polls?.map((p) => ({ ...p, feedType: "poll" as const })) || [];
+
+    return [...postsWithType, ...pollsWithType].sort((a, b) => {
+      const dateA = a.feedType === "post" ? a.publishDate : a.createdAt;
+      const dateB = b.feedType === "post" ? b.publishDate : b.createdAt;
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+  }, [posts, polls]);
 
   const colors = [
     { color: "#FFCFF2", name: "pink" },
@@ -33,8 +70,19 @@ const Feed = () => {
     return colors[randomIndex];
   };
 
+  if (pollsLoading || postsLoading) {
+    return (
+      <main className="flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0">
+        <FeedSkeleton />
+        {/* Keep the right sidebar skeleton if needed */}
+      </main>
+    );
+  }
+
   return (
-    <main className="flex flex-col-reverse gap-6 md:flex-row h-full">
+    <main
+      className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0 pb-5`}
+    >
       <div
         className="space-y-10 md:w-3/5 overflow-y-auto"
         style={{
@@ -44,7 +92,7 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full"
+          className="bg-rgtpurple sticky top-0 z-50 rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
@@ -73,7 +121,6 @@ const Feed = () => {
                 display: none; /* Chrome, Safari, and Opera */
               }
               `}
-              //{" "}
             </style>
             {projectCards[0].members.map((item, index) => {
               const randomColor = getRandomColor();
@@ -111,74 +158,104 @@ const Feed = () => {
 
         {/* Posts section */}
         <section className="space-y-7">
-          <CreatePost />
+          <WithRole
+            roles={["hr", "markerter", "admin"]}
+            userRole={user?.role.name as string}
+          >
+            <CreatePost />
+          </WithRole>
+
           <div className="space-y-3">
             <header className="font-semibold text-lg text-[#706D8A]">
               For you
             </header>
-            <Post poll={poll} avtrDets={avtrDets[0]} text={postText2} />
-            <Post image={imageUrl} avtrDets={avtrDets[0]} text={postText1} />
+            <div className="space-y-5">
+              {mergedFeed.map((item) => (
+                <React.Fragment key={item.id}>
+                  {item.feedType === "post" ? (
+                    <Post post={item} postId={item.id} />
+                  ) : item.feedType === "poll" ? (
+                    <PollUI pollId={item.id} /> // Render PollUI directly for polls
+                  ) : (
+                    <div>No post or poll data available</div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
         </section>
       </div>
 
-      <section className="flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto">
-        <div className="pt-5 space-y-3 h-fit  order-2 bg-white rounded-t-2xl w-full">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            initialFocus
-            classNames={{
-              day_selected:
-                "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
-              month: "flex flex-col space-y-3 flex-grow",
-              day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
-              head_cell: "w-8 sm:w-10 flex-grow",
-              cell: "flex items-center justify-center flex-grow",
-            }}
-            className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
+      <div className={`flex flex-col order-first`}>
+        <div className="w-fit" onClick={() => setShowEvents(!showEvents)}>
+          <ArrowIcon
+            className={`bg-white rounded-full shadow-md cursor-pointer md:hidden transition-all duration-300 ease-in ${
+              showEvents ? "rotate-180" : ""
+            }`}
           />
-
-          <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
-            <div className="flex items-center justify-between">
-              <p className="text-[#706D8A] font-[700] text-lg">
-                Special Events
-              </p>
-              <Link to="/events-calendar">
-                <img
-                  src="/Down 2.svg"
-                  className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
-                />
-              </Link>
-            </div>
-
-            {/* Events List */}
-            <div className="flex flex-col space-y-5">
-              {eventList.map((event, index) => (
-                <EventList
-                  key={index}
-                  {...event}
-                  className={`${
-                    eventList.length - 1 === index ? "border-b-0" : ""
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="p-4 bg-white rounded-lg space-y-2">
-            <div className="flex items-center justify-between pb-4">
-              <p className="font-[700] text-lg">Announcements</p>
-            </div>
-            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
-              {announcements.map((announcement, index) => (
-                <AnnouncementCard {...announcement} key={index} />
-              ))}
-            </div>
-          </div>
         </div>
-      </section>
+        <section
+          className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
+            showEvents ? "h-[500px]" : ""
+          }`}
+        >
+          <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              initialFocus
+              classNames={{
+                day_selected:
+                  "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
+                month: "flex flex-col space-y-3 flex-grow",
+                day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
+                head_cell: "w-8 sm:w-10 flex-grow",
+                cell: "flex items-center justify-center flex-grow",
+              }}
+              className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
+            />
+
+            <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
+              <div className="flex items-center justify-between">
+                <p className="text-[#706D8A] font-[700] text-lg">
+                  Special Events
+                </p>
+                <Link to="/events-calendar">
+                  <img
+                    src="/Down 2.svg"
+                    className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
+                  />
+                </Link>
+              </div>
+
+            
+              <div className="flex flex-col space-y-5">
+                {eventList.map((event, index) => (
+                  <EventList
+                    key={index}
+                    {...event}
+                    className={`${
+                      eventList.length - 1 === index ? "border-b-0" : ""
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 bg-white rounded-lg space-y-2">
+              <div className="flex items-center justify-between pb-4">
+                <p className="font-[700] text-lg">Announcements</p>
+              </div>
+              <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
+                {announcements.map((announcement, index) => (
+                  <AnnouncementCard {...announcement} key={index} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 };

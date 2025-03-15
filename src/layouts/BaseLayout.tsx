@@ -72,7 +72,7 @@ export const BaseLayout = () => {
         </div>
 
         <div
-          className="pt-[78px]  flex-1 md:w-3/5 h-screen overflow-y-auto"
+          className="pt-[78px] flex-1 md:w-3/5 h-screen overflow-y-auto"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,

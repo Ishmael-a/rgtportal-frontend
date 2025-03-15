@@ -12,28 +12,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ClassNameValue } from "tailwind-merge";
 
 interface IDatePicker {
   placeholder?: string;
-  fn?: (val: Date | undefined) => void;
+  value?: Date;
+  onChange?: (val: Date | undefined) => void;
+  className?: ClassNameValue;
 }
 
-const DatePicker: React.FC<IDatePicker> = ({ placeholder, fn }) => {
-  const [date, setDate] = React.useState<Date>();
-
-  if (fn) {
-    fn(date);
-  }
+const DatePicker: React.FC<IDatePicker> = ({
+  placeholder,
+  value,
+  onChange,
+  className,
+}) => {
+  const [date, setDate] = React.useState<Date | undefined>(value);
+  // Update Formik's state when the date changes
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (onChange) {
+      onChange(newDate);
+    }
+  };
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className=" p-0 ">
         <Button
           variant={"outline"}
-          className={cn(
-            " w-full h-full justify-between text-left font-normal",
+          className={`${className || ""} ${cn(
+            "justify-between text-left font-normal",
             !date && "text-muted-foreground"
-          )}
+          )}`}
         >
           {date ? (
             format(date, "PPP")
@@ -50,7 +61,7 @@ const DatePicker: React.FC<IDatePicker> = ({ placeholder, fn }) => {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={handleDateChange}
           initialFocus
           classNames={{
             day_selected:

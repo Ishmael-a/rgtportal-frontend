@@ -4,8 +4,23 @@ import {
   IAnnouncementCard,
   IProjectType,
   IProjectMembers,
+  EmployeeCardType,
 } from "./types/employee";
 import { Column } from "./types/tables";
+
+export enum ParticipantStatus {
+  INVITED = "invited",
+  ACCEPTED = "accepted",
+  DECLINED = "declined",
+  MAYBE = "maybe"
+}
+export enum EventType {
+  BIRTHDAY = "birthday",
+  HOLIDAY = "holiday",
+  ANNOUNCEMENT = "announcement", 
+  TRAINING = "training",
+  OTHER = "other"
+}
 
 export const avtrDets: Partial<IProjectMembers>[] = [
   {
@@ -106,6 +121,80 @@ export const eventList: IEventList[] = [
   },
 ];
 
+
+export interface IEvent {
+  id: string;
+  title: string;
+  date: Date;
+  startTime?: string;
+  endTime?: string;
+  type: 'exam' | 'meeting' | 'evaluation' | 'holiday' | 'birthday';
+  color?: string;
+}
+
+
+export interface IAnnouncementItem {
+  title: string;
+  date: Date;
+  startTime?: string;
+  endTime?: string;
+  description?: string;
+}
+
+export const events: IEvent[] = [
+    {
+      id: '1',
+      title: 'Graphic Design Exam',
+      date: new Date(2025, 0, 2), // January 2, 2025
+      startTime: '08:00',
+      endTime: '10:00',
+      type: 'exam'
+    },
+    {
+      id: '2',
+      title: 'Meeting with Candidate',
+      date: new Date(2025, 0, 11), // January 11, 2025
+      startTime: '08:00',
+      endTime: '10:00',
+      type: 'meeting'
+    },
+    {
+      id: '3',
+      title: 'Evaluate',
+      date: new Date(2025, 0, 15), // January 15, 2025
+      startTime: '08:00',
+      endTime: '10:00',
+      type: 'evaluation'
+    },
+    {
+      id: '4',
+      title: 'Web Design Exam',
+      date: new Date(2025, 0, 25), // January 25, 2025
+      startTime: '08:00',
+      endTime: '10:00',
+      type: 'exam'
+    }
+  ];
+  
+  // Sample announcements
+  export const hrannouncements: IAnnouncementItem[] = [
+    {
+      title: "Independence Day",
+      date: new Date(2025, 2, 6), // March 6, 2025
+      description: "National holiday"
+    },
+    {
+      title: "Group Meetup",
+      date: new Date(2025, 3, 25), // April 25, 2025
+      startTime: "14:00",
+      endTime: "16:00"
+    },
+    {
+      title: "Fatimah's Birthday",
+      date: new Date(2025, 5, 25) // June 25, 2025
+    }
+  ];
+
 export const announcements: IAnnouncementCard[] = [
   {
     title: "RGT University",
@@ -159,6 +248,59 @@ export const recognees = [
     project: "MediBoard",
   },
 ];
+
+const imgSrc = "https://randomuser.me/api/portraits/med/women/75.jpg";
+
+export const employeeCards:EmployeeCardType[] = [
+    {
+      id: '1',
+      name: 'Samantha William',
+      position: 'Web Developer',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    },
+    {
+      id: '2',
+      name: 'Johanna',
+      position: 'UI Designer',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    },
+    {
+      id: '3',
+      name: 'Frans Ferdinand',
+      position: 'Translator',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    },
+    {
+      id: '4',
+      name: 'Michael Black',
+      position: 'English Teacher',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    },
+    {
+      id: '5',
+      name: 'Jordy Ahmad',
+      position: 'Web Developer',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    },
+    {
+      id: '6',
+      name: 'Kimmy Yam',
+      position: 'Web Developer',
+      phone: '+12 345 6789 0',
+      email: 'email@mail.com',
+      imgSrc: imgSrc
+    }
+  ];
 
 const membersArray = [
   {
@@ -313,8 +455,8 @@ export const timeOffDummy = [
 ];
 
 export const timeOffTableColumns: Column[] = [
-  { key: "from", header: "From" },
-  { key: "to", header: "To" },
+  // { key: "startDate", header: "From" },
+  // { key: "endDate", header: "To" },
   { key: "total", header: "Total" },
   { key: "reason", header: "Reason" },
   {
@@ -323,11 +465,11 @@ export const timeOffTableColumns: Column[] = [
     cellClassName: (row: Record<string, any>) => {
       const status = row.status; // Access the status value from the row
       return `${
-        status === "Pending"
+        status === "pending"
           ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
-          : status === "Approved"
+          : status === "approved" || status === "manager_approved"
           ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
-          : status === "Rejected"
+          : status === "declined" || status === "manager_declined"
           ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
           : ""
       }`;
@@ -339,12 +481,130 @@ export const timeOffTableColumns: Column[] = [
     cellClassName: (row: Record<string, any>) => {
       const type = row.type; // Access the type value from the row
       return `${
-        type === "Sick Leave"
+        type === "vacation"
           ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
-          : type === "PTO"
+          : type === "sick"
           ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
           : ""
       }`;
     },
   },
+];
+
+
+export interface timeOffData {
+  id?: number;
+  employeeName: string;
+  email: string;
+  from: string;
+  to: string;
+  total: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
+
+export const timeOffManagementData:timeOffData[] = [
+  {
+    id: 1,
+    employeeName: 'Erdil Beckman',
+    email: 'erdil.beckman@example.com',
+    from: '01 Mar 2023',
+    to: '03 Mar 2023',
+    total: '3 Days',
+    reason: 'Engagement',
+    status: 'pending'
+  },
+  {
+    id: 2,
+    employeeName: 'Ben Barker',
+    email: 'ben.barker@example.com',
+    from: '01 Mar 2023',
+    to: '02 Mar 2023',
+    total: '1 Day',
+    reason: 'Unwell',
+    status: 'pending'
+  },
+  {
+    id: 3,
+    employeeName: 'Eddy Goell',
+    email: 'eddy.goell@example.com',
+    from: '01 Mar 2023',
+    to: '04 Mar 2023',
+    total: '4 Days',
+    reason: 'Emergency',
+    status: 'pending'
+  },
+  {
+    id: 4,
+    employeeName: 'Carmelo Keen',
+    email: 'carmelo.keen@example.com',
+    from: '01 Mar 2023',
+    to: '04 Mar 2023',
+    total: '1 Day',
+    reason: 'Emergency',
+    status: 'pending'
+  },
+  {
+    id: 5,
+    employeeName: 'Anthony Daily',
+    email: 'anthony.daily@example.com',
+    from: '01 Mar 2023',
+    to: '04 Mar 2023',
+    total: '4 Days',
+    reason: 'Emergency',
+    status: 'pending'
+  }
+];
+
+
+export const dummyProjects: Project[] = [
+  {
+    id: 1,
+    leadId: 1,
+    name: "Project Alpha",
+    description: "Development of new AI platform",
+    startDate: new Date("2023-01-01"),
+    endDate: new Date("2023-12-31"),
+    status: "In Progress",
+    lead: {
+      id: 1,
+      firstName: "John",
+      lastName: "Doe",
+      // ... other employee fields
+    },
+    assignments: []
+  },
+  {
+    id: 2,
+    leadId: 2,
+    name: "Project Beta",
+    description: "Mobile app development",
+    startDate: new Date("2023-03-15"),
+    endDate: new Date("2023-09-30"),
+    status: "Planning",
+    lead: {
+      id: 2,
+      firstName: "Jane",
+      lastName: "Smith",
+      // ... other employee fields
+    },
+    assignments: []
+  },
+  {
+    id: 3,
+    leadId: 3,
+    name: "Project Gamma",
+    description: "Cloud infrastructure upgrade",
+    startDate: new Date("2023-05-01"),
+    endDate: new Date("2023-11-30"),
+    status: "Completed",
+    lead: {
+      id: 3,
+      firstName: "Michael",
+      lastName: "Johnson",
+      // ... other employee fields
+    },
+    assignments: []
+  }
 ];

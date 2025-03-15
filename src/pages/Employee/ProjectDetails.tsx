@@ -1,6 +1,6 @@
 import DepartmentTable from "@/components/common/DepartmentTable";
 import { projectCards } from "@/constants";
-import { IProjectCard, IProjectType } from "@/types/employee";
+import { IProjectType } from "@/types/employee";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 

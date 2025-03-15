@@ -14,3 +14,15 @@ export interface CreateDepartmentDTO{
   description?: string;
   managerId: number;
 }
+
+export interface AddEmployeeToDepartmentDTO{
+  employeeId: string;
+}
+export interface AddEmployeesToDepartmentDTO{
+  employeeIds: string[];
+}
+
+interface DepartmentQueryParams {
+  includeEmployees?: boolean;
+  employeeFields?: string[];
+}

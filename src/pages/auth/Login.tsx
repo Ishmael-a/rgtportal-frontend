@@ -1,17 +1,17 @@
-import { Field, FieldInputProps, Formik, Form as FormikForm } from 'formik';
-import { Eye, EyeOff } from 'lucide-react';
+import * as Yup from "yup";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
-import { useState } from 'react';
-import { useLogin } from '@/api/query-hooks/auth.hooks';
-import rgtPattern from '@/assets/images/RGT PATTERN 1.png';
-import rgtIcon from '@/assets/images/RGT TRANSPARENT 1.png';
-import envato from '@/assets/images/envato-labs-image-edit (5) 2.png';
-import { GoogleAuthButton } from '@/components/Login/GoogleAuthButton';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { Field, Form as FormikForm, Formik, FieldInputProps } from "formik";
+import { useLogin } from '@/api/query-hooks/auth.hooks';
+import { toast } from '@/hooks/use-toast';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { GoogleAuthButton } from "@/components/Login/GoogleAuthButton";
+import rgtIcon from "../assets/images/RGT TRANSPARENT 1.png";
+import rgtpatternimg1 from "../assets/images/rgtpatternimg1.svg";
+import loginMainImg from "../assets/images/WomanAndBackground.png";
 
 interface FormValues {
   email: string;
@@ -199,23 +199,20 @@ const Login = () => {
       </div>
 
       {/* Right Side: Pattern and Image - Hidden on mobile */}
-      <div className="hidden md:flex w-full lg:w-[675px] md:w-1/2 bg-purpleaccent2 text-center px-4 lg:px-20 pb-20 flex-col justify-center order-1 md:order-2">
-        <div className="relative flex justify-end lg:mr-8 md:mr-3">
-          <img
-            className="absolute w-[123px] h-[128px] top-[-75px]"
-            src={rgtPattern}
-            alt="Pattern"
-          />
-          <div className="w-[81px] h-[71px] rounded-[8px] bg-rgtpurple"></div>
-        </div>
-
-        <div className="relative mt-2 md:mt-0 mx-auto">
-          <div className="bg-rgtpurpleaccent2 lg:w-[294px] lg:h-[342px] md:w-[260px] md:h-[320px] rounded-t-[426px]"></div>
-          <div className="w-full lg:w-[800px] md:w-[700px] absolute lg:top-[-150px] md:top-[-173px] md:left-[300px]  lg:left-[380px] -translate-x-1/2">
-            <img src={envato} className="max-w-full h-auto " alt="Envato" />
-          </div>
-        </div>
+      <div className="hidden px-auto md:flex w-full  md:w-1/2 lg:w-1/2  xl:w-1/2 2xl:w-1/2 bg-purpleaccent2 text-center pb-20 flex-col justify-center order-1 md:order-2">
+            <div className="relative  flex justify-center h-fit ">
+              <img 
+                src={loginMainImg} 
+                alt="MainLogin Image"
+                className="xl:scale-130"
+              />
+              <img 
+                src={rgtpatternimg1}
+                className="absolute right-1/5 md:right-1/8 top-0"
+              />
+            </div>
       </div>
+
     </div>
   );
 };

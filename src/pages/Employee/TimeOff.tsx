@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
-import {SideFormModal}  from "@/components/Modal";
+import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
-import { timeOffDummy, timeOffTableColumns } from "@/constants";
+import { Input } from "@/components/ui/input";
+import { timeOffTableColumns } from "@/constants";
+import { useRequestPto } from "@/hooks/usePtoRequests";
+import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -12,66 +16,77 @@ export default function TimeOff() {
   const [appRej, setAppRej] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeletePTO, setIsDeletePTO] = useState(false);
+  const [selectedPtoId, setSelectedPtoId] = useState<number | undefined>(
+    undefined
+  );
 
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const {
+    createPto,
+    ptoData,
+    isPtoLoading,
+    isPtoDeleting,
+    deletePto,
+    isLoading,
+  } = useRequestPto();
 
-  const [ptoForm, setPtoForm] = useState({
-    timeOffType: "PTO",
+  const formattedPtoData = ptoData?.map((item) => ({
+    ...item,
+    total: `${Math.ceil(
+      (new Date(item.endDate as Date).getTime() -
+        new Date(item.startDate as Date).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )} days`,
+  }));
+
+  const initialFormValues = {
+    type: "vacation",
     reason: "",
-    fromDate: new Date(),
-    toDate: new Date(),
-  });
+    startDate: undefined,
+    endDate: undefined,
+  };
 
   const ptoFormSchema = Yup.object({
-    timeOffType: Yup.string().required("Required"),
+    type: Yup.string()
+      .oneOf(["vacation", "sick"], "Invalid leave type")
+      .required("Leave type is required"),
     reason: Yup.string()
-      .min(3, "A minimum of 3 characters are required for you rdepartment name")
-      .max(100, "A max of 100 characters are required for you rdepartment name")
-      .required("Required"),
-    fromDate: Yup.date().required("Required"),
-    toDate: Yup.date().required("Required"),
+      .max(50, "reason must be at most 50 characters")
+      .required("reason is required"),
+    startDate: Yup.date()
+      .required("From date is required")
+      .typeError("Invalid date"),
+    endDate: Yup.date()
+      .required("To date is required")
+      .min(Yup.ref("startDate"), "To date must be after From date")
+      .typeError("Invalid date"),
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setPtoForm((prev) =>
-      prev
-        ? {
-            ...prev,
-            [name]: value,
-          }
-        : prev
-    );
-    console.log("formChanging:", ptoForm);
+  const handleFormSubmit = async (
+    values: typeof initialFormValues,
+    { setSubmitting }: FormikHelpers<typeof initialFormValues>
+  ) => {
+    try {
+      await createPto(values as PtoLeave);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error creating PTO:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  console.log("From:", fromDate);
-  console.log("To:", toDate);
-
-  const handleFromDate = (val: Date | undefined) => {
-    setFromDate(val);
-  };
-
-  const handleToDate = (val: Date | undefined) => {
-    setToDate(val);
-  };
-
-  // const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   console.log("submitting", e);
-  //   setIsModalOpen(false);
-  // };
 
   const handleCheckNow = () => {
     console.log("...checking");
     setIsSuccess(false);
   };
 
+  const viewPtoData = ptoData?.find((item) => item.id === selectedPtoId);
+
   return (
-    <main>
+    <main className="px-4">
       <div className="bg-white p-4 rounded-md">
-        <header className="flex justify-between items-center">
+        <header className="flex sm:flex-row flex-col justify-between sm:items-center">
           <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
             Request Time List
           </h1>
@@ -84,170 +99,245 @@ export default function TimeOff() {
           </Button>
         </header>
 
-        <div className="flex gap-3 h-[50px] items-center my-8">
-          <DatePicker />
+        <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:h-[50px] my-8">
+          <DatePicker className="sm:h-full" />
           <CustomSelect options={["plnt"]} />
           <CustomSelect options={["plnt"]} />
         </div>
 
-        {/* Table with custom cell styles */}
         <DataTable
           columns={timeOffTableColumns}
-          data={timeOffDummy}
+          data={formattedPtoData}
           actionBool={true}
           actionObj={[
-            { name: "view", action: () => setAppRej(true) },
-            { name: "delete", action: () => console.log("delete") },
+            {
+              name: "view",
+              action: (rowData) => {
+                console.log("rowData:", rowData);
+                setAppRej(!appRej);
+                setSelectedPtoId(rowData);
+              },
+            },
+            {
+              name: "delete",
+              action: () => setIsDeletePTO(true),
+            },
           ]}
+          showDelete={isDeletePTO}
+          setShowDelete={setIsDeletePTO}
+          isDeleteLoading={isPtoDeleting}
+          onDelete={deletePto}
+          loading={isLoading}
         />
       </div>
 
       {/* modal for a new Time off request */}
       {isModalOpen && (
-        // <div>TimeOff</div>
         <SideFormModal
-          // onSubmit={handleFormSubmit}
+          onSubmit={handleFormSubmit}
           title="Add New Time Off"
-          back
           validationSchema={ptoFormSchema}
-          initialFormValues={ptoForm}
+          initialFormValues={initialFormValues}
+          backFn={() => setIsModalOpen(false)}
+          back={true}
+          isSubmitting={isPtoLoading}
+          submitBtnText="Create"
           buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
-          <section className="space-y-[25px] h-[85%]">
-            {/* Time Off Type */}
-            <div className="">
-              <label className="block pb-[10px] text-xs font-semibold text-[#7D7D81]">
-                Time Off Type
-              </label>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  // onClick={(e) => setPtoForm()}
-                  className={`px-3 py-1 rounded-md text-[11px] font-medium border-[1px] duration-300 transition-colors ease-in cursor-pointer 
-                    `}
-                  //   ${
-                  //   timeOffType === "PTO"
-                  //     ? "bg-gray-200"
-                  //     : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-                  // }
-                >
-                  PTO
-                </button>
-                <button
-                  type="button"
-                  // onClick={() => setTimeOffType("Sick Leave")}
-                  className={`px-4 py-2 rounded-md border text-[11px] font-medium duration-300 transition-colors ease-in cursor-pointer
-                    `}
-                  //   ${
-                  //   timeOffType === "Sick Leave"
-                  //     ? "bg-gray-200"
-                  //     : "bg-[#F6F6F9] text-gray-700 hover:bg-gray-200"
-                  // }
-                >
-                  Sick Leave
-                </button>
-              </div>
-            </div>
-
-            {/* From and To Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="font-medium text-xs text-[#737276]">
-                  From
+          <Field name="type">
+            {({
+              field,
+              form: { touched, errors },
+            }: {
+              field: FieldInputProps<string>;
+              form: any;
+            }) => (
+              <div className="pb-1">
+                <label className="block text-xs font-medium pb-1 text-[#737276]">
+                  Leave Type
                 </label>
-                <DatePicker placeholder="From" fn={handleFromDate} />
+                <div className="flex gap-4">
+                  <label className="flex items-center text-[#737276] text-xs font-medium">
+                    <input
+                      type="radio"
+                      {...field}
+                      value="vacation"
+                      checked={field.value === "vacation"}
+                      className="mr-2"
+                    />
+                    Vacation
+                  </label>
+                  <label className="flex items-center text-[#737276] text-xs font-medium">
+                    <input
+                      type="radio"
+                      {...field}
+                      value="sick"
+                      checked={field.value === "sick"}
+                      className="mr-2"
+                    />
+                    Sick
+                  </label>
+                </div>
+                {touched.type && errors.type && (
+                  <div className="text-red-500 text-xs mt-1">{errors.type}</div>
+                )}
               </div>
-              <div>
-                <label className="font-medium text-xs text-[#737276]">To</label>
-                <DatePicker placeholder="To" fn={handleToDate} />
-              </div>
-            </div>
+            )}
+          </Field>
 
-            {/* Reason */}
-            <div className="pt-5">
-              <label className="block text-xs font-medium  text-[#737276]">
-                Reason
-              </label>
-              <textarea
-                name="reason"
-                value={ptoForm.reason}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9]"
-                rows={3}
-                placeholder="Provide your reason"
-                maxLength={50}
-              />
-            </div>
-          </section>
+          <div className="flex w-full gap-4 pt-2">
+            <Field name="startDate">
+              {({
+                field,
+                form: { setFieldValue, touched, errors },
+              }: {
+                field: FieldInputProps<Date>;
+                form: any;
+              }) => (
+                <div className="flex flex-col w-full">
+                  <label className="font-medium text-xs text-[#737276]">
+                    From
+                  </label>
+                  <DatePicker
+                    placeholder="From"
+                    value={field.value}
+                    onChange={(val) => setFieldValue("startDate", val)}
+                  />
+                  {touched.startDate && errors.startDate && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {errors.startDate}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Field>
+
+            <Field name="endDate">
+              {({
+                field,
+                form: { setFieldValue, touched, errors },
+              }: {
+                field: FieldInputProps<Date>;
+                form: any;
+              }) => (
+                <div className="flex flex-col w-full">
+                  <label className="font-medium text-xs text-[#737276]">
+                    To
+                  </label>
+                  <DatePicker
+                    placeholder="To"
+                    value={field.value}
+                    onChange={(val) => setFieldValue("endDate", val)}
+                  />
+                  {touched.endDate && errors.endDate && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {errors.endDate}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Field>
+          </div>
+
+          <Field name="reason">
+            {({
+              field,
+              form: { touched, errors },
+            }: {
+              field: FieldInputProps<string>;
+              form: any;
+            }) => (
+              <div className="pt-5">
+                <label className="block text-xs font-medium pb-1 text-[#737276]">
+                  reason
+                </label>
+                <textarea
+                  {...field}
+                  className={`w-full px-3 py-2 border rounded-md resize-none bg-[#F6F6F9] ${
+                    touched.reason && errors.reason ? "border-red-500" : ""
+                  }`}
+                  rows={3}
+                  placeholder="Provide your reason"
+                  maxLength={50}
+                />
+                {touched.reason && errors.reason && (
+                  <div className="text-red-500 text-xs mt-1">
+                    {errors.reason}
+                  </div>
+                )}
+              </div>
+            )}
+          </Field>
         </SideFormModal>
       )}
 
       {/* modal for viewing old request */}
       {appRej && (
-        <div>TimeOff</div>
-        // <SideFormModal
-        //   title="Approve or Reject Request"
-        //   back={true}
-        //   backFn={() => setAppRej(false)}
-        // >
-        //   <div className="flex flex-col gap-1">
-        //     <label className="text-[#73727675] font-semibold text-sm">
-        //       Employee Name
-        //     </label>
-        //     <Input
-        //       value={"Enchill Beckham"}
-        //       className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-base text-[#73727675] font-semibold"
-        //       disabled
-        //     />
-        //   </div>
+        <SideFormModal
+          title="Approve or Reject Request"
+          back={true}
+          backFn={() => setAppRej(false)}
+          initialFormValues={{}}
+        >
+          {viewPtoData && (
+            <>
+              <section className="flex gap-2">
+                <div>
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    From
+                  </label>
+                  <Input
+                    value={
+                      viewPtoData.startDate
+                        ? new Date(viewPtoData.startDate).toDateString()
+                        : ""
+                    }
+                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                    disabled
+                  />
+                </div>
 
-        //   <section className="flex gap-2">
-        //     <div>
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         From
-        //       </label>
-        //       <Input
-        //         value={"01 March 2023"}
-        //         className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-        //         disabled
-        //       />
-        //     </div>
+                <div>
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    To
+                  </label>
+                  <Input
+                    value={
+                      viewPtoData.endDate
+                        ? new Date(viewPtoData.endDate).toDateString()
+                        : ""
+                    }
+                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                    disabled
+                  />
+                </div>
+              </section>
+              <section className="space-y-5 pt-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    Reason
+                  </label>
+                  <textarea
+                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                    value={viewPtoData.reason}
+                    disabled
+                  />
+                </div>
 
-        //     <div>
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         To
-        //       </label>
-        //       <Input
-        //         value={"01 March 2024"}
-        //         className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-        //         disabled
-        //       />
-        //     </div>
-        //   </section>
-        //   <section className="space-y-5 pt-3">
-        //     <div className="flex flex-col gap-1">
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         Reason
-        //       </label>
-        //       <textarea
-        //         className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-        //         value={"Engagement"}
-        //         disabled
-        //       />
-        //     </div>
-
-        //     <div className="flex flex-col gap-1">
-        //       <label className="text-[#73727675] font-semibold text-sm">
-        //         HR Reason
-        //       </label>
-        //       <textarea
-        //         className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-        //         value={"We can't let you go at the moment"}
-        //         disabled
-        //       />
-        //     </div>
-        //   </section>
-        // </SideFormModal>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    HR reason
+                  </label>
+                  <textarea
+                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                    value={"We can't let you go at the moment"}
+                    disabled
+                  />
+                </div>
+              </section>
+            </>
+          )}
+        </SideFormModal>
       )}
 
       {/* Success modal for timeoff creation */}

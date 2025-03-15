@@ -3,6 +3,7 @@ import { employeeService } from '../services/employee.service';
 import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
 import {Employee} from "@/types/employee"
 import { toast } from '@/hooks/use-toast';
+import { useMemo } from 'react';
 
 
 export const useAllEmployees = (
@@ -17,17 +18,18 @@ export const useAllEmployees = (
         enabled?: boolean;
     }
 ) => {
+  const stableParams = useMemo(() => params ?? {}, [params]); 
+
   return useRbacQuery(
     "employeeRecords",
     "view",
-    ["employees", params],
-    () => employeeService.getAllEmployees(params),
+    ["employees", stableParams],
+    () => employeeService.getAllEmployees(stableParams),
     {
         ...options,
         placeholderData: (previousData) => {
             return previousData;
         },
-
     }
   );
 };

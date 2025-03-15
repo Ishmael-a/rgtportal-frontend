@@ -98,12 +98,19 @@ body {
   --color-rgtyellow: #f9b500;
   --color-rgtpurple: #452667;
   --color-rgtpurpleaccent2: #c9adff;
+  --color-rgtpurpleaccent3: #C0AFFF;
   --color-rgtviolet: #6418C3;
   --color-rgtblue: #5259a3;
   --color-pinkaccent2: #FFA6CD;
+  --color-pinkaccent2: #FFA6CD;
+  --color-pinkaccentsharp: #E328AF;
   --color-purpleaccent2: #EFE7FF;
   --color-rgtred : #EB2E31;
   --color-rgtgray: #475569;
+  --color-greenaccent3: #DFFFC7;
+  --color-confirmgreen: #20E42A;
+  --color-redaccent3: #FEE4E2;
+  --color-cancelred: #FF4A55;
 }
 
 @theme inline {

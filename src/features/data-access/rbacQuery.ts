@@ -24,6 +24,7 @@ export function useRbacQuery<TData, TError = unknown>(
   >,
   dataForPermissionCheck?: any
 ) {
+  
   const { hasAccess } = usePermission();
 
   const hasPermission = hasAccess(
