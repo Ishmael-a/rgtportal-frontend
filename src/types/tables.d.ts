@@ -15,7 +15,8 @@ export interface DataTableProps {
   showDelete?: boolean;
   onDelete?: (id: number) => Promise<void>;
   setShowDelete?: React.Dispatch<React.SetStateAction<boolean>>;
-  isDeleteLoading?:boolean
+  isDeleteLoading?: boolean;
+  loading?: boolean; // for initial loading of the table data
 }
 
 export interface ActionObject {

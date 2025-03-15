@@ -21,8 +21,14 @@ export default function TimeOff() {
     undefined
   );
 
-  const { createPto, ptoData, isPtoLoading, isPtoDeleting, deletePto } =
-    useRequestPto();
+  const {
+    createPto,
+    ptoData,
+    isPtoLoading,
+    isPtoDeleting,
+    deletePto,
+    isLoading,
+  } = useRequestPto();
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
@@ -121,6 +127,7 @@ export default function TimeOff() {
           setShowDelete={setIsDeletePTO}
           isDeleteLoading={isPtoDeleting}
           onDelete={deletePto}
+          loading={isLoading}
         />
       </div>
 

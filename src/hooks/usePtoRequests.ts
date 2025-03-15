@@ -5,7 +5,7 @@ import { toast } from "./use-toast";
 export const useRequestPto = () => {
   const queryClient = useQueryClient();
 
-  const { data: ptoData } = useQuery({
+  const { data: ptoData, isLoading } = useQuery({
     queryKey: ["ptoData"],
     queryFn: () => PtoRequestService.fetchUserPtoRequest(),
   });
@@ -61,5 +61,6 @@ export const useRequestPto = () => {
     isPtoDeleting: deletePtoRequestMutation.isPending,
     isPtoLoading: createPtoRequestMutation.isPending,
     ptoData,
+    isLoading
   };
 };
