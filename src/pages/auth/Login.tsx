@@ -9,9 +9,9 @@ import { toast } from '@/hooks/use-toast';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GoogleAuthButton } from "@/components/Login/GoogleAuthButton";
-import rgtIcon from "../assets/images/RGT TRANSPARENT 1.png";
-import rgtpatternimg1 from "../assets/images/rgtpatternimg1.svg";
-import loginMainImg from "../assets/images/WomanAndBackground.png";
+import rgtIcon from "@/assets/images/RGT TRANSPARENT 1.png";
+import rgtpatternimg1 from "@/assets/images/rgtpatternimg1.svg";
+import loginMainImg from "@/assets/images/WomanAndBackground.png";
 
 interface FormValues {
   email: string;

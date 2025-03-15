@@ -44,7 +44,11 @@ export const SideFormModal = <T extends FormikValues>({
   return (
     <div
       className="fixed inset-0  backdrop-blur-xs  flex items-start justify-end"
-      style={{ zIndex: 170 }}
+      style={{
+        zIndex: 170,
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
+      }}
     >
       {back && (
         <div className="relative h-screen flex flex-col justify-center p-5">
