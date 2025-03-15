@@ -36,7 +36,7 @@ export const SideFormModal = <T extends FormikValues>({
   // buttonClassName,
   formClassName,
   onSubmit,
-  submitBtnText,
+  submitBtnText = "Create",
   isSubmitting,
   back,
   backFn,
