@@ -109,6 +109,7 @@ export default function TimeOff() {
           // onSubmit={handleFormSubmit}
           title="Add New Time Off"
           back
+          backFn = {() => setIsModalOpen(false)}
           validationSchema={ptoFormSchema}
           initialFormValues={ptoForm}
           buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"

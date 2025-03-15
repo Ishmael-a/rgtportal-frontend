@@ -8,6 +8,7 @@ import AuthContextProvider from "./contexts/AuthContextProvider"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { Toaster } from './components/ui/toaster.tsx';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import {queryClient} from "./features/data-access/rbacQuery"
 
 
@@ -16,8 +17,10 @@ createRoot(document.getElementById("root")!).render(
     <Provider store={Store}>
     <QueryClientProvider  client={queryClient}>
       <AuthContextProvider>
+      <TooltipProvider>
         <App />
         <Toaster />
+      </TooltipProvider>
       </AuthContextProvider>
       <ReactQueryDevtools/>
     </QueryClientProvider>

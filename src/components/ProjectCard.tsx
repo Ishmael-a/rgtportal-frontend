@@ -7,7 +7,8 @@ const ProjectCard: React.FC<IProjectCard> = ({
   name,
   leadName,
   id,
-  path
+  path,
+  includeBgImg
 }) => {
   const maxVisible = 3; // Show up to 3 avatars before the "+X" indicator
   const extraCount = members.length - maxVisible;
@@ -38,8 +39,8 @@ const ProjectCard: React.FC<IProjectCard> = ({
   };
 
   return (
-    <div key={id} className="flex flex-col space-y-2 bg-white rounded-md p-2 md:min-w-64 shadow-md hover:shadow-gray-400 transition-all duration-300 ease-in ">
-      <div className="pb-4 border-b-[1px]  border-gray-100">
+    <div key={id} className="relative flex flex-col space-y-2 bg-white rounded-md p-2 md:min-w-64 w-[360px]  shadow-md hover:shadow-gray-400 transition-all duration-300 ease-in overflow-hidden">
+      <div className="pb-4 border-b-[1px]  border-gray-200">
         <header className="text-[#706D8A] text-[21.56px] font-semibold flex justify-between items-start">
           <p className="w-44 text-nowrap truncate">{name}</p>
           <NavLink to={path}>
@@ -82,6 +83,13 @@ const ProjectCard: React.FC<IProjectCard> = ({
         </div>
         }
       </div>
+
+      {/* Background Image (Gradient Splash) */}
+      {includeBgImg && (
+        <div className="absolute  translate-x-56 top-1/7 h-full w-1/2  pointer-events-none opacity-50 ">
+          <img src={"/RGT PATTERN 1.svg"} style={{ width: "130px", height: "135px"}} />
+        </div>
+      )}
     </div>
   );
 };
