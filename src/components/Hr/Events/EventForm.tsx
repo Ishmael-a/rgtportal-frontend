@@ -35,6 +35,10 @@ const EventForm = memo(({ formik, selectedFormType, selectedSpecialEventType, se
   const [open, setOpen] = useState(false);
   const [popoverOpenStates, setPopoverOpenStates] = useState<PopoverStates>({});
   const [projectPopoverOpenStates, setProjectPopoverOpenStates] = useState<PopoverStates>({});
+  const [hasOpened, setHasOpened] = useState(false);
+  const [hasOpenedProject, setHasOpenedProject] = useState(false);
+
+
 
   const handlePopoverOpenChange = useCallback((index: number, open: boolean) => {
     setPopoverOpenStates((prevStates) => ({
@@ -415,7 +419,6 @@ const EventForm = memo(({ formik, selectedFormType, selectedSpecialEventType, se
                       <div className="flex gap-1 items-center">
                         <Field name={`recognitionList.${index}.employeeId`}>
                           {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
-                            const [hasOpened, setHasOpened] = useState(false);
                             const employeeError = touched.recognitionList?.[index]?.employeeId && errors.recognitionList?.[index]?.employeeId;
 
                             return (
@@ -496,7 +499,6 @@ const EventForm = memo(({ formik, selectedFormType, selectedSpecialEventType, se
 
                         <Field name={`recognitionList.${index}.projectId`}>
                           {({ field, form: { values, touched, errors, setFieldValue, setFieldTouched } }: { field: FieldInputProps<string>; form: any }) => {
-                            const [hasOpenedProject, setHasOpenedProject] = useState(false);
                             const projectError = touched.recognitionList?.[index]?.projectId && errors.recognitionList?.[index]?.projectId;
 
                             return (
