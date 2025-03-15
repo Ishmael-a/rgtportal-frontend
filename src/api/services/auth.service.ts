@@ -21,9 +21,27 @@ export const authService = {
     });
   },
 
-  login: async (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => {
-    const response = await defaultApiClient.post<ApiResponse<LoginResponse>>(
-      "/auth/login",
+  login: async (data: LoginRequest): Promise<any> => {
+    const response = await defaultApiClient.post(
+      "/user/auth/login",
+      data
+    );
+    console.log("response", response);
+    
+    return response.data;
+  },
+
+  setPassword: async (data: any): Promise<any> => {
+    const response = await defaultApiClient.post(
+      "/user/auth/set-password",
+      data
+    );
+    return response.data;
+  },
+
+  verifyOtp: async (data: any): Promise<any> => {
+    const response = await defaultApiClient.post(
+      "/user/auth/verify-otp",
       data
     );
     return response.data;
@@ -38,7 +56,7 @@ export const authService = {
 
   getCurrentUser: async (): Promise<ResponseUser> => {
     const response = await defaultApiClient.get("/user");
-    console.log("User data", response.data);
+    // console.log("User data", response.data);
     return response.data;
   },
 };

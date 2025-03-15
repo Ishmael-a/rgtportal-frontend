@@ -82,12 +82,17 @@ export const SideModal = ({
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         {showOverlay && (
-          <Dialog.Overlay
-            className={`fixed inset-0 backdrop-blur-mdd bg-black/30 z-1999 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={() => closeOnClickOutside && onOpenChange(false)}
-          />
+         <Dialog.Overlay
+          className={`fixed inset-0 bg-black/30 z-40 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
+            isOpen ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            backdropFilter: "blur(4px)",
+            WebkitBackdropFilter: "blur(4px)", 
+          }}
+          onClick={() => closeOnClickOutside && onOpenChange(false)}
+        />
+
         )}
 
         <Dialog.Content

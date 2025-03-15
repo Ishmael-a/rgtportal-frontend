@@ -205,7 +205,7 @@ const RecruitmentTable: React.FC<RecruitmentTableProps> = ({
       <div className="flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-700">
+            <h1 className="text-xl font-semibold text-gray-700">
               {type === RecruitmentType.EMPLOYEE
                 ? "EMPLOYEE CANDIDATES"
                 : "NSS CANDIDATES"}

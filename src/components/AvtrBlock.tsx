@@ -1,16 +1,17 @@
-import { IAvtrBlock } from "@/types/employee";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
-const AvtrBlock: React.FC<{ avtDets: IAvtrBlock }> = ({ avtDets }) => {
+const AvtrBlock: React.FC<{ user: User | null }> = ({ user }) => {
+  if (!user) return;
   return (
     <div className="flex gap-2 items-center">
       <Avatar>
-        <AvatarImage src={avtDets.avatarUrl} alt={avtDets.name} />
-        <AvatarFallback>{avtDets.fallBack}</AvatarFallback>
+        <AvatarImage src={user.profileImage} alt={user.employee.firstName} />
       </Avatar>
       <div className="">
-        <p className="font-bold">{avtDets.name}</p>
-        <p className="text-rgtgray text-xs">{avtDets.role}</p>
+        <p className="font-bold">
+          {user.employee.firstName + user.employee.lastName}
+        </p>
+        <p className="text-rgtgray text-xs">{user.role.name.toUpperCase()}</p>
       </div>
     </div>
   );

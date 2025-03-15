@@ -1,6 +1,4 @@
-import React from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { ArrowUp } from 'lucide-react';
 
 export interface IMetricCard{
     title: string;
@@ -43,7 +41,7 @@ export const MetricCard = ({ title, value, growth, color }: IMetricCard) => {
   const selectedColor = colors[color];
 
   // Simple chart representing a line graph
-  const ChartLine = ({ color }: {color: string}) => (
+  const ChartLine = () => (
     <img src="/ChartLines.svg" />    
   );
   
@@ -63,7 +61,7 @@ export const MetricCard = ({ title, value, growth, color }: IMetricCard) => {
         
         <div className="flex justify-between items-center mt-5">
           <h2 className="text-4xl font-bold text-gray-800">{value}</h2>
-          <ChartLine color={selectedColor.chartColor} />
+          <ChartLine  />
         </div>
       </CardContent>
       

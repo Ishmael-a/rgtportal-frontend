@@ -76,7 +76,7 @@ const EmployeeDirectory = () => {
           </div>
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-y-6 ">
+      <div className="flex flex-wrap gap-4  ">
           {employees?.map(employeeCard => (
             <EmployeeCard key={employeeCard.id} employee={employeeCard} />
           ))}

@@ -13,6 +13,8 @@ interface ICustomSelect {
   options: string[];
   selectLabel?: string;
   className?: string;
+  onChange?: (value: string) => void;
+  value?: string;
 }
 
 const CustomSelect: React.FC<ICustomSelect> = ({
@@ -20,12 +22,15 @@ const CustomSelect: React.FC<ICustomSelect> = ({
   placeholder,
   selectLabel,
   className,
+  onChange,
+  value,
 }) => {
+  console.log("value", value);
   return (
-    <Select >
+    <Select onValueChange={onChange} value={value || ""}>
       <div className={className}>
         <SelectTrigger className="w-full h-full">
-          <SelectValue placeholder={`${placeholder ? placeholder : "Select"}`} />
+          <SelectValue placeholder={placeholder || "Select"} />
         </SelectTrigger>
         <SelectContent className="w-full h-full">
           <SelectGroup>

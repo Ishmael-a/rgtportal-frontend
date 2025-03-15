@@ -31,7 +31,7 @@ export const BaseLayout = () => {
     <div>
       <header
         className="fixed top-0 flex items-center justify-between p-4 bg-white border-b w-full"
-        style={{ zIndex: 150 }}
+        style={{ zIndex: 10 }}
       >
         {/* Left section with logo */}
         <div className="flex items-center">
@@ -72,7 +72,7 @@ export const BaseLayout = () => {
         </div>
 
         <div
-          className="pt-[78px]  flex-1 md:w-3/5 h-screen overflow-y-auto"
+          className="pt-[78px] flex-1 md:w-3/5 h-screen overflow-y-auto"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,
