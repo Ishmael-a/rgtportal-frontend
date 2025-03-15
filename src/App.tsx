@@ -3,7 +3,7 @@ import { WithPermission } from "@/components/common/WithPermission";
 import  ProtectedRoute  from "@/components/common/ProtectedRoute";
 import { BaseLayout } from "./layouts/BaseLayout";
 import NotFoundPage from "./pages/NotFoundPage";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import Feed from "./pages/common/Feed";
 import { HRDashboard } from "./pages/HR/HRDashboard";
 import { AllDepartments } from "./pages/HR/Employees/AllDepartments";
@@ -16,6 +16,8 @@ import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
+import CreatePassword from "./pages/auth/CreatePassword";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 import EmployeeDirectory from "./pages/HR/Employees/EmployeeDirectory";
 import Events from "./pages/HR/Events/Events";
 import DepartmentPage from "@/pages/HR/Employees/DepartmentPage"
@@ -26,6 +28,8 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/set-password" element={<CreatePassword />} />
         
         {/* Employee routes - accessible by all roles */}
         <Route element={<ProtectedRoute allowedRoles={["EMPLOYEE", "MANAGER", "HR", "ADMIN", "MODERATOR"]} />}>
