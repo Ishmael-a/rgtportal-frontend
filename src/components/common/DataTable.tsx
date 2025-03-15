@@ -8,6 +8,8 @@ import {
   TableRow,
 } from "../ui/table";
 import { Column, DataTableProps } from "@/types/tables";
+import DeleteCard from "./DeleteCard";
+import { useState } from "react";
 
 export function DataTable({
   columns,
@@ -15,7 +17,21 @@ export function DataTable({
   dividers = false,
   actionBool = true,
   actionObj = [],
+  showDelete,
+  setShowDelete,
+  onDelete,
+  isDeleteLoading,
 }: DataTableProps) {
+  const [cellToDelete, setCellToDelete] = useState<number | null>(null);
+
+  const handleDelete = async (id: number) => {
+    if (setShowDelete && onDelete) {
+      await onDelete(id);
+      setCellToDelete(null);
+      setShowDelete(false);
+    }
+  };
+
   const tableColumns: Column[] = actionBool
     ? [
         ...columns,
@@ -31,7 +47,7 @@ export function DataTable({
                       <button
                         key="view"
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
-                        onClick={() => action.action()}
+                        onClick={() => action.action(row.id)}
                       >
                         <img src="/Show.svg" />
                       </button>
@@ -48,13 +64,20 @@ export function DataTable({
                     );
                   case "delete":
                     return (
-                      <button
-                        key="delete"
-                        className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors"
-                        onClick={() => action.action(row.id)}
-                      >
-                        <img src="/Delete.svg" alt="delete" />
-                      </button>
+                      <>
+                        <button
+                          key="delete"
+                          className="bg-[#EB2E31] text-white p-1 rounded-md hover:bg-red-500 duration-300 ease-in cursor-pointer transition-colors"
+                          onClick={() => {
+                            setCellToDelete(row.id);
+                            if (setShowDelete) {
+                              setShowDelete(true);
+                            }
+                          }}
+                        >
+                          <img src="/Delete.svg" alt="delete" />
+                        </button>
+                      </>
                     );
                   default:
                     return null;
@@ -106,7 +129,7 @@ export function DataTable({
                     <div
                       className={`  w-fit ${
                         typeof column.cellClassName === "function"
-                          ? column.cellClassName(row) // Call the function with row data
+                          ? column.cellClassName(row)
                           : column.cellClassName ?? ""
                       } ${
                         column.render
@@ -122,6 +145,26 @@ export function DataTable({
             ))}
         </TableBody>
       </Table>
+
+      {/* Delete Card */}
+      {showDelete && (
+        <DeleteCard
+          title="Delete PTO"
+          message="Are you sure you want to delete this PTO?"
+          onDelete={() => {
+            if (cellToDelete !== null) {
+              handleDelete(cellToDelete);
+            }
+          }}
+          onCancel={() => {
+            setCellToDelete(null);
+            if (setShowDelete) {
+              setShowDelete(false);
+            }
+          }}
+          isDeleting={isDeleteLoading}
+        />
+      )}
     </div>
   );
 }

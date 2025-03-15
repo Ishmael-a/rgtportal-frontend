@@ -8,6 +8,7 @@ import {
   FormikValues,
 } from "formik";
 import * as Yup from "yup";
+import { Loader } from "lucide-react";
 
 interface ISideFormModal<T extends FormikValues> {
   title: string;
@@ -70,7 +71,7 @@ export const SideFormModal = <T extends FormikValues>({
                   onClick={backFn}
                   key={"Cancel"}
                   variant="outline"
-                  className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100"
+                  className="w-1/2 h-full rounded-[12px] border-red-500 text-red-500 hover:bg-red-100 cursor-pointer"
                 >
                   Cancel
                 </Button>
@@ -80,9 +81,14 @@ export const SideFormModal = <T extends FormikValues>({
                   type={"submit"}
                   key={"Create"}
                   disabled={isSubmitting}
-                  className={`w-1/2 h-full rounded-[12px] bg-rgtpink hover:bg-pink-600 text-white`}
+                  className={`w-1/2 h-full rounded-[12px] bg-rgtpink  text-white cursor-pointer
+                    ${isSubmitting ? "opacity-45" : "hover:bg-pink-500"}`}
                 >
-                  {submitBtnText}
+                  {isSubmitting ? (
+                    <Loader className="animate-spin" size={20} />
+                  ) : (
+                    submitBtnText
+                  )}
                 </Button>
               </div>
             )}

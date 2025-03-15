@@ -12,11 +12,14 @@ export class PtoRequestService {
       });
 
       if (!response.data.success) {
-        throw new Error("Pto data post not successful");
+        throw new Error(
+          response.data.message || "PTO data post not successful"
+        );
       }
       return response.data;
     } catch (error) {
       console.error("Error posting pto data", error);
+      throw error;
     }
   }
 
@@ -25,11 +28,14 @@ export class PtoRequestService {
       const response = await axios.get(`${API_URL}/my-requests`);
       console.log("response PtoData:", response.data);
       if (!response.data.success) {
-        throw new Error("Pto data fetching unsuccessful.");
+        throw new Error(
+          response.data.message || "PTO data fetching unsuccessful."
+        );
       }
-      return response.data.data;
+      return response.data.data.reverse();
     } catch (error) {
       console.error("Error fetching pto data:", error);
+      throw error;
     }
   }
 
@@ -37,12 +43,23 @@ export class PtoRequestService {
     try {
       const response = await axios.delete(`${API_URL}/${id}`);
 
+      console.log("success Response:", response.data);
       if (!response.data.success) {
-        throw new Error("Pto data post not successful");
+        console.log("fail Response:", response.data);
+        throw new Error(
+          response.data.message || "PTO data post not successful"
+        );
       }
       return response.data;
     } catch (error) {
-      console.error("Error posting pto data", error);
+      console.error("Error deleting pto data", error);
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(
+          error.response.data?.message || "Failed to delete PTO request"
+        );
+      } else {
+        throw new Error("Failed to delete PTO request");
+      }
     }
   }
 }

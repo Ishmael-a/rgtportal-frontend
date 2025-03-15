@@ -12,6 +12,10 @@ export interface DataTableProps {
   dividers?: boolean;
   actionBool?: boolean;
   actionObj: { name: string; action: (id?: number) => void }[];
+  showDelete?: boolean;
+  onDelete?: (id: number) => Promise<void>;
+  setShowDelete?: React.Dispatch<React.SetStateAction<boolean>>;
+  isDeleteLoading?:boolean
 }
 
 export interface ActionObject {

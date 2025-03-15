@@ -325,9 +325,9 @@ export const timeOffTableColumns: Column[] = [
       return `${
         status === "pending"
           ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
-          : status === "approved"
+          : status === "approved" || status === "manager_approved"
           ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
-          : status === "rejected"
+          : status === "declined" || status === "manager_declined"
           ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
           : ""
       }`;

@@ -16,8 +16,13 @@ export default function TimeOff() {
   const [appRej, setAppRej] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeletePTO, setIsDeletePTO] = useState(false);
+  const [selectedPtoId, setSelectedPtoId] = useState<number | undefined>(
+    undefined
+  );
 
-  const { createPto, ptoData, deletePto } = useRequestPto();
+  const { createPto, ptoData, isPtoLoading, isPtoDeleting, deletePto } =
+    useRequestPto();
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
@@ -51,15 +56,18 @@ export default function TimeOff() {
       .typeError("Invalid date"),
   });
 
-  const handleFormSubmit = (
+  const handleFormSubmit = async (
     values: typeof initialFormValues,
     { setSubmitting }: FormikHelpers<typeof initialFormValues>
   ) => {
-    console.log("Submmitting Form", values);
-    createPto(values as PtoLeave);
-    setSubmitting(false);
-    setIsModalOpen(false);
-    // setIsSuccess(true);
+    try {
+      await createPto(values as PtoLeave);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error creating PTO:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCheckNow = () => {
@@ -67,12 +75,7 @@ export default function TimeOff() {
     setIsSuccess(false);
   };
 
-  // const handleDelete =()=>{
-  //   if(!ptoData){
-  //     if
-  //     deletePto()
-  //   }
-  // }
+  const viewPtoData = ptoData?.find((item) => item.id === selectedPtoId);
 
   return (
     <main className="px-4">
@@ -96,22 +99,28 @@ export default function TimeOff() {
           <CustomSelect options={["plnt"]} />
         </div>
 
-        {/* Table with custom cell styles */}
         <DataTable
           columns={timeOffTableColumns}
           data={formattedPtoData}
           actionBool={true}
           actionObj={[
-            { name: "view", action: () => setAppRej(!appRej) },
             {
-              name: "delete",
-              action: (id) => {
-                if (id !== undefined) {
-                  deletePto(id);
-                }
+              name: "view",
+              action: (rowData) => {
+                console.log("rowData:", rowData);
+                setAppRej(!appRej);
+                setSelectedPtoId(rowData);
               },
             },
+            {
+              name: "delete",
+              action: () => setIsDeletePTO(true),
+            },
           ]}
+          showDelete={isDeletePTO}
+          setShowDelete={setIsDeletePTO}
+          isDeleteLoading={isPtoDeleting}
+          onDelete={deletePto}
         />
       </div>
 
@@ -124,6 +133,7 @@ export default function TimeOff() {
           initialFormValues={initialFormValues}
           backFn={() => setIsModalOpen(false)}
           back={true}
+          isSubmitting={isPtoLoading}
           submitBtnText="Create"
           buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
         >
@@ -261,52 +271,64 @@ export default function TimeOff() {
           back={true}
           backFn={() => setAppRej(false)}
         >
-          <section className="flex gap-2">
-            <div>
-              <label className="text-[#73727675] font-semibold text-sm">
-                From
-              </label>
-              <Input
-                value={"01 March 2023"}
-                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                disabled
-              />
-            </div>
+          {viewPtoData && (
+            <>
+              <section className="flex gap-2">
+                <div>
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    From
+                  </label>
+                  <Input
+                    value={
+                      viewPtoData.startDate
+                        ? new Date(viewPtoData.startDate).toDateString()
+                        : ""
+                    }
+                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                    disabled
+                  />
+                </div>
 
-            <div>
-              <label className="text-[#73727675] font-semibold text-sm">
-                To
-              </label>
-              <Input
-                value={"01 March 2024"}
-                className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                disabled
-              />
-            </div>
-          </section>
-          <section className="space-y-5 pt-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-[#73727675] font-semibold text-sm">
-                reason
-              </label>
-              <textarea
-                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                value={"Engagement"}
-                disabled
-              />
-            </div>
+                <div>
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    To
+                  </label>
+                  <Input
+                    value={
+                      viewPtoData.endDate
+                        ? new Date(viewPtoData.endDate).toDateString()
+                        : ""
+                    }
+                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
+                    disabled
+                  />
+                </div>
+              </section>
+              <section className="space-y-5 pt-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    Reason
+                  </label>
+                  <textarea
+                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                    value={viewPtoData.reason}
+                    disabled
+                  />
+                </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-[#73727675] font-semibold text-sm">
-                HR reason
-              </label>
-              <textarea
-                className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                value={"We can't let you go at the moment"}
-                disabled
-              />
-            </div>
-          </section>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[#73727675] font-semibold text-sm">
+                    HR reason
+                  </label>
+                  <textarea
+                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
+                    value={"We can't let you go at the moment"}
+                    disabled
+                  />
+                </div>
+              </section>
+            </>
+          )}
         </SideFormModal>
       )}
 
