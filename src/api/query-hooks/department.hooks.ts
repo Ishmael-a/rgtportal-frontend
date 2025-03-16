@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRbacQuery } from '@/features/data-access/rbacQuery';
 import { toast } from '@/hooks/use-toast';
-import { AddEmployeeToDepartmentDTO, AddEmployeesToDepartmentDTO, CreateDepartmentDTO, DepartmentQueryParams } from '@/types/department';
+import { AddEmployeeToDepartmentDTO, AddEmployeesToDepartmentDTO, CreateDepartmentDTO } from '@/types/department';
 import { departmentService } from '../services/department.service';
 
 
@@ -43,7 +43,7 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: ({ data }: { data: CreateDepartmentDTO }) => 
       departmentService.createNewDepartment(data),
-    onSuccess: (_, variables) => {
+    onSuccess: (_, _variables) => {
       // Invalidate and refetch
       queryClient.invalidateQueries({
         queryKey: ['departments'],

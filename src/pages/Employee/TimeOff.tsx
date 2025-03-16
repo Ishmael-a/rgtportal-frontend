@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
+import { PtoLeave } from "@/types/PTOS";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";

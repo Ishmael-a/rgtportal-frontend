@@ -6,11 +6,10 @@ import { useParams, Link } from 'react-router-dom';
 import { useGetDepartmentById } from "@/api/query-hooks/department.hooks";
 import ErrorMessage from "@/components/common/ErrorMessage"
 import ProfileAdd from "@/assets/icons/ProfileAdd"
-import FilterIcon from "@/assets/icons/FilterIcon"
 import LinearRightArrow from "@/assets/icons/LinearRightArrow"
 import DepartmentEmployeeTable from "@/components/Hr/Employees/DepartmentEmployeeTable"
 import { SideFormModal } from "@/components/Modal";
-import { Field, FieldArray, FieldInputProps, FormikHelpers, FieldProps, FormikErrors, ErrorMessage as FormikErrorMessage } from 'formik';
+import { Field, FieldArray, FormikHelpers, FieldProps } from 'formik';
 import * as Yup from 'yup';
 import {
   Select,
@@ -46,8 +45,6 @@ const DepartmentPage = () => {
 
   const {
     data: users,
-    isLoading: isEmployeesLoading,
-    isError: isEmployeesError
   } = useAllEmployees(
     {},
     {
@@ -193,9 +190,7 @@ const DepartmentPage = () => {
           formClassName="flex flex-col my-8 gap-6"
           isSubmitting = {addEmployeeToDepartment.isPending || addEmployeesToDepartment.isPending}
         >
-          {({ values, errors, touched }) => {
-            const emailsInputErrors = errors.emails as string | FormikErrors<string>[] | undefined;
-            const emailsInputTouched = touched.emails as boolean[] | undefined;
+          {({ values }) => {
 
             return (
                 <FieldArray name="emails">
@@ -206,8 +201,6 @@ const DepartmentPage = () => {
                       <div className="space-y-4">
                         {values.emails && values.emails.length > 0 ? (
                           values.emails.map((email, index) => {
-                            const fieldError = Array.isArray(emailsInputErrors) ? emailsInputErrors[index] as string : undefined;
-                            const fieldTouched = emailsInputTouched?.[index];
 
                             return (
                               <div key={email} className="space-y-2"> {/* Use email as the key */}

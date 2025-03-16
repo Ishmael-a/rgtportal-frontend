@@ -7,7 +7,7 @@ import EmployeeManagementTableSkeleton from './EmployeeManagementTableSkeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
-import { Employee, EmployeeType, WorkType } from "@/types/employee"; // Adjust the import path as needed
+import { Employee, EmployeeType } from "@/types/employee"; 
 
  const employeeTypeLabels: Record<EmployeeType, string> = {
   "full_time": "FT",
@@ -35,7 +35,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeSection, setActiveSection] = useState<string>("personal");
+  const [activeSection, _setActiveSection] = useState<string>("personal");
   const [filter, setFilter] = useState({
     department: "All Departments",
     employmentType: "All Types",
@@ -51,10 +51,6 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
 
   const {
     data: employeeData,
-    isLoading: isEmployeesLoading,
-    isError: isEmployeesError,
-    error: employeeError,
-    refetch: refetchEmployees
   } = useAllEmployees({}, {});
 
   // Get unique departments from data
@@ -252,7 +248,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     {
       key: "actions",
       header: "Action",
-      render: (row) => (
+      render: (_row) => (
         <div className="flex space-x-2">
           <button className="cursor-pointer w-8 h-8 bg-pink-400 rounded-md flex items-center justify-center">
             <Eye className="text-white" size={16} />

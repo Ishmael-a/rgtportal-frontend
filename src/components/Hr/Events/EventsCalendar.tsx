@@ -23,22 +23,7 @@ const getEventColor = (type: EventType) => {
   return colors[type] || '#7848BF';
 };
 
-// Categorize events
-const categorizeEvents = () => {
-  const specialEvents = events.filter(event => 
-    [EventType.BIRTHDAY, EventType.HOLIDAY].includes(event.type)
-  );
-  
-  const regularEvents = events.filter(event => 
-    [EventType.TRAINING, EventType.OTHER].includes(event.type)
-  );
-  
-  const announcements = events.filter(event => 
-    event.type === EventType.ANNOUNCEMENT
-  );
-  
-  return { specialEvents, regularEvents, announcements };
-};
+
 
 // Helper method to check if an event is on a specific date
 const isEventOnDate = (event: Event, date: Date) => {
@@ -326,7 +311,7 @@ const renderMonthView = () => {
               </div>
               
               <div className="space-y-1 px-1">
-                {dayEvents.slice(0, 2).map((event, idx) => renderEventCard(event, true))}
+                {dayEvents.slice(0, 2).map((event, _idx) => renderEventCard(event, true))}
                 
                 {dayEvents.length > 2 && (
                   <div className="text-xs text-gray-500 text-center">
@@ -348,7 +333,7 @@ const renderYearView = () => {
   
   return (
     <div className="grid grid-cols-3 gap-4 md:grid-cols-4">
-      {yearMonths.map((month, index) => {
+      {yearMonths.map((month, _) => {
         const monthEvents = events.filter(event => 
           event.startTime.getMonth() === month.getMonth() && 
           event.startTime.getFullYear() === month.getFullYear()

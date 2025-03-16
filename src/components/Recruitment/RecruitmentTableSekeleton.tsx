@@ -18,7 +18,6 @@ interface RecruitmentTableSkeletonProps {
 const RecruitmentTableSkeleton: React.FC<RecruitmentTableSkeletonProps> = ({
   rowCount = 5,
   columnCount = 8,
-  type = "EMPLOYEE CANDIDATES",
 }) => {
   const columns = Array.from({ length: columnCount }, (_, i) => i);
   const rows = Array.from({ length: rowCount }, (_, i) => i);

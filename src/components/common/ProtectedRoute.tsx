@@ -2,6 +2,7 @@ import React, { useEffect} from 'react'
 import {useAuthContextProvider} from '../../hooks/useAuthContextProvider'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import {Button} from "@/components/ui/button"
+import { ROLE } from '@/types/authUser';
 
 type ProtectedRouteProps = {
     allowedRoles: ROLE[];

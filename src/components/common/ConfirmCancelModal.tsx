@@ -69,7 +69,7 @@ return (
           className
         )}
         onEscapeKeyDown={() => onOpenChange(false)}
-        onInteractOutside={(e) => closeOnClickOutside && onOpenChange(false)}
+        onInteractOutside={(_e) => closeOnClickOutside && onOpenChange(false)}
       >
         {title && (
           <Dialog.Title className="text-lg font-semibold text-gray-900 mb-4">

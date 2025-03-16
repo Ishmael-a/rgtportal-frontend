@@ -35,12 +35,12 @@ interface IAnnouncementCard {
   date: Date;
 }
 
-// interface IAvtrComponent {
-//   className?: ClassNameValue;
-//   index?: number;
-//   url: string;
-//   name: string;
-// }
+interface IAvtrComponent {
+  className?: ClassNameValue;
+  index?: number;
+  url: string;
+  name: string;
+}
 
 interface EmployeeCardType {
   id: string;

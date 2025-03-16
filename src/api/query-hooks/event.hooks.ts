@@ -1,5 +1,5 @@
 import { eventService } from "../services/event.service"
-import { useMutation, useQuery, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { ApiResponse } from '../types';
 import { CreateEventDto, Event } from '@/types/events';
@@ -22,7 +22,7 @@ export const useCreateEvent = () => {
   return useMutation({
     mutationFn: ({  data }: { data: CreateEventDto }) =>
       eventService.createEvent(data),
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
         toast({
         title: "Success",

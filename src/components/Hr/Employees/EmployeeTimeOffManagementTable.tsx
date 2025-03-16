@@ -217,7 +217,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   const actionColumns:ActionObject[] = [
     {
       name: 'view',
-      action: (id?: number, row?: timeOffData) => {
+      action: (_id?: number, row?: timeOffData) => {
         
         if (row) {
             setIsModalOpen(true);

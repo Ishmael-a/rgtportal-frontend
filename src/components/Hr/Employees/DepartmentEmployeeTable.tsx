@@ -4,12 +4,8 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import StepProgress from "@/components/StepProgress";
 import { Column } from "@/types/tables";
-// import { employeeTypeLabels, EmployeeType } from "../../../types/employee";
 import { DataTable } from '../../common/DataTable';
 import { usePermission } from '@/hooks/use-permission';
-import ErrorMessage from "@/components/common/ErrorMessage";
-import EmployeeTableSkeleton from "../Dashboard/EmployeeTableSkeleton";
-import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
 import { EmployeeType } from '@/types/employee';
 import { Department } from '../../../types/department';
 

@@ -1,7 +1,6 @@
 import { SideFormModal } from "@/components/Modal";
 import EventForm  from "./EventForm";
 import { useEventForm, formTypes } from "@/hooks/useEventForm";
-import { useEffect } from "react"
 import { Field, FieldProps } from 'formik';
 import {
   Select,
@@ -15,13 +14,13 @@ import {
 
 
 interface IEventModal{
-    isOpen: boolean,
+    isOpen?: boolean,
     onClose: () => void,
     selectedAction?: string
     title?: string
 }
 
-export const EventModal = ({ isOpen, onClose, selectedAction, title }: IEventModal) => {
+export const EventModal = ({ onClose, selectedAction, title }: IEventModal) => {
     const initialFormType = selectedAction === "Recognition" ? "3" :
                             selectedAction === "Special Events" ? "1" :
                             selectedAction === "Announcements" ? "2" : "1";

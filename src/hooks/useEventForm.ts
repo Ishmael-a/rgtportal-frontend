@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useFormik, FormikHelpers } from "formik";
+import { FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { toast } from "@/hooks/use-toast";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
@@ -78,8 +78,6 @@ export const useEventForm = (initialFormType = "1") => {
   const { data: users = [] } = useAllEmployees({}, { enabled: true });
   const {
         data,
-        isLoading: isProjectsLoading,
-        isError: isProjectsError
     } = useAllProjects(
         {},
         {}

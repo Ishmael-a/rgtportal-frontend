@@ -47,7 +47,6 @@ export const EditRecruitment: React.FC<EditRecruitmentProps> = ({
   onOpenChange,
   candidateId,
   title = "Edit Candidate",
-  type,
   fields = recruitmentSchema,
   onSubmit = (values) => console.log("Form submitted with values:", values),
 }) => {
@@ -165,7 +164,6 @@ export const EditRecruitment: React.FC<EditRecruitmentProps> = ({
 
     try {
       setSubmissionStatus("loading");
-      const uploadPromises = [];
       let cvUrl = candidate?.cvPath;
       let photoUrl = candidate?.photoUrl;
 

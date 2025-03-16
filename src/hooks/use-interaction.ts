@@ -37,7 +37,7 @@ export const useInteraction = (postId: number | undefined) => {
       );
       return { previousStats };
     },
-    onError: (err, newComment, context) => {
+    onError: (_err, _newComment, context) => {
       queryClient.setQueryData(["postStats", postId], context?.previousStats);
     },
     onSettled: () => {
@@ -67,7 +67,7 @@ export const useInteraction = (postId: number | undefined) => {
       );
       return { previousStats };
     },
-    onError: (err, newLike, context) => {
+    onError: (_err, _newLike, context) => {
       queryClient.setQueryData(["postStats", postId], context?.previousStats);
     },
     onSettled: () => {

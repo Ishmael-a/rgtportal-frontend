@@ -9,6 +9,7 @@ import { Search, Eye, Check } from "lucide-react";
 import { useState } from "react";
 import EmployeeManagementTable from "@/components/Hr/Employees/EmployeeManagementTable";
 
+
 export const ManageEmployees = () => {
   const [visibleColumns, setVisibleColumns] = useState([
     'name', 'email', 'phoneNumber', 'birthday', 'startDate', 'department', 'onLeave', 'actions'
