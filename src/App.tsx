@@ -14,7 +14,7 @@ import TimeOff from "./pages/Employee/TimeOff";
 import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
-import CandidateDetailView from "./pages/HR/CandidateDetailed";
+import CandidateDetailView from "@/pages/HR/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
 import CreatePassword from "./pages/auth/CreatePassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
