@@ -237,7 +237,7 @@ export const AllDepartments = () => {
                     id="description"
                     placeholder="Enter department description"
                     {...field}
-                    className={`w-full min-h-[100px] px-4 py-2 ${touched.description && errors.description ? "border-red-500" : ""}`}
+                    className={`w-full min-h-[100px] px-6 py-2 ${touched.description && errors.description ? "border-red-500" : ""}`}
                   />
                   <FileText className="absolute right-3 top-2 h-5 w-5 text-gray-500" />
                 </div>
