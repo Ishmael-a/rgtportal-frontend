@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { EmployeeCardType, Employee } from '@/types/employee';
+import { Employee } from '@/types/employee';
 import { Phone, Mail } from 'lucide-react';
 
 const EmployeeCard = ({ employee }: { employee: Employee}) => {

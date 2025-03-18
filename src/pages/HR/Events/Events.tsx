@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import{ useState } from "react";
 import { EventModal } from "@/components/Hr/Events/EventModal";
 import EventsCalendar from "@/components/Hr/Events/EventsCalendar";
 import EnhancedCalendar from "@/components/Hr/Events/EnhancedCalendar";
 import { Button } from "@/components/ui/button";
 import { useAllEvents } from "@/api/query-hooks/event.hooks";
-import { Calendar } from "@/components/ui/calendar";
 import EventList from "@/components/EventList";
 import AnnouncementCard from "@/components/AnnouncementCard";
 import { Link } from "react-router-dom";

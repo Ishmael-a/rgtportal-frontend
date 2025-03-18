@@ -6,8 +6,6 @@ import { useState, useEffect } from "react";
 import { SideFormModal } from "@/components/Modal";
 import {
   Field,
-  Form as FormikForm,
-  Formik,
   FieldInputProps,
   FormikHelpers,
   FieldProps,
@@ -60,7 +58,7 @@ export const AllDepartments = () => {
   const createDepartmentMutation = useCreateDepartment();
 
   // Fetch employees unconditionally
-  const { data: users, isLoading, isError } = useAllEmployees({});
+  const { data: users } = useAllEmployees({});
 
   useEffect(() => {
     if (!departments || departments.length <= 0) {

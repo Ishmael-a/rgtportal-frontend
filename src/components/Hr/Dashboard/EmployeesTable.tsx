@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DataTable } from '../../common/DataTable';
 import StepProgress from "../../StepProgress";
-import { Column, ActionObject } from "@/types/tables";
+import { Column } from "@/types/tables";
 import { usePermission } from '@/hooks/use-permission';
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -177,13 +177,13 @@ const EmployeeTable: React.FC = () => {
     ...(hasAccess("employeeRecords", 'view')
       ? [{
         name: "view",
-        action: (id?: number, row?: any) => handleView(id)
+        action: (id?: number, _row?: any) => handleView(id)
       }]
       : []),
     ...(hasAccess("employeeRecords", 'edit')
       ? [{
         name: "edit",
-        action: (id?: number, row? : any) => handleEdit(id)
+        action: (id?: number, _row? : any) => handleEdit(id)
       }]
       : [])
   ];

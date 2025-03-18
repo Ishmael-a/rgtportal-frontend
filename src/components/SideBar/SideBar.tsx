@@ -32,6 +32,7 @@ export const SideBar = () => {
 
   return (
     <section className="space-y-3 p-2 flex flex-col items-center h-full">
+<<<<<<< HEAD
       {(location.pathname === "/emp/feed" ||
         location.pathname === "/hr/feed") && (
         <header className="md:flex flex-col items-start hidden">
@@ -44,11 +45,30 @@ export const SideBar = () => {
         </header>
       )}
       <div className="bg-white rounded-[30px] flex flex-col items-center py-[31px] ">
+=======
+      <header className="md:flex flex-col items-start hidden">
+        <p className="font-semibold text-[24px] text-[#706D8A]">
+          Hello, there!
+        </p>
+        <p className="text-sm font-medium text-[#8C8C8C]">
+          Welcome back, let's explore now!
+        </p>
+      </header>
+      <div className="bg-white rounded-[30px] flex flex-col items-center md:py-[31px] ">
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
         <div className="space-y-3">
           <div className="flex relative bg-[#452667] text-white justify-start items-center px-4 md:p-[16px] space-x-2 md:space-x-4 rounded-[16px] md:w-[240px] h-[72px]">
             <Avtr
+<<<<<<< HEAD
               url={user?.profileImage as string}
               name={user?.username as string}
+=======
+              url={
+                user?.profileImage ||
+                "https://randomuser.me/api/portraits/med/women/75.jpg"
+              }
+              name={user?.username || "No Username"}
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
               className="border-0"
             />
             <div className="md:flex flex-col items-start justify-center hidden">

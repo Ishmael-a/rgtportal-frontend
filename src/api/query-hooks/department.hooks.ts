@@ -43,7 +43,11 @@ export const useCreateDepartment = () => {
   return useMutation({
     mutationFn: ({ data }: { data: CreateDepartmentDTO }) => 
       departmentService.createNewDepartment(data),
+<<<<<<< HEAD
     onSuccess: () => {
+=======
+    onSuccess: (_, _variables) => {
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
       // Invalidate and refetch
       queryClient.invalidateQueries({
         queryKey: ['departments'],

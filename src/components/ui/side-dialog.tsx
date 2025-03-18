@@ -99,7 +99,7 @@ export const SideModal = ({
           className={`${sideModalVariants({ position, size })} ${className}`}
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
-          onInteractOutside={(e) => closeOnClickOutside && onOpenChange(false)}
+          onInteractOutside={(_e) => closeOnClickOutside && onOpenChange(false)}
         >
           {(title || showCloseButton) && (
             <div

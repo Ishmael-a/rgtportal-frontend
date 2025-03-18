@@ -2,7 +2,7 @@ import EmployeeCard from "@/components/Hr/Employees/EmployeeCard";
 import EmployeeCardSkeleton from "@/components/Hr/Employees/EmployeeCardSkeleton";
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NoEmployeesPage from "@/pages/common/NoEmployeesPage"
 
@@ -17,7 +17,7 @@ const EmployeeDirectory = () => {
       {}
     );
 
-    if (isEmployeesLoading) {
+    if (isEmployeesLoading || isFetching) {
       return <EmployeeCardSkeleton />;
     }
 

@@ -4,6 +4,7 @@ import { Search, Plus, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useGetDepartmentById } from "@/api/query-hooks/department.hooks";
+<<<<<<< HEAD
 import ErrorMessage from "@/components/common/ErrorMessage";
 import ProfileAdd from "@/assets/icons/ProfileAdd";
 import LinearRightArrow from "@/assets/icons/LinearRightArrow";
@@ -17,6 +18,15 @@ import {
   FormikErrors,
 } from "formik";
 import * as Yup from "yup";
+=======
+import ErrorMessage from "@/components/common/ErrorMessage"
+import ProfileAdd from "@/assets/icons/ProfileAdd"
+import LinearRightArrow from "@/assets/icons/LinearRightArrow"
+import DepartmentEmployeeTable from "@/components/Hr/Employees/DepartmentEmployeeTable"
+import { SideFormModal } from "@/components/Modal";
+import { Field, FieldArray, FormikHelpers, FieldProps } from 'formik';
+import * as Yup from 'yup';
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
 import {
   Select,
   SelectContent,
@@ -51,8 +61,11 @@ const DepartmentPage = () => {
 
   const {
     data: users,
+<<<<<<< HEAD
     // isLoading: isEmployeesLoading,
     // isError: isEmployeesError
+=======
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
   } = useAllEmployees(
     {},
     {
@@ -209,12 +222,16 @@ const DepartmentPage = () => {
             addEmployeesToDepartment.isPending
           }
         >
+<<<<<<< HEAD
           {({ values, errors, touched }) => {
             const emailsInputErrors = errors.emails as
               | string
               | FormikErrors<string>[]
               | undefined;
             const emailsInputTouched = touched.emails as boolean[] | undefined;
+=======
+          {({ values }) => {
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
 
             return (
               <FieldArray name="emails">
@@ -225,6 +242,7 @@ const DepartmentPage = () => {
                       department.managerId !== user.id
                   );
 
+<<<<<<< HEAD
                   return (
                     <div className="space-y-4">
                       {values.emails && values.emails.length > 0
@@ -233,6 +251,12 @@ const DepartmentPage = () => {
                               ? (emailsInputErrors[index] as string)
                               : undefined;
                             const fieldTouched = emailsInputTouched?.[index];
+=======
+                    return (
+                      <div className="space-y-4">
+                        {values.emails && values.emails.length > 0 ? (
+                          values.emails.map((email, index) => {
+>>>>>>> e1b7f54793849ffbdf8ce04d97dac3ad696c4616
 
                             return (
                               <div key={email} className="space-y-2">

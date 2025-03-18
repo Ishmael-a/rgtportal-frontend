@@ -33,8 +33,8 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
   selected,
   onSelect,
 }) => {
-  const [tooltipDate, setTooltipDate] = useState<Date | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const [_tooltipDate, setTooltipDate] = useState<Date | null>(null);
+  const [_tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
   const dayRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Create a map of dates with events
@@ -78,7 +78,7 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
   }, [events]);
 
   // Get events for the tooltip date
-  const tooltipEvents = tooltipDate ? eventDatesMap.get(format(tooltipDate, 'yyyy-MM-dd')) || [] : [];
+//   const tooltipEvents = tooltipDate ? eventDatesMap.get(format(tooltipDate, 'yyyy-MM-dd')) || [] : [];
 
   // Handle day mouse enter
   const handleDayMouseEnter = (date: Date, event: React.MouseEvent<HTMLDivElement>) => {

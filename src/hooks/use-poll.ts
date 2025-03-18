@@ -78,7 +78,7 @@ export const usePoll = (pollId: number) => {
      updatePollData(newPoll);
      return { previousPoll };
    },
-   onError: (err, optionId, context) => {
+   onError: (_err, _optionId, context) => {
      if (context?.previousPoll) {
        updatePollData(context.previousPoll);
      }
@@ -128,7 +128,7 @@ export const usePoll = (pollId: number) => {
      updatePollData(newPoll);
      return { previousPoll };
    },
-   onError: (err, optionId, context) => {
+   onError: (_err, _optionId, context) => {
      if (context?.previousPoll) {
        updatePollData(context.previousPoll);
      }

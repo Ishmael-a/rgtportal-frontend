@@ -1,6 +1,7 @@
 import { PtoRequestService } from "@/api/services/pto-request.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "./use-toast";
+import {PtoLeave} from "@/types/PTOS"
 
 export const useRequestPto = () => {
   const queryClient = useQueryClient();
