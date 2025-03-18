@@ -17,7 +17,19 @@ export function Toaster() {
         return (
           <Toast key={id} {...props}>
             <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
+              {title && (
+                <ToastTitle
+                  className={
+                    props.variant === "success"
+                      ? "text-green-300"
+                      : props.variant === "destructive"
+                      ? "text-white"
+                      : undefined
+                  }
+                >
+                  {title}
+                </ToastTitle>
+              )}
               {description && (
                 <ToastDescription>{description}</ToastDescription>
               )}

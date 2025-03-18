@@ -6,10 +6,17 @@ import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
+import { useNotifications } from "@/api/query-hooks/notification";
+import { NotificationContainer } from "@/components/common/NotificationsContainer";
+import { useState } from "react";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
   const { isLoading, isError } = useInitializeSharedData();
+  const { unreadCount } = useNotifications();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+
 
   if (isLoading) {
     return (
@@ -53,8 +60,17 @@ export const BaseLayout = () => {
 
           {/* Right section with notification */}
           <div className="flex items-center">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
+            <button
+              className="relative p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+              onClick={() => setNotificationsOpen(true)}
+              aria-label="Notifications"
+            >
               <Bell className="h-5 w-5 text-gray-600" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -81,6 +97,10 @@ export const BaseLayout = () => {
           <Outlet />
         </div>
       </div>
+      <NotificationContainer
+        isOpen={notificationsOpen}
+        onOpenChange={setNotificationsOpen}
+      />
     </div>
   );
 };

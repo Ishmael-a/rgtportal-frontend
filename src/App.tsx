@@ -14,7 +14,7 @@ import TimeOff from "./pages/Employee/TimeOff";
 import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
-import CandidateDetailView from "./pages/HR/CandidateDetailed";
+import CandidateDetailView from "./pages/HR/Recruitment/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
 import CreatePassword from "./pages/auth/CreatePassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
@@ -23,6 +23,17 @@ import Events from "./pages/HR/Events/Events";
 import DepartmentPage from "@/pages/HR/Employees/DepartmentPage"
 
 function App() {
+  const getCookie = (name: string) => {
+    const cookies = document.cookie.split("; ");
+    console.log("cookies", document.cookie);
+    
+    const cookie = cookies.find((row) => row.startsWith(name + "="));
+    return cookie ? cookie.split("=")[1] : null;
+  };
+
+  const sessionID = getCookie("sessionID");
+
+  console.log("sessionID", sessionID);
   return (
 <BrowserRouter>
       <Routes>

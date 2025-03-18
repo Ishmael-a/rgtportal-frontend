@@ -32,6 +32,7 @@ export interface User {
   role: Role;
   createdAt: string;
   updatedAt: string;
+  token?: string;
 }
 
 interface ResponseUser {
@@ -43,4 +44,5 @@ interface ResponseUser {
   role: ResponseRole;
   createdAt: string;
   updatedAt: string;
+  token?: string;
 }

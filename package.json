@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "build": "tsc --project tsconfig.build.json && vite build",
     "preview": "vite preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint src/**/*.{ts,tsx}"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.6",
@@ -47,6 +47,7 @@
     "react-router-dom": "^7.2.0",
     "react-textarea-autosize": "^8.5.7",
     "react-toastify": "^11.0.3",
+    "react-use-websocket": "^4.13.0",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "yup": "^1.6.1"
