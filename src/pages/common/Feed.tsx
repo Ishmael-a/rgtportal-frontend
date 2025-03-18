@@ -2,11 +2,9 @@ import AnnouncementCard from "@/components/AnnouncementCard";
 import CreatePost from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
-import { announcements, eventList, projectCards } from "@/constants";
+import { announcements, eventList } from "@/constants";
 import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
-import Avtr from "@/components/Avtr";
-import cool from "../../assets/images/coolEmoji.png";
 import { Calendar } from "@/components/ui/calendar";
 import React, { useMemo, useState } from "react";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
@@ -23,6 +21,8 @@ const Feed = () => {
   const [date, setDate] = useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
   const { currentUser: user } = useAuthContextProvider();
+
+  // const { departments } = useSelector((state: RootState) => state.sharedState);
 
   const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],
@@ -59,16 +59,16 @@ const Feed = () => {
     });
   }, [posts, polls]);
 
-  const colors = [
-    { color: "#FFCFF2", name: "pink" },
-    { color: "#FFEBCC", name: "yellow" },
-    { color: "#F6EEFF", name: "purple" },
-  ];
+  // const colors = [
+  //   { color: "#FFCFF2", name: "pink" },
+  //   { color: "#FFEBCC", name: "yellow" },
+  //   { color: "#F6EEFF", name: "purple" },
+  // ];
 
-  const getRandomColor = () => {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
-  };
+  // const getRandomColor = () => {
+  //   const randomIndex = Math.floor(Math.random() * colors.length);
+  //   return colors[randomIndex];
+  // };
 
   if (pollsLoading || postsLoading) {
     return (
@@ -122,7 +122,7 @@ const Feed = () => {
               }
               `}
             </style>
-            {projectCards[0].members.map((item, index) => {
+            {/* {departments[0].employees.map((item, index) => {
               const randomColor = getRandomColor();
               return (
                 <div className="flex flex-col items-center">
@@ -137,8 +137,9 @@ const Feed = () => {
                     key={index}
                   >
                     <Avtr
-                      url={item.avtr.url}
-                      name={item.avtr.fallBack}
+                      url={item.photoUrl as string}
+                      name={item.firstName as string}
+                      index={index}
                       className={`sm:w-[50px] sm:h-[50px] md:w-[76.94px] md:h-[76.94px]`}
                     />
                     <img
@@ -152,7 +153,7 @@ const Feed = () => {
                   </p>
                 </div>
               );
-            })}
+            })} */}
           </div>
         </section>
 
@@ -229,7 +230,6 @@ const Feed = () => {
                 </Link>
               </div>
 
-            
               <div className="flex flex-col space-y-5">
                 {eventList.map((event, index) => (
                   <EventList

@@ -28,21 +28,19 @@ const CustomSelect: React.FC<ICustomSelect> = ({
   console.log("value", value);
   return (
     <Select onValueChange={onChange} value={value || ""}>
-      <div className={className}>
-        <SelectTrigger className="w-full h-full">
-          <SelectValue placeholder={placeholder || "Select"} />
-        </SelectTrigger>
-        <SelectContent className="w-full h-full">
-          <SelectGroup>
-            {selectLabel && <SelectLabel>{selectLabel}</SelectLabel>}
-            {options.map((item, index) => (
-              <SelectItem value={item.toLowerCase()} key={index}>
-                {item}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </div>
+      <SelectTrigger className={`w-full h-full border-0 ${className}`}>
+        <SelectValue placeholder={placeholder || "Select"} />
+      </SelectTrigger>
+      <SelectContent className="w-full h-full border-0">
+        <SelectGroup>
+          {selectLabel && <SelectLabel>{selectLabel}</SelectLabel>}
+          {options.map((item, index) => (
+            <SelectItem value={item.toLowerCase()} key={index}>
+              {item}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
     </Select>
   );
 };

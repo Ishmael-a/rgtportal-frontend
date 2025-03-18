@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ClassNameValue } from "tailwind-merge";
+import CalendarIcon2 from "@/assets/icons/CalendarIcon2";
 
 interface IDatePicker {
   placeholder?: string;
@@ -43,18 +43,18 @@ const DatePicker: React.FC<IDatePicker> = ({
           variant={"outline"}
           className={`${className || ""} ${cn(
             "justify-between text-left font-normal",
-            !date && "text-muted-foreground"
+            !date && "text-muted-foreground "
           )}`}
         >
           {date ? (
             format(date, "PPP")
           ) : (
-            <span className="text-[#7B7A80]">
+            <span className="text-[#7B7A80] font-semibold">
               {placeholder ? placeholder : "Pick a date"}
             </span>
           )}
 
-          <CalendarIcon />
+          <CalendarIcon2 />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" style={{ zIndex: 170 }}>

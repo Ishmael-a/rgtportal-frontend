@@ -1,33 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { ClassNameValue } from "tailwind-merge";
 import { Poll } from "./polls";
-interface IProjectCard {
+interface IDepartmentCard {
   id: string | number;
-  members: IProjectMembers[] | Employee[];
+  employees: Employee[];
   name: string;
   leadName?: string;
-  path: string;
-  includeBgImg?: boolean
-}
-interface IProjectType {
-  id: string | number;
-  members: IProjectMembers[];
-  name: string;
-  leadName?: string;
+  includeBgImg?: boolean;
 }
 
-interface IProjectMembers {
-  id: number;
-  name: string;
-  avtr: { url: string; fallBack: string };
-  department: string;
-  role: string;
-}
+// interface IDepartmentMembers {
+//   id: number;
+//   name: string;
+//   avtr: { url: string; fallBack: string };
+//   department: string;
+//   role: string;
+// }
 
 interface IFeed {
   poll?: Poll;
   post?: IPost;
-  postId?:number
+  postId?: number;
 }
 
 interface IAnnouncementCard {
@@ -51,13 +44,9 @@ interface EmployeeCardType {
   imgSrc: string;
 }
 
+export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp";
 
-export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp"
-
-type WorkType =  "hybrid" | "remote"
-
-
-
+type WorkType = "hybrid" | "remote";
 
 export interface Employee {
   id: number;

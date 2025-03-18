@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
+import { X } from "lucide-react";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -91,18 +92,30 @@ export default function TimeOff() {
             Request Time List
           </h1>
           <Button
-            className="bg-rgtpink hover:bg-pink-500 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
+            className="bg-[#6418C3] hover:bg-purple-800 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
             onClick={() => setIsModalOpen(true)}
           >
             <img src="/Add.svg" alt="add" />
-            Add New Request
+            <p className="hidden sm:block">Add New Request</p>
           </Button>
         </header>
 
-        <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:h-[50px] my-8">
-          <DatePicker className="sm:h-full" />
-          <CustomSelect options={["plnt"]} />
-          <CustomSelect options={["plnt"]} />
+        <div className="flex  gap-3 h-[50px] my-8">
+          <DatePicker className="h-full border-0 bg-[#F6F6F9] sm:w-[320px] text-xs sm:text-sm font-semibold rounded-[12px]" />
+          <CustomSelect
+            placeholder="All Type"
+            options={["Vacation", "Sick"]}
+            className="bg-[#F6F6F9] border-0 sm:w-[320px] text-xs sm:text-sm font-semibold text-nowrap rounded-[12px]"
+          />
+          <CustomSelect
+            placeholder="All Status"
+            options={["pending", "approved", "declined"]}
+            className="bg-[#F6F6F9] border-0 sm:w-[320px] text-xs sm:text-sm font-semibold text-nowrap rounded-[12px]"
+          />
+          <div className="text-[#8A8A8C] font-semibold text-sm flex items-center p-1 flex-1 justify-center hover:bg-slate-200 rounded-[12px] transition-all duration-300 ease-in cursor-pointer bg-slate-100">
+            <X className="w-4 md:hidden sm:w-8" />
+            <p className="hidden md:block">Reset</p>
+          </div>
         </div>
 
         <DataTable

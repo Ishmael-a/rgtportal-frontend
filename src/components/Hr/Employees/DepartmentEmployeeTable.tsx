@@ -1,24 +1,26 @@
-import { useState, useMemo } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState, useMemo } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import StepProgress from "@/components/StepProgress";
 import { Column } from "@/types/tables";
-// import { employeeTypeLabels, EmployeeType } from "../../../types/employee";
-import { DataTable } from '../../common/DataTable';
-import { usePermission } from '@/hooks/use-permission';
-import ErrorMessage from "@/components/common/ErrorMessage";
-import EmployeeTableSkeleton from "../Dashboard/EmployeeTableSkeleton";
-import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
-import { EmployeeType } from '@/types/employee';
-import { Department } from '../../../types/department';
+import { DataTable } from "../../common/DataTable";
+import { usePermission } from "@/hooks/use-permission";
+import { EmployeeType } from "@/types/employee";
+import { Department } from "../../../types/department";
 
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
-  "full_time": "FT",
-  "part_time": "PT",
-  "contractor": "FT",
-  "nsp": "PT"
+  full_time: "FT",
+  part_time: "PT",
+  contractor: "FT",
+  nsp: "PT",
 };
 
 interface FilterState {
@@ -33,15 +35,18 @@ interface DepartmentEmployeeTableProps {
   department: Department;
 }
 
-const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filterByName, department }) => {
- const [currentPage, setCurrentPage] = useState<number>(1);
+const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
+  filterByName,
+  department,
+}) => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [employeesPerPage] = useState<number>(5);
   const { hasAccess } = usePermission();
   const [filter, setFilter] = useState<FilterState>({
-    role: 'All Role',
-    workType: 'All Work Type',
-    employeeType: 'All Employee Type',
-    status: 'All Status'
+    role: "All Role",
+    workType: "All Work Type",
+    employeeType: "All Employee Type",
+    status: "All Status",
   });
 
   // const {
@@ -54,43 +59,61 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
 
   const filteredData = useMemo(() => {
     if (!department.employees) return [];
-    
-    return department.employees.filter(employee => {
-      const nameMatch = !filterByName ||
-        employee.firstName?.toLowerCase().includes(filterByName.toLowerCase()) ||
+
+    return department.employees.filter((employee) => {
+      const nameMatch =
+        !filterByName ||
+        employee.firstName
+          ?.toLowerCase()
+          .includes(filterByName.toLowerCase()) ||
         employee.lastName?.toLowerCase().includes(filterByName.toLowerCase());
 
-      const roleMatch = filter.role === 'All Role' || employee.role === filter.role;
+      const roleMatch =
+        filter.role === "All Role" || employee.role === filter.role;
 
-      const workTypeMatch = filter.workType === 'All Work Type' || employee.workType === filter.workType;
+      const workTypeMatch =
+        filter.workType === "All Work Type" ||
+        employee.workType === filter.workType;
 
-      const employeeTypeMatch = filter.employeeType === 'All Employee Type' ||
+      const employeeTypeMatch =
+        filter.employeeType === "All Employee Type" ||
         employee.employeeType === filter.employeeType;
 
-      const statusMatch = filter.status === 'All Status' ||
-        (filter.status === 'Available' ? !employee.leaveType : !!employee.leaveType);
+      const statusMatch =
+        filter.status === "All Status" ||
+        (filter.status === "Available"
+          ? !employee.leaveType
+          : !!employee.leaveType);
 
-      return nameMatch && roleMatch && workTypeMatch && employeeTypeMatch && statusMatch;
+      return (
+        nameMatch &&
+        roleMatch &&
+        workTypeMatch &&
+        employeeTypeMatch &&
+        statusMatch
+      );
     });
   }, [department, filter, filterByName]);
 
   const totalPages = useMemo(() => {
     return Math.ceil((filteredData ?? []).length / employeesPerPage);
   }, [filteredData, employeesPerPage]);
-  
+
   const paginatedData = useMemo(() => {
-    return filteredData?.slice(
-      (currentPage - 1) * employeesPerPage,
-      currentPage * employeesPerPage
-    ) || [];
+    return (
+      filteredData?.slice(
+        (currentPage - 1) * employeesPerPage,
+        currentPage * employeesPerPage
+      ) || []
+    );
   }, [filteredData, currentPage, employeesPerPage]);
 
   const resetFilter = () => {
     setFilter({
-      role: 'All Role',
-      workType: 'All Work Type',
-      employeeType: 'All Employee Type',
-      status: 'All Status'
+      role: "All Role",
+      workType: "All Work Type",
+      employeeType: "All Employee Type",
+      status: "All Status",
     });
     setCurrentPage(1);
   };
@@ -101,87 +124,87 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
   };
 
   const actionObj = [
-    ...(hasAccess("employeeRecords", 'view')
-      ? [{
-        name: 'view',
-        action: () => console.log('View clicked')
-      }]
+    ...(hasAccess("employeeRecords", "view")
+      ? [
+          {
+            name: "view",
+            action: () => console.log("View clicked"),
+          },
+        ]
       : []),
-    ...(hasAccess("employeeRecords", 'edit')
-      ? [{
-        name: 'delete',
-        action: () => console.log('Delete clicked')
-      }]
-      : [])
+    ...(hasAccess("employeeRecords", "edit")
+      ? [
+          {
+            name: "delete",
+            action: () => console.log("Delete clicked"),
+          },
+        ]
+      : []),
   ];
 
   const columns: Column[] = [
     {
-      key: 'name',
-      header: 'Employee Name',
+      key: "name",
+      header: "Employee Name",
       render: (row) => (
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
             <img
-              src={row.photoUrl || '/default-avatar.png'}
-              alt={row.firstName || 'Employee'}
+              src={row.photoUrl || "/default-avatar.png"}
+              alt={row.firstName || "Employee"}
               className="w-full h-full object-cover"
             />
           </div>
           <div>
-            <div className="font-medium">{row.firstName} {row.lastName}</div>
+            <div className="font-medium">
+              {row.firstName} {row.lastName}
+            </div>
             <div className="text-gray-500 text-xs">{row.phone}</div>
           </div>
         </div>
-      )
+      ),
     },
     {
-      key: 'role',
-      header: 'Role',
-      render: (row) => (
-        <div>
-          {row.role || department?.name }
-        </div>
-      )
+      key: "role",
+      header: "Role",
+      render: (row) => <div>{row.role || department?.name}</div>,
     },
     {
-      key: 'workType',
-      header: 'Work Type',
-      render: (row) => (
-        <div>
-          {row.workType || "N/A"}
-        </div>
-      )
+      key: "workType",
+      header: "Work Type",
+      render: (row) => <div>{row.workType || "N/A"}</div>,
     },
     {
-      key: 'employeeType',
-      header: 'Employee Type',
+      key: "employeeType",
+      header: "Employee Type",
       render: (row) => (
-        <div className={`px-3 py-2 rounded-[5px] text-center text-xs ${
-          row.employeeType === 'full_time'
-            ? 'bg-yellow-100 text-yellow-800'
-            : 'bg-purple-100 text-purple-800'
-        }`}>
+        <div
+          className={`px-3 py-2 rounded-[5px] text-center text-xs ${
+            row.employeeType === "full_time"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-purple-100 text-purple-800"
+          }`}
+        >
           {employeeTypeLabels[row.employeeType as EmployeeType] || "N/A"}
         </div>
-      )
+      ),
     },
     {
-      key: 'status',
-      header: 'Status',
+      key: "status",
+      header: "Status",
       render: (row) => (
-        <div className={`px-3 py-2 rounded-[5px] text-center text-xs ${
-          !row.leaveType
-            ? 'bg-green-100 text-green-800'
-            : 'bg-red-100 text-red-800'
-        }`}>
+        <div
+          className={`px-3 py-2 rounded-[5px] text-center text-xs ${
+            !row.leaveType
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
           {!row.leaveType ? "Available" : "Busy"}
         </div>
-      )
+      ),
     },
   ];
-
-
 
   return (
     <div className="rounded-lg bg-white py-6">
@@ -191,7 +214,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
         <Select
           value={filter.role}
           onValueChange={(value) => {
-            setFilter(prev => ({ ...prev, role: value }));
+            setFilter((prev) => ({ ...prev, role: value }));
             setCurrentPage(1);
           }}
         >
@@ -199,7 +222,6 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
             <SelectValue placeholder="All Role" />
           </SelectTrigger>
           <SelectContent>
-
             <SelectItem value="All Role">All Role</SelectItem>
             <SelectItem value="Graphic Design">Graphic Design</SelectItem>
             <SelectItem value="Copywriter">Copywriter</SelectItem>
@@ -210,7 +232,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
         <Select
           value={filter.workType}
           onValueChange={(value) => {
-            setFilter(prev => ({ ...prev, workType: value }));
+            setFilter((prev) => ({ ...prev, workType: value }));
             setCurrentPage(1);
           }}
         >
@@ -228,7 +250,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
         <Select
           value={filter.employeeType}
           onValueChange={(value) => {
-            setFilter(prev => ({ ...prev, employeeType: value }));
+            setFilter((prev) => ({ ...prev, employeeType: value }));
             setCurrentPage(1);
           }}
         >
@@ -248,7 +270,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
         <Select
           value={filter.status}
           onValueChange={(value) => {
-            setFilter(prev => ({ ...prev, status: value }));
+            setFilter((prev) => ({ ...prev, status: value }));
             setCurrentPage(1);
           }}
         >
@@ -274,26 +296,28 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({ filte
         </Button>
       </div>
 
-      {paginatedData.length > 0 ? 
+      {paginatedData.length > 0 ? (
         <>
-        <DataTable
-          columns={columns}
-          data={paginatedData}
-          actionBool={true}
-          actionObj={actionObj}
-          dividers={false}
-        />
-        <div className="mt-4">
-          <StepProgress
-            currentPage={currentPage}
-            setCurrentPage={fetchData}
-            totalPages={totalPages}
+          <DataTable
+            columns={columns}
+            data={paginatedData}
+            actionBool={true}
+            actionObj={actionObj}
+            dividers={false}
           />
-        </div>
+          <div className="mt-4">
+            <StepProgress
+              currentPage={currentPage}
+              setCurrentPage={fetchData}
+              totalPages={totalPages}
+            />
+          </div>
         </>
-        :
-        <div className="flex w-full h-full items-center justify-center py-8">No Employees In This Department </div>
-      }
+      ) : (
+        <div className="flex w-full h-full items-center justify-center py-8">
+          No Employees In This Department{" "}
+        </div>
+      )}
     </div>
   );
 };

@@ -8,8 +8,8 @@ import Feed from "./pages/common/Feed";
 import { HRDashboard } from "./pages/HR/HRDashboard";
 import { AllDepartments } from "./pages/HR/Employees/AllDepartments";
 import EventsCalendar from "./pages/Employee/EventsCalendar";
-import Projects from "./pages/Employee/Projects";
-import ProjectDetails from "./pages/Employee/ProjectDetails";
+import Projects from "./pages/Employee/Departments";
+import ProjectDetails from "./pages/Employee/DepartmentDetails";
 import TimeOff from "./pages/Employee/TimeOff";
 import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
@@ -36,8 +36,8 @@ function App() {
           <Route path="/emp" element={<BaseLayout />}>
             <Route index path="feed" element={<Feed />} />
             <Route path="events-calendar" element={<EventsCalendar />} />
-            <Route path="all-projects/" element={<Projects />} />
-            <Route path="all-projects/:id" element={<ProjectDetails />} />
+            <Route path="all-departments/" element={<Projects />} />
+            <Route path="all-departments/:id" element={<ProjectDetails />} />
             <Route path="time-off" element={<TimeOff />} />
           </Route>
         </Route>

@@ -28,7 +28,7 @@ import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
 import { useCreateDepartment } from "@/api/query-hooks/department.hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import ProjectCard from "@/components/ProjectCard";
+import ProjectCard from "@/components/DepartmentCard";
 import NoDepartmentsPage from "../../common/NoDepartmentsPage";
 
 const NewDepSchema = Yup.object({
@@ -174,9 +174,9 @@ export const AllDepartments = () => {
               <ProjectCard
                 key={department.id}
                 id={department.id}
-                path={`department/${department.id}`}
+                // path={`department/${department.id}`}
                 name={department.name}
-                members={department.employees ?? []}
+                employees={department.employees ?? []}
                 includeBgImg={true}
               />
             ))}

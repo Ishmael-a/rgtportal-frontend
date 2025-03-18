@@ -8,10 +8,11 @@ export interface Column {
 
 export interface DataTableProps {
   columns: Column[];
-  data: PtoLeave[] | undefined;
+  // data: PtoLeave[] | Employee[] |Department[] | undefined;
+  data: any[] | undefined;
   dividers?: boolean;
   actionBool?: boolean;
-  actionObj: { name: string; action: (id?: number, row?: T) => void }[];
+  actionObj?: { name: string; action: (id?: number, row?: T) => void }[];
   showDelete?: boolean;
   onDelete?: (id: number) => Promise<void>;
   setShowDelete?: React.Dispatch<React.SetStateAction<boolean>>;

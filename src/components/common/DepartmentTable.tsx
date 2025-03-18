@@ -1,30 +1,31 @@
-import { IProjectType } from "@/types/employee";
+import { IDepartmentCard } from "@/types/employee";
 import Avtr from "../Avtr";
+import { getAvatarFallback } from "@/lib/helpers";
 
-const DepartmentTable = ({ details }: { details: IProjectType | null }) => {
+const DepartmentTable = ({ detail }: { detail: IDepartmentCard | null }) => {
   return (
-    <main className="flex max-w-[360px] sm:max-w-full overflow-scroll">
+    <main className="flex flex-col max-w-[360px] sm:max-w-full overflow-scroll">
       <table className="border-collapse rounded-lg w-full">
         {/* Table Head */}
         <thead>
           <tr className=" text-gray-700 text-left">
             <th className="text-[#A3A7AA] font-semibold text-sm p-3 md:pl-16">
-              Assigned To
+              Employee Name
             </th>
             <th className="text-[#A3A7AA] font-semibold text-sm p-3">
-              Department
+              Department Role
             </th>
-            <th className="text-[#A3A7AA] font-semibold text-sm p-3">Role</th>
+            <th className="text-[#A3A7AA] font-semibold text-sm p-3">Type</th>
             <th className="p-3 text-center text-[#A3A7AA] font-semibold text-sm ">
-              Action
+              User Type
             </th>
           </tr>
         </thead>
 
         {/* Table Body */}
         <tbody>
-          {details &&
-            details?.members.map((item, index) => (
+          {detail &&
+            detail?.employees.map((item, index) => (
               <tr
                 key={index}
                 className=" hover:bg-gray-50 transition-all space-y-3"
@@ -32,26 +33,28 @@ const DepartmentTable = ({ details }: { details: IProjectType | null }) => {
                 {/* Assigned To */}
                 <td className="p-3 flex items-center gap-3">
                   <Avtr
-                    url={item.avtr.url}
-                    name={item.avtr.fallBack}
-                    className="border-3 border-[#2186EB]"
+                    url={item.user.profileImage as string}
+                    name={getAvatarFallback(item)}
+                    index={index}
+                    className="border-3 text-white font-semibold text-sm"
+                    avtBg="bg-[#E328AF]"
                   />
                   <span className="text-sm font-semibold text-[#8A8A8C] text-nowrap">
-                    {item.name}
+                    {item.user.username}
                   </span>
                 </td>
 
                 {/* Department */}
                 <td className="p-3">
-                  <span className="px-2 text-nowrap py-1 bg-green-100 text-[#039855] text-sm font-light rounded">
-                    {item.department}
+                  <span className="px-2 text-nowrap py-1 bg-green-100 text-[#039855] text-sm font-semibold rounded">
+                    {detail.name}
                   </span>
                 </td>
 
                 {/* Role */}
                 <td className="p-3">
-                  <span className="px-2 py-1 text-nowrap bg-green-100 text-[#039855] text-sm font-light rounded">
-                    {item.role}
+                  <span className="px-2 py-1 text-nowrap bg-green-100 text-[#039855] text-sm rounded font-semibold">
+                    {item.user.role.name.toUpperCase()}
                   </span>
                 </td>
 
@@ -68,7 +71,7 @@ const DepartmentTable = ({ details }: { details: IProjectType | null }) => {
             ))}
         </tbody>
       </table>
-      {!details && (
+      {!detail && (
         <div className="w-full flex justify-center items-center p-3">
           <p className="text-slate-500 font-semibold text-sm">
             No Data available

@@ -1,12 +1,15 @@
-import { IAvtrComponent } from "@/types/employee";
+import { ClassNameValue } from "tailwind-merge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-const Avtr: React.FC<IAvtrComponent> = ({
-  className,
-  index = 0,
-  url,
-  name,
-}) => {
+interface IAvtr {
+  className?: ClassNameValue;
+  index?: number;
+  url: string;
+  name: string;
+  avtBg?: string;
+}
+
+const Avtr: React.FC<IAvtr> = ({ className, index = 0, url, name, avtBg }) => {
   return (
     <Avatar
       className={`border-2 border-white ${className}`}
@@ -16,7 +19,9 @@ const Avtr: React.FC<IAvtrComponent> = ({
       }}
     >
       <AvatarImage src={url} alt={name} className="h-full w-full" />
-      <AvatarFallback className="h-full w-full">{name}</AvatarFallback>
+      <AvatarFallback className={`h-full w-full ${avtBg}`}>
+        {name}
+      </AvatarFallback>
     </Avatar>
   );
 };
