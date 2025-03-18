@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Input } from "./ui/input";
 import { useInteraction } from "@/hooks/use-interaction";
-import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { User } from "@/types/authUser";
 import SendIcon from "@/assets/icons/SendIcon";
 import EmojiIcon from "@/assets/icons/EmojiIcon";
@@ -11,22 +10,20 @@ const CommentBlck: React.FC<{
   user: User | null;
   postId: number | undefined;
 }> = ({ user, postId }) => {
-  const { currentUser } = useAuthContextProvider();
 
   const [comment, setComment] = useState<IComment>({
     content: "",
     author: {
-      id: currentUser?.employee?.id,
-      firstName: currentUser?.employee?.firstName ?? "",
-      lastName: currentUser?.employee?.lastName ?? "",
-      profileImage: currentUser?.profileImage ?? "",
+      id: user?.employee?.id,
+      firstName: user?.employee?.firstName ?? "",
+      lastName: user?.employee?.lastName ?? "",
+      profileImage: user?.profileImage ?? "",
     },
     createdAt: new Date(),
   });
 
   const { addComment, isCommentLoading } = useInteraction(postId);
 
-  // console.log("statsCommnets:", stats);
 
   const handleSubmitComment = async () => {
     try {
