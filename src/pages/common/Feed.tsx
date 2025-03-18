@@ -88,7 +88,7 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple sticky top-0 z-50 rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full h-[130px]"
+          className="bg-rgtpurple sticky top-0 z-50 rounded-[20px] text-white flex flex-col  max-w-full p-3 space-y-1"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
@@ -96,7 +96,7 @@ const Feed = () => {
           }}
         >
           <header className="">
-            <p className="font-semibold text-xl sm:text-2xl text-center">
+            <p className="font-semibold text-xl md:text-2xl text-center">
               Employees of the Week!!
             </p>
             <p className="font-semibold text-xs sm:text-sm text-center">
@@ -105,7 +105,7 @@ const Feed = () => {
           </header>
 
           <div
-            className="w-full flex justify-center gap-1 p-2 items-center overflow-x-scroll"
+            className="w-full flex justify-center gap-1 items-center overflow-x-scroll"
             style={{
               scrollbarWidth: "none" /* Firefox */,
               msOverflowStyle: "none" /* IE and Edge */,
@@ -121,7 +121,7 @@ const Feed = () => {
             {departments[1].employees.map((item, index) => {
               const randomColor = getRandomColor();
               return (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center justify-end">
                   <div
                     className={`border-3 rounded-full p-1 flex w-fit items-center justify-center relative ${
                       randomColor.name === "pink"
@@ -135,7 +135,7 @@ const Feed = () => {
                     <Avtr
                       url={item.user.profileImage as string}
                       name={item.firstName as string}
-                      className={`sm:w-[50px] sm:h-[50px] md:w-[76.94px] md:h-[76.94px]`}
+                      className={`w-[55px] h-[55px]`}
                     />
                     <img
                       src={fume}
