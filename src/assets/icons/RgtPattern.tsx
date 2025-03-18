@@ -1,3 +1,5 @@
+import { IconTypes } from "./types";
+
 const RgtPattern: React.FC<IconTypes> = ({ color }) => {
   return (
     <svg width="123" height="142" viewBox="0 0 123 142" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">

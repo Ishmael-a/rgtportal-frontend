@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import Avtr from "../Avtr";
 import { ChevronDown } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
@@ -11,6 +11,7 @@ import DepartmentsIcon from "@/assets/icons/DepartmentsIcon";
 export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
   const [showProfile, setShowProfile] = useState(false);
+  const location = useLocation();
 
   const navItems = [
     { icon: FeedIcon, label: "Feed", path: "feed" },
@@ -29,17 +30,20 @@ export const SideBar = () => {
 
   return (
     <section className="space-y-3 p-2 flex flex-col items-center h-full">
-      <header className="md:flex flex-col items-start hidden">
-        <p className="font-semibold text-[24px] text-[#706D8A]">
-          Hello, there!
-        </p>
-        <p className="text-sm font-medium text-[#8C8C8C]">
-          Welcome back, let's explore now!
-        </p>
-      </header>
-      <div className="bg-white rounded-[30px] flex flex-col items-center md:py-[31px] ">
+      {(location.pathname === "/emp/feed" ||
+        location.pathname === "/hr/feed") && (
+        <header className="md:flex flex-col items-start hidden">
+          <p className="font-semibold text-[24px] text-[#706D8A]">
+            Hello, there!
+          </p>
+          <p className="text-sm font-medium text-[#8C8C8C]">
+            Welcome back, let's explore now!
+          </p>
+        </header>
+      )}
+      <div className="bg-white rounded-[30px] flex flex-col items-center py-[31px] ">
         <div className="space-y-3">
-          <div className="flex relative bg-[#452667] text-white justify-start items-center px-4 md:p-[16px] space-x-2 md:space-x-4 rounded-lg md:w-[240px] h-[72px]">
+          <div className="flex relative bg-[#452667] text-white justify-start items-center px-4 md:p-[16px] space-x-2 md:space-x-4 rounded-[16px] md:w-[240px] h-[72px]">
             <Avtr
               url={user?.profileImage as string}
               name={user?.username as string}
@@ -61,32 +65,38 @@ export const SideBar = () => {
             >
               <ChevronDown className="text-white font-bold" size={20} />
             </div>
-            {/* <div className="absolute border rounded-md space-y-2 -right-10 -bottom-8 w-40 bg-white text-black ">
-              <p>Profile</p>
-              <p>Logout</p>
-            </div> */}
           </div>
         </div>
-        <nav className="rounded-xl justify-center items-center md:items-start sm:min-w-[100px] md:min-w-[280px] h-[294px]  py-4 flex flex-col space-y-4 ">
+        <nav className="rounded-xl justify-start items-center md:items-start sm:min-w-[100px] md:min-w-[280px] flex flex-col pt-[10px] space-y-1">
           {navItems.map((item) => (
             <div className="w-full" key={item.path}>
               <NavLink to={item.path}>
                 {({ isActive }) => (
                   <div
                     className={`
-              flex items-center justify-start  py-2.5 rounded-lg
-              transition-colors duration-200 font-medium  flex-1 text-[#706D8A]
-              ${isActive ? "text-[#E328AF]" : "hover:bg-gray-50"}
+              flex items-center justify-start py-3 transition-colors duration-200 font-medium text-[#706D8A]
+              ${isActive ? "text-[#E328AF]" : "hover:bg-gray-100"}
               `}
                   >
                     {isActive && (
                       <div
-                        className={`h-[35px] w-[5px] bg-[#E328AF] rounded-r-full transition-all duration-300 ease-in`}
+                        className={`h-[30px] w-[5px] bg-[#E328AF] rounded-r-full transition-transform duration-300 ease-in-out`}
                       />
                     )}
-                    <div className="flex items-center gap-3 w-full justify-center sm:justify-start sm:pl-5 transition-all duration-300 ease-in">
-                      {isActive ? <item.icon color="#E328AF" /> : <item.icon />}
-                      <span className="font-semibold text-lg hidden md:block">
+                    <div className="flex items-center gap-3 w-full justify-center sm:justify-start sm:pl-5">
+                      {isActive ? (
+                        <item.icon
+                          color="#E328AF"
+                          size={26}
+                          className="transition-all duration-300 ease-in-out"
+                        />
+                      ) : (
+                        <item.icon
+                          size={24}
+                          className="transition-all duration-300 ease-in-out"
+                        />
+                      )}
+                      <span className="font-semibold text-base hidden md:block">
                         {item.label}
                       </span>
                     </div>

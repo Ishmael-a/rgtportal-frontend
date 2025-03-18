@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
+import WithRole from "@/common/WithRole";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
@@ -67,8 +68,18 @@ export const BaseLayout = () => {
             msOverflowStyle: "none" /* IE and Edge */,
           }}
         >
-          {user?.role.name === "HR" && <HrSideBar />}
-          {user?.role.name === "EMPLOYEE" && <SideBar />}
+          <WithRole
+            roles={["hr", "admin"]}
+            userRole={user?.role.name as string}
+          >
+            <HrSideBar />
+          </WithRole>
+          <WithRole
+            roles={["employee", "manager", "marketer"]}
+            userRole={user?.role.name as string}
+          >
+            <SideBar />
+          </WithRole>
         </div>
 
         <div

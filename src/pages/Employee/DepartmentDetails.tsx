@@ -1,5 +1,4 @@
 import ArrowIcon from "@/assets/icons/ArrowIcon";
-import ViewIcon from "@/assets/icons/ViewIcon";
 import Avtr from "@/components/Avtr";
 import { DataTable } from "@/components/common/DataTable";
 import Filters from "@/components/common/Filters";
@@ -32,14 +31,13 @@ const DepartmentDetails = () => {
     return <div>No data</div>;
   }
 
-
   const transformedData = details.employees.map((employee) => ({
     username: employee.user.username || "N/A",
     email: employee.user.email || "N/A",
-    type: employee.employeeType || "N/A",
+    type: employee.employeeType || "N/A", //whether remote, hybrid, part-time or full time
     userType: employee.user.role.name.toUpperCase() || "N/A",
-    positionStatus: !employee.leaveType ? "Permanent" : "Nsp",
-    ptoRequest: employee.leaveType ? "Active" : "Inactive",
+    positionStatus: !employee.position ? "Permanent" : "Nsp",
+    ptoRequest: employee.leaveType ? "Inactive" : "Active",
     profileImage: employee.user.profileImage,
   }));
 
@@ -92,32 +90,32 @@ const DepartmentDetails = () => {
       },
     },
 
-    {
-      key: "pto request",
-      header: "PTO Request",
-      render: (row) => (
-        <>
-          {row && (
-            <div className="flex items-center gap-2">
-              <p
-                className={`font-semibold text-xs rounded-[6px] h-[30px] flex items-center justify-center ${
-                  row.ptoRequest.toLowerCase() === "active"
-                    ? "bg-[#DFFFC7] w-[141.9px] text-confirmgreen"
-                    : "bg-[#FEE4E2] w-[182px] text-[#FF4A55] "
-                }`}
-              >
-                {row.ptoRequest}
-              </p>
-              {row.ptoRequest.toLowerCase() === "active" && (
-                <div className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in">
-                  <ViewIcon />
-                </div>
-              )}
-            </div>
-          )}
-        </>
-      ),
-    },
+    // {
+    //   key: "pto request",
+    //   header: "PTO Request",
+    //   render: (row) => (
+    //     <>
+    //       {row && (
+    //         <div className="flex items-center gap-2">
+    //           <p
+    //             className={`font-semibold text-xs rounded-[6px] h-[30px] flex items-center justify-center ${
+    //               row.ptoRequest.toLowerCase() === "active"
+    //                 ? "bg-[#DFFFC7] w-[141.9px] text-confirmgreen"
+    //                 : "bg-[#FEE4E2] w-[182px] text-[#FF4A55] "
+    //             }`}
+    //           >
+    //             {row.ptoRequest}
+    //           </p>
+    //           {row.ptoRequest.toLowerCase() === "active" && (
+    //             <div className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in">
+    //               <ViewIcon />
+    //             </div>
+    //           )}
+    //         </div>
+    //       )}
+    //     </>
+    //   ),
+    // },
   ];
 
   return (

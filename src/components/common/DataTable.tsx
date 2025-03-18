@@ -11,7 +11,6 @@ import { Column, DataTableProps } from "@/types/tables";
 import DeleteCard from "./DeleteCard";
 import { useState } from "react";
 import DataTableSkeleton from "@/pages/Employee/components/DataTableSkeleton";
-import { ViewIcon } from "lucide-react";
 
 export function DataTable({
   columns,
@@ -52,7 +51,7 @@ export function DataTable({
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
                         onClick={() => action.action(row.id)}
                       >
-                        <ViewIcon />
+                        <img src="/Show.svg" />
                       </button>
                     );
                   case "edit":
@@ -110,7 +109,7 @@ export function DataTable({
                 <TableHead
                   key={column.key}
                   className={
-                    "border-none text-nowrap text-[#A3A7AA] text-xs font-bold px-6 text-left"
+                    "border-none text-nowrap text-[#A3A7AA] text-xs p-6 text-left"
                   }
                 >
                   {column.header}
