@@ -7,6 +7,8 @@ import FeedIcon from "@/assets/icons/FeedIcon";
 import MessageIcon from "@/assets/icons/MessageIcon";
 import TimeIcon from "@/assets/icons/TimeIcon";
 import DepartmentsIcon from "@/assets/icons/DepartmentsIcon";
+import UserIcon from "@/assets/icons/UserIcon";
+import LogoutIcon from "@/assets/icons/LogoutIcon";
 
 export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
@@ -53,7 +55,7 @@ export const SideBar = () => {
               <p className="font-bold text-[15px] text-nowrap w-32 truncate">
                 {user?.username}
               </p>
-              <p className="text-[#F6F6F9] text-sm font-light">
+              <p className="text-[#F6F6F9] text-[12px] font-medium">
                 {user?.role.name}
               </p>
             </div>
@@ -65,6 +67,30 @@ export const SideBar = () => {
             >
               <ChevronDown className="text-white font-bold" size={20} />
             </div>
+            {/* Dropdown Menu */}
+            {showProfile && (
+              <div className="absolute top-[45px] right-0 bg-white border border-gray-200 rounded-lg shadow-lg h-[100px] z-10">
+                <div className="py-2 px-2 flex flex-col font-semibold">
+                  <NavLink
+                    to="/profile"
+                    className="  py-2 text-sm text-[#706D8A] md:hover:bg-gray-100 flex items-center border-b"
+                  >
+                    <UserIcon size={24} className="" />
+                    <p className="hidden md:block">Profile</p>
+                  </NavLink>
+                  <button
+                    onClick={() => {
+                      // Handle logout logic here
+                      console.log("Logout clicked");
+                    }}
+                    className="flex cursor-pointer items-center w-full text-left py-2 text-sm text-[#EF4444] md:hover:bg-gray-100 "
+                  >
+                    <LogoutIcon size={24} />
+                    <p className="hidden md:block">Logout</p>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <nav className="rounded-xl justify-start items-center md:items-start sm:min-w-[100px] md:min-w-[280px] flex flex-col pt-[10px] space-y-1">

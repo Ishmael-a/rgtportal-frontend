@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
 import { Calendar } from "@/components/ui/calendar";
 import React, { useMemo, useState } from "react";
-import ArrowIcon from "@/assets/icons/ArrowIcon";
 import { PollService } from "@/api/services/poll.service";
 import { useQuery } from "@tanstack/react-query";
 import { Poll } from "@/types/polls";
@@ -16,13 +15,17 @@ import { FeedSkeleton } from "../../FeedSkeleton";
 import PollUI from "@/components/PollUI";
 import WithRole from "@/common/WithRole";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import Avtr from "@/components/Avtr";
+import fume from "../../assets/images/fume.png";
 
 const Feed = () => {
   const [date, setDate] = useState<Date>();
   const [showEvents, setShowEvents] = useState(false);
   const { currentUser: user } = useAuthContextProvider();
 
-  // const { departments } = useSelector((state: RootState) => state.sharedState);
+  const { departments } = useSelector((state: RootState) => state.sharedState);
 
   const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],
@@ -31,17 +34,11 @@ const Feed = () => {
         console.log("polls:", res.data);
         return res.data as Poll[];
       }),
-    // placeholderData: (previousData) => {
-    //   return previousData;
-    // },
   });
 
   const { data: posts, isLoading: postsLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
-    // placeholderData: (previousData) => {
-    //   return previousData;
-    // },
   });
 
   console.log("posts:", posts);
@@ -59,22 +56,21 @@ const Feed = () => {
     });
   }, [posts, polls]);
 
-  // const colors = [
-  //   { color: "#FFCFF2", name: "pink" },
-  //   { color: "#FFEBCC", name: "yellow" },
-  //   { color: "#F6EEFF", name: "purple" },
-  // ];
+  const colors = [
+    { color: "#FFCFF2", name: "pink" },
+    { color: "#FFEBCC", name: "yellow" },
+    { color: "#F6EEFF", name: "purple" },
+  ];
 
-  // const getRandomColor = () => {
-  //   const randomIndex = Math.floor(Math.random() * colors.length);
-  //   return colors[randomIndex];
-  // };
+  const getRandomColor = () => {
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
+  };
 
   if (pollsLoading || postsLoading) {
     return (
       <main className="flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0">
         <FeedSkeleton />
-        {/* Keep the right sidebar skeleton if needed */}
       </main>
     );
   }
@@ -92,7 +88,7 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple sticky top-0 z-50 rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full"
+          className="bg-rgtpurple sticky top-0 z-50 rounded-lg text-white p-4 min-h-44 flex flex-col  max-w-full h-[130px]"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
@@ -100,16 +96,16 @@ const Feed = () => {
           }}
         >
           <header className="">
-            <p className="font-semibold  sm:text-[24px] md:text-[32px] text-center">
+            <p className="font-semibold text-xl sm:text-2xl text-center">
               Employees of the Week!!
             </p>
             <p className="font-semibold text-xs sm:text-sm text-center">
-              Them of the week: Dedication... Let's Lock in
+              Theme of the week: Dedication... Let's Lock in
             </p>
           </header>
 
           <div
-            className="w-full flex justify-center gap-4 p-2 items-center overflow-x-scroll"
+            className="w-full flex justify-center gap-1 p-2 items-center overflow-x-scroll"
             style={{
               scrollbarWidth: "none" /* Firefox */,
               msOverflowStyle: "none" /* IE and Edge */,
@@ -122,7 +118,7 @@ const Feed = () => {
               }
               `}
             </style>
-            {/* {departments[0].employees.map((item, index) => {
+            {departments[1].employees.map((item, index) => {
               const randomColor = getRandomColor();
               return (
                 <div className="flex flex-col items-center">
@@ -137,23 +133,22 @@ const Feed = () => {
                     key={index}
                   >
                     <Avtr
-                      url={item.photoUrl as string}
+                      url={item.user.profileImage as string}
                       name={item.firstName as string}
-                      index={index}
                       className={`sm:w-[50px] sm:h-[50px] md:w-[76.94px] md:h-[76.94px]`}
                     />
                     <img
-                      src={cool}
-                      className="absolute bottom-0 right-0 w-5 h-5 md:w-10 md:h-10"
+                      src={fume}
+                      className="absolute bottom-0 right-0  "
                       style={{ zIndex: "100" }}
                     />
                   </div>
-                  <p className="font-semibold text-xs  sm:text-sm w-18 truncate text-nowrap text-center">
-                    yusif
+                  <p className="font-semibold text-xs  sm:text-sm w-20 truncate  text-center">
+                    {item.firstName}
                   </p>
                 </div>
               );
-            })} */}
+            })}
           </div>
         </section>
 
@@ -188,13 +183,13 @@ const Feed = () => {
       </div>
 
       <div className={`flex flex-col order-first`}>
-        <div className="w-fit" onClick={() => setShowEvents(!showEvents)}>
+        {/* <div className="w-fit" onClick={() => setShowEvents(!showEvents)}>
           <ArrowIcon
             className={`bg-white rounded-full shadow-md cursor-pointer md:hidden transition-all duration-300 ease-in ${
               showEvents ? "rotate-180" : ""
             }`}
           />
-        </div>
+        </div> */}
         <section
           className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
             showEvents ? "h-[500px]" : ""
