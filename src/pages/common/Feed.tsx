@@ -3,7 +3,6 @@ import CreatePost from "@/components/CreatePost";
 import EventList from "@/components/EventList";
 import Post from "@/components/Post";
 import { announcements, eventList } from "@/constants";
-import { Link } from "react-router-dom";
 import confetti from "../../assets/images/confetti2.png";
 import { Calendar } from "@/components/ui/calendar";
 import React, { useMemo, useState } from "react";
@@ -19,10 +18,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import Avtr from "@/components/Avtr";
 import fume from "../../assets/images/fume.png";
+import ArrowIcon from "@/assets/icons/ArrowIcon";
 
 const Feed = () => {
-  const [date, setDate] = useState<Date>();
-  const [showEvents, setShowEvents] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const { currentUser: user } = useAuthContextProvider();
 
   const { departments } = useSelector((state: RootState) => state.sharedState);
@@ -77,13 +76,13 @@ const Feed = () => {
 
   return (
     <main
-      className={`flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0 pb-5`}
+      className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end`}
     >
       <div
-        className="space-y-10 md:w-3/5 overflow-y-auto"
+        className="space-y-10 flex-1 overflow-y-auto"
         style={{
-          scrollbarWidth: "none" /* Firefox */,
-          msOverflowStyle: "none" /* IE and Edge */,
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
         }}
       >
         {/* Recognition Section */}
@@ -182,75 +181,75 @@ const Feed = () => {
         </section>
       </div>
 
-      <div className={`flex flex-col order-first`}>
-        {/* <div className="w-fit" onClick={() => setShowEvents(!showEvents)}>
-          <ArrowIcon
-            className={`bg-white rounded-full shadow-md cursor-pointer md:hidden transition-all duration-300 ease-in ${
-              showEvents ? "rotate-180" : ""
-            }`}
+      <section
+        className="hidden custom1:flex space-y-10 w-[380px] overflow-y-auto "
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full flex flex-col items-center">
+          <p className="font-bold text-lg text-[#706D8A] px-4 w-full">
+            Upcoming Events
+          </p>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            initialFocus
+            modifiers={{
+              today: new Date(),
+            }}
+            modifiersClassNames={{
+              today: date ? "" : "bg-[#F8C74F] text-white",
+            }}
+            classNames={{
+              day_selected:
+                "bg-[#F8C74F] text-white hover:bg-[#F8C74F] focus:bg-[#F8C74F] rounded-full",
+              month: "flex flex-col space-y-3 flex-grow",
+              day: "w-8 h-8 font-medium rounded-full",
+              head_cell:
+                "w-8 flex-grow text-[#B5BEC6] font-semibold uppercase text-[10px]",
+              cell: "flex items-center justify-center flex-grow text-sm",
+            }}
+            className="shadow-lg shadow-gray-300 p-2 rounded-md flex flex-col w-[348px] h-full"
           />
-        </div> */}
-        <section
-          className={`flex justify-center md:fixed md:right-0 md:top-0 md:h-screen md:w-[30%] md:py-[78px] overflow-y-auto max-h-[1600px] h-0 transition-all duration-300 ease-in ${
-            showEvents ? "h-[500px]" : ""
-          }`}
-        >
-          <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              initialFocus
-              classNames={{
-                day_selected:
-                  "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF] rounded-full",
-                month: "flex flex-col space-y-3 flex-grow",
-                day: "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full",
-                head_cell: "w-8 sm:w-10 flex-grow",
-                cell: "flex items-center justify-center flex-grow",
-              }}
-              className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
-            />
 
-            <div className="px-[34px] py-[24px] bg-white rounded-lg space-y-5">
-              <div className="flex items-center justify-between">
-                <p className="text-[#706D8A] font-[700] text-lg">
-                  Special Events
-                </p>
-                <Link to="/events-calendar">
-                  <img
-                    src="/Down 2.svg"
-                    className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in -rotate-90 cursor-pointer"
-                  />
-                </Link>
-              </div>
+          <div className="px-4 py-[24px] bg-white rounded-lg space-y-5 w-full">
+            <div className="flex items-center justify-between">
+              <p className="text-[#706D8A] font-[700] text-lg">
+                Special Events
+              </p>
 
-              <div className="flex flex-col space-y-5">
-                {eventList.map((event, index) => (
-                  <EventList
-                    key={index}
-                    {...event}
-                    className={`${
-                      eventList.length - 1 === index ? "border-b-0" : ""
-                    }`}
-                  />
-                ))}
-              </div>
+              <ArrowIcon className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in rotate-360 cursor-pointer" />
             </div>
 
-            <div className="p-4 bg-white rounded-lg space-y-2">
-              <div className="flex items-center justify-between pb-4">
-                <p className="font-[700] text-lg">Announcements</p>
-              </div>
-              <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
-                {announcements.map((announcement, index) => (
-                  <AnnouncementCard {...announcement} key={index} />
-                ))}
-              </div>
+            <div className="flex flex-col space-y-5">
+              {eventList.map((event, index) => (
+                <EventList
+                  key={index}
+                  {...event}
+                  className={`${
+                    eventList.length - 1 === index ? "border-b-0" : ""
+                  }`}
+                />
+              ))}
             </div>
           </div>
-        </section>
-      </div>
+
+          <div className="px-4 bg-white rounded-lg space-y-2 w-full">
+            <div className="flex items-center justify-between pb-4">
+              <p className="font-[700] text-lg">Announcements</p>
+            </div>
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
+              {announcements.map((announcement, index) => (
+                <AnnouncementCard {...announcement} key={index} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* </div> */}
     </main>
   );
 };

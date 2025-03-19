@@ -111,6 +111,7 @@ body {
   --color-confirmgreen: #20E42A;
   --color-redaccent3: #FEE4E2;
   --color-cancelred: #FF4A55;
+  --breakpoint-custom1: 1140px
 }
 
 @theme inline {

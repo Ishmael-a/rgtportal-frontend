@@ -60,7 +60,7 @@ export const BaseLayout = () => {
           </div>
         </div>
       </header>
-      <div className="flex sm:px-[13px] sm:space-x-[17px] w-screen h-screen">
+      <div className="flex px-[13px] sm:space-x-[17px] w-screen h-screen">
         <div
           className="h-screen text-center sm:py-[78px] hidden sm:block overflow-y-scroll"
           style={{
@@ -83,7 +83,7 @@ export const BaseLayout = () => {
         </div>
 
         <div
-          className="pt-[78px] flex-1 md:w-3/5 h-screen overflow-y-auto"
+          className="pt-[78px] flex-1 h-screen overflow-y-auto"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,

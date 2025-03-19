@@ -31,7 +31,7 @@ export const SideBar = () => {
   ];
 
   return (
-    <section className="space-y-3 p-2 flex flex-col items-center h-full">
+    <section className="space-y-3 flex flex-col items-center h-full">
       {(location.pathname === "/emp/feed" ||
         location.pathname === "/hr/feed") && (
         <header className="md:flex flex-col items-start hidden">
