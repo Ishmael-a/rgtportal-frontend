@@ -216,33 +216,6 @@ export const announcements: IAnnouncementCard[] = [
   },
 ];
 
-export const recognees = [
-  {
-    name: "Bernard Parry",
-    project: "Lauder",
-  },
-  {
-    name: "Yusif Ishmael",
-    project: "RGT Portal",
-  },
-  {
-    name: "Simon Boateng",
-    project: "MediBoard",
-  },
-  {
-    name: "Bernard Parry",
-    project: "Lauder",
-  },
-  {
-    name: "Yusif Ishmael",
-    project: "RGT Portal",
-  },
-  {
-    name: "Simon Boateng",
-    project: "MediBoard",
-  },
-];
-
 const imgSrc = "https://randomuser.me/api/portraits/med/women/75.jpg";
 
 export const employeeCards: EmployeeCardType[] = [
@@ -296,125 +269,6 @@ export const employeeCards: EmployeeCardType[] = [
   },
 ];
 
-// const membersArray = [
-//   {
-//     id: 1,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "Design",
-//     role: "UI/UX",
-//   },
-//   {
-//     id: 2,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "FullStack",
-//     role: "FE",
-//   },
-//   {
-//     id: 3,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "DevOps",
-//     role: "AWS",
-//   },
-//   {
-//     id: 4,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "AI",
-//     role: "LLM",
-//   },
-//   {
-//     id: 5,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "AI",
-//     role: "Data Analysis",
-//   },
-//   {
-//     id: 6,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "FullStack",
-//     role: "BE",
-//   },
-//   {
-//     id: 7,
-//     name: "Enchill Beckham",
-//     avtr: {
-//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-//       fallBack: "AB",
-//     },
-//     department: "QA",
-//     role: "QA",
-//   },
-// ];
-
-// for all project page
-// export const projectCards: IDepartmentCard[] = [
-//   {
-//     id: 0,
-//     name: "Design",
-//     leadName: "Bernard",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 1,
-//     name: "Blockchain",
-//     leadName: "Raiyan",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 2,
-//     name: "Full Stack",
-//     leadName: "Razak",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 3,
-//     name: "PM",
-//     leadName: "Lena",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 4,
-//     name: "AI",
-//     leadName: "Silas",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 5,
-//     name: "QA",
-//     leadName: "Felix",
-//     employees: membersArray,
-//   },
-//   {
-//     id: 6,
-//     name: "Mobile Dev",
-//     leadName: "Adom",
-//     employees: membersArray,
-//   },
-// ];
-
 export const timeOffDummy = [
   {
     from: "01 Mar 2023",
@@ -443,15 +297,13 @@ export const timeOffDummy = [
 ];
 
 export const timeOffTableColumns: Column[] = [
-  // { key: "startDate", header: "From" },
-  // { key: "endDate", header: "To" },
   { key: "total", header: "Total" },
   { key: "reason", header: "Reason" },
   {
     key: "status",
     header: "Status",
     cellClassName: (row: Record<string, any>) => {
-      const status = row.status; // Access the status value from the row
+      const status = row.status;
       return `${
         status === "pending"
           ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
@@ -467,7 +319,7 @@ export const timeOffTableColumns: Column[] = [
     key: "type",
     header: "Type",
     cellClassName: (row: Record<string, any>) => {
-      const type = row.type; // Access the type value from the row
+      const type = row.type;
       return `${
         type === "vacation"
           ? "font-semibold text-[#6418C3]  bg-[#C9ADFF] rounded-md w-fit"

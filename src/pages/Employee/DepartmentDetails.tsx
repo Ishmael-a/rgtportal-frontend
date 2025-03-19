@@ -17,10 +17,11 @@ const DepartmentDetails = () => {
   const { departments } = useSelector((state: RootState) => state.sharedState);
 
   const [details, setDetails] = useState<IDepartmentCard | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string>("All Work Types");
+  const [selectedWorkType, setSelectedWorkType] =
+    useState<string>("Work Types");
   const [selectedUserType, setSelectedUserType] =
     useState<string>("All User Types");
-  const [selectStatus, setSelectStatus] = useState<Date | null>(null);
+  const [selectStatus, setSelectStatus] = useState<string>("Permanent");
 
   useEffect(() => {
     const department = departments.find((item) => item.id === id);
@@ -77,7 +78,7 @@ const DepartmentDetails = () => {
           <div>
             {row && (
               <div
-                className={`font-semibold w-[182px] h-[30px] flex justify-center items-center rounded-[4.91px] ${
+                className={`font-semibold w-[182px] custom1:w-[195px] h-[30px] flex justify-center items-center rounded-[4.91px] ${
                   lowerCase === "nsp"
                     ? "bg-[#FFF7D8] text-rgtyellow"
                     : "bg-[#C9ADFF] text-[#6418C3]"
@@ -89,20 +90,20 @@ const DepartmentDetails = () => {
           </div>
         );
       },
+      cellClassName: () => "position-status-cell",
     },
-
     {
       key: "pto request",
       header: "PTO Request",
       render: (row) => (
         <>
           {row && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               <p
                 className={`font-semibold text-xs rounded-[6px] h-[30px] flex items-center justify-center ${
                   row.ptoRequest.toLowerCase() === "active"
-                    ? "bg-[#DFFFC7] w-[141.9px] text-confirmgreen"
-                    : "bg-[#FEE4E2] w-[182px] text-[#FF4A55] "
+                    ? "bg-[#DFFFC7] w-[182px] text-confirmgreen"
+                    : "bg-[#FEE4E2] md:w-[240px] text-[#FF4A55] "
                 }`}
               >
                 {row.ptoRequest}
@@ -116,21 +117,22 @@ const DepartmentDetails = () => {
           )}
         </>
       ),
+      cellClassName: () => "pto-request-cell",
     },
   ];
 
   const handleResetFilters = () => {
-    setSelectedRole("Work Types");
+    setSelectedWorkType("Work Types");
     setSelectedUserType("All User Types");
-    setSelectStatus(null);
+    setSelectStatus("Position Status");
   };
 
   const filters: FilterConfig[] = [
     {
       type: "select",
       options: ["Work Types", "full_time", "part_time"],
-      value: selectedRole,
-      onChange: setSelectedRole,
+      value: selectedWorkType,
+      onChange: setSelectedWorkType,
     },
     {
       type: "select",
@@ -140,8 +142,7 @@ const DepartmentDetails = () => {
     },
     {
       type: "select",
-      placeholder: "Select status",
-      options: ["Permanent", "Nsp"],
+      options: ["Position Status", "Permanent", "Nsp"],
       value: selectStatus,
       onChange: setSelectStatus,
     },
@@ -149,14 +150,18 @@ const DepartmentDetails = () => {
 
   const filteredData = transformedData?.filter((employee) => {
     const workTypes =
-      selectedRole === "Work Types" ||
-      employee.type.toLowerCase() === selectedRole.toLowerCase();
+      selectedWorkType === "Work Types" ||
+      employee.type.toLowerCase() === selectedWorkType.toLowerCase();
 
     const userTypeMatch =
       selectedUserType === "All User Types" ||
       employee.userType.toLowerCase() === selectedUserType.toLowerCase();
 
-    return workTypes && userTypeMatch;
+    const status =
+      selectedWorkType === "Position Status" ||
+      employee.positionStatus.toLowerCase() === selectStatus.toLowerCase();
+
+    return workTypes && userTypeMatch && status;
   });
 
   return (

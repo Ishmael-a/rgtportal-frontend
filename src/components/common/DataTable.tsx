@@ -131,7 +131,7 @@ export function DataTable({
                         dividers
                           ? ""
                           : "border-none text-xs font-semibold text-[#898989] text-nowrap"
-                      }`}
+                      } ${column.cellClassName || ""}`}
                     >
                       <div
                         className={`w-fit ${
