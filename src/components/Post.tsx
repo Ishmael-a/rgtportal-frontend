@@ -7,10 +7,11 @@ import { IFeed } from "@/types/employee";
 import { useInteraction } from "@/hooks/use-interaction";
 import { useState } from "react";
 import CommentsModal from "./common/CommentsModal";
+import PostSkeleton from "./common/PostSkeleton";
 
 const Post: React.FC<IFeed> = ({ post }) => {
   const { currentUser } = useAuthContextProvider();
-  const { stats } = useInteraction(post?.id);
+  const { stats, isLoading } = useInteraction(post?.id);
 
   const [isComments, setIsComments] = useState(false);
 
@@ -110,50 +111,60 @@ const Post: React.FC<IFeed> = ({ post }) => {
     console.log("recentlyPostedComment:", recentlyPostedComment);
   }
 
+  if (isLoading) {
+    return <PostSkeleton />;
+  }
+
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
-      <section className="w-full border-b py-3 flex justify-between">
-        <AvtrBlock user={currentUser} />
-        <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
-      </section>
+      {post && currentUser && (
+        <div>
+          <section className="w-full border-b py-3 flex justify-between">
+            <AvtrBlock
+              firstName={post.author?.firstName as string}
+              lastName={post.author?.lastName as string}
+              profileImage={post.author?.profileImage as string}
+              
+            />
+            <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
+          </section>
 
-      <section className="pt-3 space-y-3">
-        <p className="text-sm">{formatText(post?.content)}</p>
-        <div className="">{renderMedia()}</div>
-        {post && currentUser && (
-          <FeedActions
-            postId={post.id}
+          <section className="pt-3 space-y-3">
+            <p className="text-sm">{formatText(post?.content)}</p>
+            <div className="">{renderMedia()}</div>
+            <FeedActions
+              postId={post.id}
+              userPrevLiked={
+                post.likes.find(
+                  (item) => item.employeeId === currentUser.employee.id
+                )?.isLike
+              }
+              onComments={handleIsComments}
+            />
+          </section>
+
+          {/* Render the CommentsModal */}
+          <CommentsModal
+            isOpen={isComments}
+            onClose={() => setIsComments(false)}
+            comments={[]}
+            postId={post?.id}
             userPrevLiked={
-              post.likes.find(
-                (item) => item.employeeId === currentUser.employee.id
+              post?.likes.find(
+                (item) => item.employeeId === currentUser?.employee.id
               )?.isLike
             }
             onComments={handleIsComments}
           />
-        )}
-      </section>
 
-      {/* Render the CommentsModal */}
-      <CommentsModal
-        isOpen={isComments}
-        onClose={() => setIsComments(false)}
-        comments={[]}
-        postId={post?.id}
-        userPrevLiked={
-          post?.likes.find((item) => item.employeeId === currentUser?.employee.id)
-            ?.isLike
-        }
-        onComments={handleIsComments}
-      />
-
-      {/* <div className="hidden sm:block">
+          {/* <div className="hidden sm:block">
         <CommentBlck user={currentUser} postId={post?.id} />
       </div>
       <div className="sm:hidden pt-2 border-t">
         <p className="text-sm font-medium text-rgtpink">Reply Post</p>
       </div> */}
 
-      {/* <section className="space-y-6">
+          {/* <section className="space-y-6">
         <div className="w-full border-t mt-5 pt-4 flex gap-3">
           {recentlyPostedComment && <Comments {...recentlyPostedComment} />}
         </div>
@@ -164,6 +175,8 @@ const Post: React.FC<IFeed> = ({ post }) => {
             </div>
           ))}
       </section> */}
+        </div>
+      )}
     </div>
   );
 };

@@ -171,7 +171,7 @@ const Feed = () => {
                   {item.feedType === "post" ? (
                     <Post post={item} postId={item.id} />
                   ) : item.feedType === "poll" ? (
-                    <PollUI pollId={item.id} /> // Render PollUI directly for polls
+                    <PollUI pollId={item.id} />
                   ) : (
                     <div>No post or poll data available</div>
                   )}

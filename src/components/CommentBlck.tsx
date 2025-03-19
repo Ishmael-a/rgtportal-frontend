@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { useInteraction } from "@/hooks/use-interaction";
 import { User } from "@/types/authUser";
 import SendIcon from "@/assets/icons/SendIcon";
+import { Loader } from "lucide-react";
 
 const CommentBlck: React.FC<{
   user: User | null;
@@ -46,7 +47,7 @@ const CommentBlck: React.FC<{
         <AvatarFallback>{user.employee.firstName}</AvatarFallback>
       </Avatar>
       <Input
-        className="w-full border-0 shadow-none bg-[#F6F6F9] py-6 rounded-lg"
+        className="w-full border-0 shadow-none bg-[#F6F6F9] py-4 rounded-lg"
         placeholder="Wanna say something?"
         onChange={(e) => setComment({ ...comment, content: e.target.value })}
         value={comment.content}
@@ -54,9 +55,13 @@ const CommentBlck: React.FC<{
       />
 
       <div className="flex justify-center space-x-">
-        <div onClick={handleSubmitComment}>
-          <SendIcon className=" w-8 h-7 cursor-pointer  fill-[#EA5E9C]" />
-        </div>
+        {isCommentLoading ? (
+          <Loader className="animate-spin" size={24} color="#EA5E9C" />
+        ) : (
+          <div onClick={handleSubmitComment}>
+            <SendIcon className=" w-8 h-7 cursor-pointer  fill-[#EA5E9C]" />
+          </div>
+        )}
       </div>
     </section>
   );
