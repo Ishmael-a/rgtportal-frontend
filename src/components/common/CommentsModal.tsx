@@ -26,7 +26,6 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   image,
 }) => {
   const { currentUser } = useAuthContextProvider();
-
   if (!isOpen) return null;
   return (
     <div

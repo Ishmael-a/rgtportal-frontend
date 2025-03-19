@@ -21,7 +21,7 @@ const Media: React.FC<{ url: string; alt?: string }> = ({
 
   return (
     <>
-      <section className="flex justify-center object-contain aspect-video">
+      <section className="flex justify-center object-contain aspect-video h-full">
         {url && !mediaError ? (
           isVideo ? (
             <video

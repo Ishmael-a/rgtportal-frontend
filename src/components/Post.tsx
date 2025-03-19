@@ -156,25 +156,6 @@ const Post: React.FC<IFeed> = ({ post }) => {
             onComments={handleIsComments}
             image={post.media}
           />
-
-          {/* <div className="hidden sm:block">
-        <CommentBlck user={currentUser} postId={post?.id} />
-      </div>
-      <div className="sm:hidden pt-2 border-t">
-        <p className="text-sm font-medium text-rgtpink">Reply Post</p>
-      </div> */}
-
-          {/* <section className="space-y-6">
-        <div className="w-full border-t mt-5 pt-4 flex gap-3">
-          {recentlyPostedComment && <Comments {...recentlyPostedComment} />}
-        </div>
-        {isComments &&
-          stats.comments.map((item, index) => (
-            <div className="w-full flex gap-3">
-              <Comments {...item} key={index} />
-            </div>
-          ))}
-      </section> */}
         </div>
       )}
     </div>
