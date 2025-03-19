@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
-import CustomSelect from "@/components/common/Select";
+import Filters from "@/components/common/Filters";
 import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { PtoLeave } from "@/types/PTOS";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
-import { X } from "lucide-react";
 import { useState } from "react";
 import * as Yup from "yup";
 
@@ -22,6 +21,9 @@ export default function TimeOff() {
   const [selectedPtoId, setSelectedPtoId] = useState<number | undefined>(
     undefined
   );
+  const [selectedType, setSelectedType] = useState<string>("All Types");
+  const [selectedStatus, setSelectedStatus] = useState<string>("All Statuses");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const {
     createPto,
@@ -83,7 +85,46 @@ export default function TimeOff() {
     setIsSuccess(false);
   };
 
+  const handleTypeChange = (value: string) => {
+    setSelectedType(value);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedType("All Types");
+    setSelectedStatus("All Statuses");
+    setSelectedDate(null);
+  };
+
   const viewPtoData = ptoData?.find((item) => item.id === selectedPtoId);
+
+  const filteredPtoData = formattedPtoData?.filter((item) => {
+    // Filter by type
+    const typeMatch =
+      selectedType === "All Types" || item.type === selectedType.toLowerCase();
+
+    // Filter by status
+    const statusMatch =
+      selectedStatus === "All Statuses" ||
+      item.status === selectedStatus.toLowerCase();
+
+    // Filter by date
+    const dateMatch =
+      !selectedDate ||
+      (item.startDate &&
+        new Date(item.startDate) <= selectedDate &&
+        item.endDate &&
+        new Date(item.endDate) >= selectedDate);
+
+    return typeMatch && statusMatch && dateMatch;
+  });
 
   return (
     <main className="px-4">
@@ -101,33 +142,28 @@ export default function TimeOff() {
           </Button>
         </header>
 
-        <div className="flex  gap-3 h-[50px] my-8">
-          <DatePicker className="h-full border-0 bg-[#F6F6F9] sm:w-[320px] text-xs sm:text-sm font-semibold rounded-[12px]" />
-          <CustomSelect
-            placeholder="All Type"
-            options={["Vacation", "Sick"]}
-            className="bg-[#F6F6F9] border-0 sm:w-[320px] text-xs sm:text-sm font-semibold text-nowrap rounded-[12px]"
-          />
-          <CustomSelect
-            placeholder="All Status"
-            options={["pending", "approved", "declined"]}
-            className="bg-[#F6F6F9] border-0 sm:w-[320px] text-xs sm:text-sm font-semibold text-nowrap rounded-[12px]"
-          />
-          <div className="text-[#8A8A8C] font-semibold text-sm flex items-center p-1 flex-1 justify-center hover:bg-slate-200 rounded-[12px] transition-all duration-300 ease-in cursor-pointer bg-slate-100">
-            <X className="w-4 md:hidden sm:w-8" />
-            <p className="hidden md:block">Reset</p>
-          </div>
-        </div>
+        <Filters
+          select_1_options={["All Types", "Vacation", "Sick"]}
+          select_2_options={["All Statuses", "pending", "approved", "declined"]}
+          select_1_placeholder="Select a type"
+          select_2_placeholder="Select a status"
+          selectedType={selectedType}
+          setSelectedType={handleTypeChange}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={handleStatusChange}
+          selectedDate={selectedDate}
+          setSelectedDate={handleDateChange}
+          onReset={handleResetFilters}
+        />
 
         <DataTable
           columns={timeOffTableColumns}
-          data={formattedPtoData}
+          data={filteredPtoData || []}
           actionBool={true}
           actionObj={[
             {
               name: "view",
               action: (rowData) => {
-                console.log("rowData:", rowData);
                 setAppRej(!appRej);
                 setSelectedPtoId(rowData);
               },
@@ -344,7 +380,7 @@ export default function TimeOff() {
                   </label>
                   <textarea
                     className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                    value={"We can't let you go at the moment"}
+                    value={viewPtoData.statusReason}
                     disabled
                   />
                 </div>

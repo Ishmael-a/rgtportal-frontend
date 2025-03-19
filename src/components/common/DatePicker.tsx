@@ -17,8 +17,9 @@ import CalendarIcon2 from "@/assets/icons/CalendarIcon2";
 interface IDatePicker {
   placeholder?: string;
   value?: Date;
-  onChange?: (val: Date | undefined) => void;
+  onChange: (date: Date | undefined) => void;
   className?: ClassNameValue;
+  selected?: Date | null;
 }
 
 const DatePicker: React.FC<IDatePicker> = ({
