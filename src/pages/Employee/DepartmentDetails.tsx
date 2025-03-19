@@ -2,7 +2,7 @@ import ArrowIcon from "@/assets/icons/ArrowIcon";
 import ViewIcon from "@/assets/icons/ViewIcon";
 import Avtr from "@/components/Avtr";
 import { DataTable } from "@/components/common/DataTable";
-import Filters from "@/components/common/Filters";
+import Filters, { FilterConfig } from "@/components/common/Filters";
 import { RootState } from "@/state/store";
 import { IDepartmentCard } from "@/types/employee";
 import { Column } from "@/types/tables";
@@ -17,9 +17,13 @@ const DepartmentDetails = () => {
   const { departments } = useSelector((state: RootState) => state.sharedState);
 
   const [details, setDetails] = useState<IDepartmentCard | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string>("All Work Types");
+  const [selectedUserType, setSelectedUserType] =
+    useState<string>("All User Types");
+  const [selectStatus, setSelectStatus] = useState<Date | null>(null);
 
   useEffect(() => {
-    const department = departments.find((item) => item.id === Number(id));
+    const department = departments.find((item) => item.id === id);
 
     if (!department) {
       return;
@@ -28,14 +32,10 @@ const DepartmentDetails = () => {
     setDetails(department);
   }, [id, departments]);
 
-  if (!details) {
-    return <div>No data</div>;
-  }
-
-  const transformedData = details.employees.map((employee) => ({
+  const transformedData = details?.employees.map((employee) => ({
     username: employee.user.username || "N/A",
     email: employee.user.email || "N/A",
-    type: employee.employeeType || "N/A", //whether remote, hybrid, part-time or full time
+    type: employee.employeeType || "N/A",
     userType: employee.user.role.name.toUpperCase() || "N/A",
     positionStatus: !employee.position ? "Permanent" : "Nsp",
     ptoRequest: employee.leaveType ? "Inactive" : "Active",
@@ -119,10 +119,50 @@ const DepartmentDetails = () => {
     },
   ];
 
+  const handleResetFilters = () => {
+    setSelectedRole("Work Types");
+    setSelectedUserType("All User Types");
+    setSelectStatus(null);
+  };
+
+  const filters: FilterConfig[] = [
+    {
+      type: "select",
+      options: ["Work Types", "full_time", "part_time"],
+      value: selectedRole,
+      onChange: setSelectedRole,
+    },
+    {
+      type: "select",
+      options: ["All User Types", "Manager", "Employee", "Marketer"],
+      value: selectedUserType,
+      onChange: setSelectedUserType,
+    },
+    {
+      type: "select",
+      placeholder: "Select status",
+      options: ["Permanent", "Nsp"],
+      value: selectStatus,
+      onChange: setSelectStatus,
+    },
+  ];
+
+  const filteredData = transformedData?.filter((employee) => {
+    const workTypes =
+      selectedRole === "Work Types" ||
+      employee.type.toLowerCase() === selectedRole.toLowerCase();
+
+    const userTypeMatch =
+      selectedUserType === "All User Types" ||
+      employee.userType.toLowerCase() === selectedUserType.toLowerCase();
+
+    return workTypes && userTypeMatch;
+  });
+
   return (
-    <main className="space-y-10 w-full f">
+    <main className="space-y-2 w-full f">
       <header className="">
-        <h3 className="text-[#706D8A] font-semibold text-[30px]">
+        <h3 className="text-[#706D8A] font-semibold text-xl">
           {details?.name}
         </h3>
         <div className="flex items-center">
@@ -139,35 +179,36 @@ const DepartmentDetails = () => {
         </div>
       </header>
 
-      <div
-        className="w-full flex justify-center sm:block bg-white rounded-md shadow-sm"
-        style={{
-          scrollbarWidth: "none" /* Firefox */,
-          msOverflowStyle: "none" /* IE and Edge */,
-        }}
-      >
-        <style>
-          {`
+      {details ? (
+        <div
+          className="w-full flex justify-center sm:block bg-white rounded-md shadow-sm mt-5"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          <style>
+            {`
                 .hide-scrollbar::-webkit-scrollbar {
                 display: none; /* Chrome, Safari, and Opera */
               }
               `}
-        </style>
+          </style>
 
-        <div className="py-[10px] px-[20px]">
-          <Filters
-            select_1_options={["Graphic Design", "Copywriter"]}
-            select_2_options={["Manager", "Employee", "Marketing"]}
-            select_1_placeholder="Department Role"
-            select_2_placeholder="User Type"
-          />
-          <DataTable
-            columns={columns}
-            data={transformedData}
-            actionBool={false}
-          />
+          <div className="py-[10px] px-[20px] w-full">
+            <Filters filters={filters} onReset={handleResetFilters} />
+            <DataTable
+              columns={columns}
+              data={filteredData || []}
+              actionBool={false}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex-1 bg-gray-200 h-screen flex justify-center items-center text-rgtpurple font-semibold">
+          <p>No data available</p>
+        </div>
+      )}
     </main>
   );
 };

@@ -19,35 +19,10 @@ const DepartmentCard: React.FC<IDepartmentCard> = ({
   id,
   includeBgImg,
 }) => {
-  const maxVisible = 3; // Show up to 3 avatars before the "+X" indicator
+  const maxVisible = 3;
   const extraCount = employees.length - maxVisible;
 
   const totalEmployees = employees.length;
-
-  // Type guard to check if member has avtr property
-  // const isProjectMember = (member: Employee): member is IDepartmentMembers => {
-  //   return (member as IDepartmentMembers).avtr !== undefined;
-  // };
-
-  // const getAvatarUrl = (member: Employee): string => {
-  //   if (isProjectMember(member)) {
-  //     return (
-  //       member.avtr?.url ||
-  //       "https://randomuser.me/api/portraits/med/women/75.jpg"
-  //     );
-  //   } else {
-  //     return "https://randomuser.me/api/portraits/med/women/75.jpg";
-  //   }
-  // };
-
-  // Helper function to get avatar fallback
-  // const getAvatarFallback = (employee: Employee) => {
-  //   return (
-  //     `${employee.firstName?.slice(0, 1).toUpperCase()}${employee.lastName
-  //       ?.slice(0, 1)
-  //       .toUpperCase()}`
-  //   );
-  // };
 
   // might change later to pick image based on what hr types in during department creation.
   const renderDepartmentIcon = () => {

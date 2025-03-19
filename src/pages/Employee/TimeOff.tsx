@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
-import Filters from "@/components/common/Filters";
+import Filters, { FilterConfig } from "@/components/common/Filters";
 import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
@@ -85,24 +85,6 @@ export default function TimeOff() {
     setIsSuccess(false);
   };
 
-  const handleTypeChange = (value: string) => {
-    setSelectedType(value);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
-
-  const handleResetFilters = () => {
-    setSelectedType("All Types");
-    setSelectedStatus("All Statuses");
-    setSelectedDate(null);
-  };
-
   const viewPtoData = ptoData?.find((item) => item.id === selectedPtoId);
 
   const filteredPtoData = formattedPtoData?.filter((item) => {
@@ -126,6 +108,33 @@ export default function TimeOff() {
     return typeMatch && statusMatch && dateMatch;
   });
 
+  const handleResetFilters = () => {
+    setSelectedType("All Types");
+    setSelectedStatus("All Statuses");
+    setSelectedDate(null);
+  };
+
+  const filters: FilterConfig[] = [
+    {
+      type: "select",
+      options: ["All Types", "Vacation", "Sick"],
+      value: selectedType,
+      onChange: setSelectedType,
+    },
+    {
+      type: "select",
+      options: ["All Statuses", "Pending", "Approved", "Declined"],
+      value: selectedStatus,
+      onChange: setSelectedStatus,
+    },
+    {
+      type: "date",
+      placeholder: "Select a date",
+      value: selectedDate,
+      onChange: setSelectedDate,
+    },
+  ];
+
   return (
     <main className="px-4">
       <div className="bg-white p-4 rounded-md">
@@ -142,19 +151,7 @@ export default function TimeOff() {
           </Button>
         </header>
 
-        <Filters
-          select_1_options={["All Types", "Vacation", "Sick"]}
-          select_2_options={["All Statuses", "pending", "approved", "declined"]}
-          select_1_placeholder="Select a type"
-          select_2_placeholder="Select a status"
-          selectedType={selectedType}
-          setSelectedType={handleTypeChange}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={handleStatusChange}
-          selectedDate={selectedDate}
-          setSelectedDate={handleDateChange}
-          onReset={handleResetFilters}
-        />
+        <Filters filters={filters} onReset={handleResetFilters} />
 
         <DataTable
           columns={timeOffTableColumns}
