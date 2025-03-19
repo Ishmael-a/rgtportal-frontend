@@ -4,13 +4,11 @@ import { Input } from "./ui/input";
 import { useInteraction } from "@/hooks/use-interaction";
 import { User } from "@/types/authUser";
 import SendIcon from "@/assets/icons/SendIcon";
-import EmojiIcon from "@/assets/icons/EmojiIcon";
 
 const CommentBlck: React.FC<{
   user: User | null;
   postId: number | undefined;
 }> = ({ user, postId }) => {
-
   const [comment, setComment] = useState<IComment>({
     content: "",
     author: {
@@ -24,7 +22,6 @@ const CommentBlck: React.FC<{
 
   const { addComment, isCommentLoading } = useInteraction(postId);
 
-
   const handleSubmitComment = async () => {
     try {
       if (!comment.content) {
@@ -37,12 +34,10 @@ const CommentBlck: React.FC<{
     }
   };
 
- 
-
   if (!user) return;
 
   return (
-    <section className="border-t pt-4 flex items-center space-x-2">
+    <section className="border-t flex items-center space-x-2 w-full pt-4">
       <Avatar>
         <AvatarImage
           src={user.profileImage}
@@ -51,35 +46,16 @@ const CommentBlck: React.FC<{
         <AvatarFallback>{user.employee.firstName}</AvatarFallback>
       </Avatar>
       <Input
-        className="rounded-full p-6 max-w-[500px]"
-        placeholder="Write your comment..."
+        className="w-full border-0 shadow-none bg-[#F6F6F9] py-6 rounded-lg"
+        placeholder="Wanna say something?"
         onChange={(e) => setComment({ ...comment, content: e.target.value })}
         value={comment.content}
         disabled={isCommentLoading}
       />
 
-      <div className="flex  min-w-[200px] justify-center space-x-">
-        <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
-          <img
-            src="/Attachment.svg"
-            className=" border-2 p-[2px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
-          />
-        </div>
-
-        <div className="px-[4px] py-[1px]  rounded-full flex items-center justify-center ">
-          {/* <img
-            src="/Smile.svg"
-            className=" border-2 p-[8px] rounded-full   transition-colors duration-200 cursor-pointer hover:bg-slate-200 border-[#CBD5E1]"
-          /> */}
-
-          <EmojiIcon />
-        </div>
-
-        <div
-          className="px-[4px] py-1  border-rgtpink border-2  rounded-full flex items-center justify-center hover:text-blue-400 hover:bg-pink-200 cursor-pointer transition-all duration-200 "
-          onClick={handleSubmitComment}
-        >
-          <SendIcon className=" w-8 h-7 rounded-full  fill-[#EA5E9C]" />
+      <div className="flex justify-center space-x-">
+        <div onClick={handleSubmitComment}>
+          <SendIcon className=" w-8 h-7 cursor-pointer  fill-[#EA5E9C]" />
         </div>
       </div>
     </section>

@@ -1,13 +1,12 @@
 import AvtrBlock from "./AvtrBlock";
 import FeedActions from "./feedActions";
-import CommentBlck from "./CommentBlck";
 import { MoreVertical } from "lucide-react";
 import Media from "./Media";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { IFeed } from "@/types/employee";
 import { useInteraction } from "@/hooks/use-interaction";
-import Comments from "./Feed/Comments";
 import { useState } from "react";
+import CommentsModal from "./common/CommentsModal";
 
 const Post: React.FC<IFeed> = ({ post }) => {
   const { currentUser } = useAuthContextProvider();
@@ -133,6 +132,19 @@ const Post: React.FC<IFeed> = ({ post }) => {
           />
         )}
       </section>
+
+      {/* Render the CommentsModal */}
+      <CommentsModal
+        isOpen={isComments}
+        onClose={() => setIsComments(false)}
+        comments={[]}
+        postId={post?.id}
+        userPrevLiked={
+          post?.likes.find((item) => item.employeeId === currentUser?.employee.id)
+            ?.isLike
+        }
+        onComments={handleIsComments}
+      />
 
       {/* <div className="hidden sm:block">
         <CommentBlck user={currentUser} postId={post?.id} />
