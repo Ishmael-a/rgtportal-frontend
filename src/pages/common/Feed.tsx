@@ -19,6 +19,7 @@ import { RootState } from "@/state/store";
 import Avtr from "@/components/Avtr";
 import fume from "../../assets/images/fume.png";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
+import ToTop from "@/components/common/ToTop";
 
 const Feed = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -79,7 +80,7 @@ const Feed = () => {
       className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end`}
     >
       <div
-        className="space-y-10 flex-1 overflow-y-auto"
+        className="space-y-[18px] flex-1 overflow-y-auto"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -154,14 +155,14 @@ const Feed = () => {
         {/* Posts section */}
         <section className="space-y-7">
           <WithRole
-            roles={["hr", "markerter", "admin"]}
+            roles={["hr", "marketer", "admin"]}
             userRole={user?.role.name as string}
           >
             <CreatePost />
           </WithRole>
 
           <div className="space-y-3">
-            <header className="font-semibold text-lg text-[#706D8A]">
+            <header className="font-semibold text-lg text-[#706D8A] ">
               For you
             </header>
             <div className="space-y-5">
@@ -239,7 +240,10 @@ const Feed = () => {
 
           <div className="px-4 bg-white rounded-lg space-y-2 w-full">
             <div className="flex items-center justify-between pb-4">
-              <p className="font-[700] text-lg">Announcements</p>
+              <p className="font-semibold text-[#706D8A] text-lg">
+                Announcements
+              </p>
+              <ArrowIcon className="hover:bg-slate-200 rounded-full transition-all duration-300 ease-in rotate-360 cursor-pointer" />
             </div>
             <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3 ">
               {announcements.map((announcement, index) => (
@@ -249,7 +253,8 @@ const Feed = () => {
           </div>
         </div>
       </section>
-      {/* </div> */}
+
+      <ToTop />
     </main>
   );
 };
