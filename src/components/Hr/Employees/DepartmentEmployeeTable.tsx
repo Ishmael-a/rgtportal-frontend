@@ -9,12 +9,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import StepProgress from "@/components/common/StepProgress";
-import { Column } from "@/types/tables";
+import { ActionObject, Column } from "@/types/tables";
 import { DataTable } from "../../common/DataTable";
 import { usePermission } from "@/hooks/use-permission";
-import { EmployeeType } from "@/types/employee";
+import { Employee, EmployeeType } from "@/types/employee";
 import { Department } from "@/types/department";
 import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
+import {useRemoveEmployeesFromDepartment} from "@/api/query-hooks/department.hooks"
 
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
@@ -40,6 +41,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
   filterByName,
   department,
 }) => {
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [employeesPerPage] = useState<number>(5);
@@ -50,6 +52,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     employeeType: "All Employee Type",
     status: "All Status",
   });
+  const removeEmployeesFromDepartment = useRemoveEmployeesFromDepartment();
 
   // const {
   //   data: employeeData,
@@ -125,22 +128,36 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     setCurrentPage(page);
   };
 
-  const handleSubmit =  () => {
-      console.log("Delete clicked")
-  }
+  const handleSubmit = async () => {
+    console.log("SelectedEMployeeId", selectedEmployeeId)
+    console.log("Selected DepartmentId",  department.id)
+    if (selectedEmployeeId && department.id) {
+      try {
+        await removeEmployeesFromDepartment.mutateAsync({
+          id: department.id.toString(), 
+          employeeId: selectedEmployeeId.toString()
+        });
+
+        setDeleteModalOpen(false);
+        setSelectedEmployeeId(null);
+      } catch (error) {
+        console.error("Failed to remove employee", error);
+      }
+    }
+  };
 
   const actionObj = [
     ...(hasAccess("employeeRecords", "edit")
       ? [
           {
             name: "delete",
-            action: () => {
-              console.log("Delete clicked")
+            action: (_, row:Employee) => {
+              setSelectedEmployeeId(row.id);
               setDeleteModalOpen(true)
             },
           },
-        ]
-      : []),
+        ] 
+      : []) as ActionObject[],
   ];
 
   const columns: Column[] = [
@@ -322,11 +339,23 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
 
       <ConfirmCancelModal
         isOpen={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
+        onOpenChange={(open) => {
+          if (!removeEmployeesFromDepartment.isPending) {
+            setDeleteModalOpen(open);
+            if (!open) {
+              setSelectedEmployeeId(null);
+            }
+          }
+        }}
         title="Remove Employee?"
+        submitText={removeEmployeesFromDepartment.isPending ? "Deleting..." : "Delete"}
+        isSubmitting={removeEmployeesFromDepartment.isPending}
         onSubmit={handleSubmit}
         onCancel={() => {
-          setDeleteModalOpen(false);
+          if (!removeEmployeesFromDepartment.isPending) {
+            setSelectedEmployeeId(null);
+            setDeleteModalOpen(false);
+          }
         }}
       >
         <div className="space-y-2">

@@ -93,7 +93,9 @@ export const SideFormModal = <T extends FormikValues>({
                   <Button
                     type={"submit"}
                     key={"Create"}
-                    disabled={formikProps.isSubmitting || isSubmitting}
+                    disabled={
+                      formikProps.isSubmitting || isSubmitting || !formikProps.isValid
+                    }
                     className={`w-1/2 h-full rounded-[12px] bg-rgtpink  text-white cursor-pointer
                     ${isSubmitting ? "opacity-45" : "hover:bg-pink-500"}`}
                   >

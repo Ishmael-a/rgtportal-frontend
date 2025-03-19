@@ -6,12 +6,15 @@ import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
+import ErrorMessage from "@/components/common/ErrorMessage";
+
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  const { isLoading, isError } = useInitializeSharedData();
+  const { isDepartmentsLoading, isDepartmentsError, refetchDepartments, departmentsError } =
+    useInitializeSharedData();
 
-  if (isLoading) {
+  if (isDepartmentsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner label="Fetching Shared Data..." size={32} />;
@@ -19,10 +22,14 @@ export const BaseLayout = () => {
     );
   }
 
-  if (isError) {
+  if (isDepartmentsError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div>Error loading shared data</div>
+        <ErrorMessage
+          title="Error Loading Shared Data"
+          error={departmentsError}
+          refetchFn={refetchDepartments}
+        />
       </div>
     );
   }

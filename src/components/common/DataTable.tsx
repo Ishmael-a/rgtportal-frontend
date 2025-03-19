@@ -76,7 +76,7 @@ export function DataTable({
                               setShowDelete(true);
                             }
                             else{
-                              action.action();
+                              action.action(row.id, row);
                             }
                           }}
                         >

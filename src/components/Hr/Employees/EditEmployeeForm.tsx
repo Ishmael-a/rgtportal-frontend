@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Field,
   FieldProps,
@@ -7,7 +7,6 @@ import {
   Form as FormikForm,
   FormikProps as formikProps,
 } from "formik";
-import * as Yup from "yup";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,24 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Mail,
-  Phone,
   CalendarIcon,
   Home,
   MapPin,
-  Globe,
   FileText,
-  Briefcase,
-  Users,
   Loader
 } from "lucide-react";
 import {
-  EmployeeType,
-  WorkType,
-  UpdateEmployeeInterface,
-} from "@/types/employee";
-import {
-  useUpdateEmployee,
   useEmployeeDetails,
 } from "@/api/query-hooks/employee.hooks";
 import { SideModal } from "@/components/ui/side-dialog";
@@ -56,65 +44,21 @@ import { RootState } from "@/state/store";
 import {
   GetCountries,
   GetState,
-  GetAllCities,
   CountrySelect,
+  StateSelect,
 } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
-import { Country, State, City } from "react-country-state-city/dist/esm/types";
-
-export enum LeaveType {
-  QUIT = "quit",
-  LAYOFF = "layoff",
-  DISMISSED = "dismissed",
-  OTHER = "other",
-}
-
-export enum EmployeeTypeEnum {
-  FULL_TIME = "full_time",
-  PART_TIME = "part_time",
-  CONTRACTOR = "contractor",
-  NSP = "nsp",
-}
-
-export enum WorkTypeEnum {
-  HYBRID = "hybrid",
-  REMOTE = "remote",
-}
-
-export enum RoleTypeEnum {
-  EMPLOYEE = "1",
-  HR = "2",
-  MANAGER = "3",
-  ADMIN = "4",
-  MARKETER = "5",
-}
+import { Country, State } from "react-country-state-city/dist/esm/types";
+import SkillsSelector from "./SkillsSelector";
+import {useEmployeeForm} from "@/hooks/useEmployeeForm"
+import { useEmployeeValidation } from "@/hooks/useEmployeeValidation";
+import { useEmployeeSubmission } from "@/hooks/useEmployeeSubmission";
+import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES  } from "@/constants";
+import { toast } from "@/hooks/use-toast";
+import {Employee} from "@/types/employee"
 
 
-const EditEmployeeSchema = Yup.object().shape({
-  department: Yup.object().shape({
-    id: Yup.number(),
-  }),
-  personalEmail: Yup.string().email("Invalid email address"),
-  phone: Yup.string(),
-  employeeType: Yup.string().oneOf(Object.values(EmployeeTypeEnum)),
-  //   workType: Yup.string().oneOf(Object.values(WorkTypeEnum)),
-  roleId: Yup.string().oneOf(Object.values(RoleTypeEnum)),
-  hireDate: Yup.date().nullable(),
-  endDate: Yup.date().nullable(),
-  leaveType: Yup.string().oneOf(Object.values(LeaveType)).nullable(),
-  leaveExplanation: Yup.string().when("leaveType", {
-    is: (val: string) => val && val !== "",
-    then: (schema) =>
-      schema.required("Explanation is required when leave reason is provided"),
-    otherwise: (schema) => schema.nullable(),
-  }),
-  notes: Yup.string().nullable(),
-  homeAddress: Yup.string().nullable(),
-  countryCode: Yup.string().nullable(),
-  stateCode: Yup.string().nullable(),
-  city: Yup.string().nullable(),
-  birthDate: Yup.date().nullable(),
-});
+
 
 interface EditEmployeeFormProps {
   employeeId: number;
@@ -127,103 +71,42 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
   isOpen,
   onClose,
 }) => {
-    const [countries, setCountries] = useState<any[]>([]);
-    const [states, setStates] = useState<any[]>([]);
-    const [cities, setCities] = useState<any[]>([]);
-
-
-
     const { departments } = useSelector(
         (state: RootState) => state.sharedState
     );
-    const updateEmployeeMutation = useUpdateEmployee();
+    const { data: employeeData, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
+    const employee = employeeData?.data|| {} as Employee;
+    const { validationSchema } = useEmployeeValidation();
+
+    const { 
+        countries, 
+        states, 
+        initialValues, 
+        setSelectedCountry 
+    } = useEmployeeForm(employee);
+
+    const { 
+        handleSubmit, 
+        isSubmitting 
+    } = useEmployeeSubmission(employeeId, employee, countries, states);
 
 
-  // Fetch employee data
-  const { data: employeeData, isLoading: isLoadingEmployee } =
-    useEmployeeDetails(employeeId.toString());
-
-  const employee = employeeData?.data ;
-
-
-  const handleFormSubmit = (values: any) => {
-    // Transform form values to UpdateEmployeeInterface
-    const updateEmployeeDto: UpdateEmployeeInterface = {
-      user: { id: employee?.user?.id || 0 },
-      firstName: values.firstName || employee?.firstName,
-      lastName: values.lastName || employee?.lastName,
-      phone: values.phone || employee?.phone,
-      departmentId: values.department?.id || employee?.departmentId,
-      department:
-        departments.find(
-          (department) => department.id === values.department?.id
-        ) || employee?.department,
-      position: values.position || employee?.position,
-      hireDate: values.hireDate || employee?.hireDate,
-      endDate: values.endDate || employee?.endDate,
-      employeeType:
-        (values.employeeType as EmployeeType) || employee?.employeeType,
-      workType: (values.workType as WorkType) || employee?.workType,
-      leaveType: (values.leaveType as LeaveType) || employee?.leaveType,
-      leaveExplanation: values.leaveExplanation || employee?.leaveExplanation,
-      notes: values.notes || employee?.notes,
-      contactDetails:
-        values.personalEmail ||
-        values.homeAddress ||
-        values.city ||
-        values.region ||
-        values.country
-          ? {
-              personalEmail:
-                values.personalEmail || employee?.contactDetails?.personalEmail,
-              homeAddress:
-                values.homeAddress || employee?.contactDetails?.homeAddress,
-              country: countries.find(c => c.isoCode === values.countryCode)?.name || "",
-              region: states.find(s => s.isoCode === values.stateCode)?.name || "",
-              city: values.city,
-            }
-          : employee?.contactDetails,
-      birthDate: values.birthDate || employee?.birthDate,
-      sickDaysBalance: employee?.sickDaysBalance || employee?.sickDaysBalance,
-      vacationDaysBalance:
-        employee?.vacationDaysBalance || employee?.vacationDaysBalance,
-      annualDaysOff: employee?.annualDaysOff || employee?.annualDaysOff,
-      skills: employee?.skills || employee?.skills,
-    };
-
-    // Call the update mutation
-    console.log("Update Employee DTO", updateEmployeeDto);
-    // updateEmployeeMutation.mutate({ id: employeeId, data: updateEmployeeDto });
-  };
-
-  // Initial form values
-  const initialValues = {
-    department: {
-      id: employee?.department?.id || 0,
-      name: employee?.department?.name || "",
-    },
-    personalEmail: employee?.contactDetails?.personalEmail || "",
-    phone: employee?.phone || "",
-    employeeType: employee?.employeeType || EmployeeTypeEnum.FULL_TIME,
-    workType: employee?.workType || WorkTypeEnum.HYBRID,
-    hireDate: employee?.hireDate || null,
-    endDate: employee?.endDate || null,
-    leaveType: employee?.leaveType || "",
-    leaveExplanation: employee?.leaveExplanation || "",
-    notes: employee?.notes || "",
-    homeAddress: employee?.contactDetails?.homeAddress || "",
-    city: employee?.contactDetails?.city || "",
-    stateCode: employee?.contactDetails?.region || "",
-    countryCode: employee?.contactDetails?.country || "",
-    birthDate: employee?.birthDate || null,
-  };
+    if(!employee || isEmployeeError ){
+        console.log("Cannot Get Employee By Id");
+        toast({
+            title: "Error Editing Employee",
+            description: "Failed To Get Employee By ID" + employeeId.toString() + ". Error" + getEmployeeError,
+            variant: "destructive",
+        });
+        return;
+    }
 
   return (
     <>
       <SideModal
         isOpen={isOpen}
         onOpenChange={() => {
-          if (!updateEmployeeMutation.isPending) {
+          if (!isSubmitting) {
             onClose();
           }
         }}
@@ -234,71 +117,11 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
       >
         <Formik
           initialValues={initialValues}
-          validationSchema={EditEmployeeSchema}
-          onSubmit={handleFormSubmit}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
         >
           {(formikProps) => {
-            useEffect(() => {
-                const loadCountries = async () => {
-                    const countriesData = await GetCountries();
-                    console.log(countriesData);
-                    setCountries(countriesData);
-                    
-                    // Set initial country code if employee has country data
-                    if (employee?.contactDetails?.country) {
-                        const initialCountry = countriesData.find(
-                        c => c.name === employee.contactDetails?.country
-                        );
-                        if (initialCountry) {
-                            formikProps.setFieldValue('countryCode', initialCountry.iso2);
-                        }
-                    }
-                };
-                loadCountries();
-            }, []);
 
-            useEffect(() => {
-                const loadStates = async () => {
-                    if (formikProps.values.countryCode) {
-                    const statesData = await GetState(formikProps.values.countryCode);
-                    console.log("States Data",statesData);
-                    setStates(statesData);
-
-                    // Set initial state code if employee has region data
-                    if (employee?.contactDetails?.region) {
-                        const initialState = statesData.find(
-                            s => s.name === employee.contactDetails?.region
-                        );
-                        if (initialState) {
-                            formikProps.setFieldValue('stateCode', initialState.state_code);
-                        }
-                    }
-                    } else {
-                    setStates([]);
-                    }
-                };
-                loadStates();
-            }, [formikProps.values.countryCode]);
-
-            useEffect(() => {
-                const loadCities = async () => {
-                    if (formikProps.values.countryCode && formikProps.values.stateCode) {
-                    const citiesData = await GetAllCities(
-                        // formikProps.values.countryCode,
-                        formikProps.values.stateCode
-                    );
-                    setCities(citiesData);
-
-                    // Set initial city if exists
-                    if (employee?.contactDetails?.city) {
-                        formikProps.setFieldValue('city', employee.contactDetails.city);
-                    }
-                    } else {
-                    setCities([]);
-                    }
-                };
-                loadCities();
-            }, [formikProps.values.countryCode, formikProps.values.stateCode]);
 
             return (
               <>
@@ -441,58 +264,23 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
 
                   {/* Employee Skills Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="department" className="text-sm font-medium">
-                      Skills
-                    </Label>
                     <Field name="skills">
-                      {({ field, form, meta }: FieldProps) => (
-                        <div className="relative">
-                          <Select
-                            onValueChange={(value) =>
-                              form.setFieldValue("department", {
-                                id: parseInt(value),
-                                name:
-                                  departments?.find(
-                                    (d) => d.id.toString() === value
-                                  )?.name || "",
-                              })
+                      {({ field, form }: FieldProps) => (
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Skills</Label>
+                          <SkillsSelector
+                            value={field.value || []}
+                            onChange={(skills) =>
+                              form.setFieldValue("skills", skills)
                             }
-                            defaultValue={field.value?.toString() || ""}
-                          >
-                            <SelectTrigger
-                              id="department"
-                              className="w-full py-6 z-[2010]"
-                            >
-                              <SelectValue placeholder="Select department" />
-                            </SelectTrigger>
-                            <SelectContent
-                              position="popper"
-                              className="z-[2010]"
-                            >
-                              <SelectGroup>
-                                <SelectLabel>Departments</SelectLabel>
-                                {departments?.length ? (
-                                  departments.map((dept) => (
-                                    <SelectItem
-                                      key={dept.id}
-                                      value={dept.id.toString()}
-                                    >
-                                      {dept.name}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value="no-departments" disabled>
-                                    No departments available
-                                  </SelectItem>
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          {meta.touched && meta.error && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {meta.error}
-                            </div>
-                          )}
+                          />
+                          {form.touched.skills &&
+                            form.errors.skills &&
+                            typeof form.errors.skills === "string" && (
+                              <div className="text-red-500 text-sm mt-1">
+                                {form.errors.skills}
+                              </div>
+                            )}
                         </div>
                       )}
                     </Field>
@@ -532,16 +320,16 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                             >
                               <SelectGroup>
                                 <SelectLabel>Employee Type</SelectLabel>
-                                <SelectItem value={EmployeeTypeEnum.FULL_TIME}>
+                                <SelectItem value={EMPLOYEE_TYPES.FULL_TIME}>
                                   Full Time
                                 </SelectItem>
-                                <SelectItem value={EmployeeTypeEnum.PART_TIME}>
+                                <SelectItem value={EMPLOYEE_TYPES.PART_TIME}>
                                   Part Time
                                 </SelectItem>
-                                <SelectItem value={EmployeeTypeEnum.CONTRACTOR}>
+                                <SelectItem value={EMPLOYEE_TYPES.CONTRACTOR}>
                                   Contractor
                                 </SelectItem>
-                                <SelectItem value={EmployeeTypeEnum.NSP}>
+                                <SelectItem value={EMPLOYEE_TYPES.NSP}>
                                   NSP
                                 </SelectItem>
                               </SelectGroup>
@@ -583,16 +371,16 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                             >
                               <SelectGroup>
                                 <SelectLabel>User Type</SelectLabel>
-                                <SelectItem value={RoleTypeEnum.EMPLOYEE}>
+                                <SelectItem value={ROLE_TYPES.EMPLOYEE}>
                                   Employee
                                 </SelectItem>
-                                <SelectItem value={RoleTypeEnum.HR}>
+                                <SelectItem value={ROLE_TYPES.HR}>
                                   Hr
                                 </SelectItem>
-                                <SelectItem value={RoleTypeEnum.MANAGER}>
+                                <SelectItem value={ROLE_TYPES.MANAGER}>
                                   Manager
                                 </SelectItem>
-                                <SelectItem value={RoleTypeEnum.MARKETER}>
+                                <SelectItem value={ROLE_TYPES.MARKETER}>
                                   Marketer
                                 </SelectItem>
                               </SelectGroup>
@@ -743,16 +531,16 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                               <SelectGroup>
                                 <SelectLabel>Reason For Leave</SelectLabel>
                                 <SelectItem value="none">None</SelectItem>
-                                <SelectItem value={LeaveType.QUIT}>
+                                <SelectItem value={LEAVE_TYPES.QUIT}>
                                   Quit
                                 </SelectItem>
-                                <SelectItem value={LeaveType.LAYOFF}>
+                                <SelectItem value={LEAVE_TYPES.LAYOFF}>
                                   Laid Off
                                 </SelectItem>
-                                <SelectItem value={LeaveType.DISMISSED}>
+                                <SelectItem value={LEAVE_TYPES.DISMISSED}>
                                   Dismissed
                                 </SelectItem>
-                                <SelectItem value={LeaveType.OTHER}>
+                                <SelectItem value={LEAVE_TYPES.OTHER}>
                                   Other
                                 </SelectItem>
                               </SelectGroup>
@@ -951,84 +739,41 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
 
                   {/* Country Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="country" className="text-sm font-medium">
+                    <Label htmlFor="countryId" className="text-sm font-medium">
                       Country
                     </Label>
-                    <Field name="countryCode">
-                    {({ field, form, meta }: FieldProps) => (
+                    <Field name="countryId">
+                      {({ form, meta }: FieldProps) => (
                         <div className="space-y-2">
-                        {/* <Label htmlFor="country" className="text-sm font-medium">
-                            Country
-                        </Label> */}
-                        <div className="relative">
+                          <div className="relative">
                             <CountrySelect
-                                onChange={(country:Country) => {
-                                    form.setFieldValue("countryCode", country?.iso2 || "");
-                                    form.setFieldValue("stateCode", "");
-                                    form.setFieldValue("city", "");
-                                }}
-                                value={
-                                    countries.find((c) => c.isoCode === field.value) || null
-                                }
-                                placeHolder="Select Country"
-                                containerClassName="w-full"
-                                inputClassName="w-full py-6 border rounded-md px-3"
+                              onChange={(country: Country) => {
+                                setSelectedCountry(country?.id || null); // Store numeric ID
+                                form.setFieldValue(
+                                  "countryId",
+                                  country?.id || null
+                                );
+                                form.setFieldValue("stateId", null);
+                                form.setFieldValue("city", "");
+                              }}
+                              value={
+                                countries.find(
+                                  (c) => c.id === formikProps.values.countryId
+                                )?.id || undefined
+                              }
+                              placeHolder="Select Country"
+                              containerClassName="w-full "
+                              inputClassName="w-full py-6 border rounded-md px-3"
                             />
                             {meta.touched && meta.error && (
-                            <div className="text-red-500 text-sm mt-1">
+                              <div className="text-red-500 text-sm mt-1">
                                 {meta.error}
-                            </div>
+                              </div>
                             )}
-                            {/* <Globe className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" /> */}
-                        </div>
-                        </div>
-                    )}
-                    </Field>
-                    {/* <Field name="countryCode">
-                      {({ field, form, meta }: FieldProps) => (
-                        <div className="relative">
-                          <Select
-                            onValueChange={(value) => {
-                                const country = countries.find((c) => c.isoCode === value);
-                                form.setFieldValue("countryCode", value);
-                                form.setFieldValue("stateCode", "");
-                                form.setFieldValue("city", "");
-                            }}
-                            value={field.value || ""} // Add empty string as fallback
-                          >
-                            <SelectTrigger id="country" className="w-full py-6">
-                                <SelectValue placeholder="Select country">
-                                    {field.value 
-                                    ? countries.find((c) => c.isoCode === field.value)?.name 
-                                    : "Select country"}
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent
-                              position="popper"
-                              className="z-[2010]"
-                            >
-                              <SelectGroup>
-                                <SelectLabel>Countries</SelectLabel>
-                                {countries.map((country) => (
-                                  <SelectItem
-                                    key={country.isoCode}
-                                    value={country.isoCode}
-                                  >
-                                    {country.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          {meta.touched && meta.error && (
-                            <div className="text-red-500 text-sm mt-1">
-                              {meta.error}
-                            </div>
-                          )}
-                          <Globe className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+                          </div>
                         </div>
                       )}
-                    </Field> */}
+                    </Field>
                   </div>
 
                   {/* Region (State) Field */}
@@ -1036,37 +781,21 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                     <Label htmlFor="region" className="text-sm font-medium">
                       Region/State
                     </Label>
-                    <Field name="stateCode">
-                      {({ field, form, meta }: FieldProps) => (
+                    <Field name="stateId">
+                      {({  form, meta }: FieldProps) => (
                         <div className="relative">
-                          <Select
-                            onValueChange={(value) => {
-                                form.setFieldValue("stateCode", value);
-                                form.setFieldValue("city", "");
+                          <StateSelect
+                            countryid={formikProps.values.countryId as number}
+                            onChange={(state: State) => {
+                              form.setFieldValue("stateId", state?.id || null);
+                              form.setFieldValue("city", "");
                             }}
-                            value={field.value || ""} 
-                            disabled={!formikProps.values.countryCode} 
-                            >
-                            <SelectTrigger id="region" className="w-full py-6">
-                                <SelectValue placeholder="Select region/state" />
-                            </SelectTrigger>
-                            <SelectContent
-                              position="popper"
-                              className="z-[2010]"
-                            >
-                              <SelectGroup>
-                                <SelectLabel>Regions/States</SelectLabel>
-                                {states.map((state) => (
-                                  <SelectItem
-                                    key={state.isoCode}
-                                    value={state.isoCode}
-                                  >
-                                    {state.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                            value={formikProps.values.stateId || null}
+                            placeHolder="Select State/Region"
+                            containerClassName="w-full shadow-xs rounded-md "
+                            inputClassName="w-full border-none rounded-md px-3"
+                            disabled={!formikProps.values.countryId}
+                          />
                           {meta.touched && meta.error && (
                             <div className="text-red-500 text-sm mt-1">
                               {meta.error}
@@ -1085,28 +814,15 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                     <Field name="city">
                       {({ field, form, meta }: FieldProps) => (
                         <div className="relative">
-                          <Select
-                            onValueChange={(value) => form.setFieldValue("city", value)}
-                            value={field.value || ""} 
-                            disabled={!formikProps.values.stateCode} 
-                          >
-                            <SelectTrigger id="city" className="w-full py-6">
-                              <SelectValue placeholder="Select city" />
-                            </SelectTrigger>
-                            <SelectContent
-                              position="popper"
-                              className="z-[2010]"
-                            >
-                              <SelectGroup>
-                                <SelectLabel>Cities</SelectLabel>
-                                {cities.map((city) => (
-                                  <SelectItem key={city.name} value={city.name}>
-                                    {city.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            id="city"
+                            type="text"
+                            placeholder="Enter City"
+                            {...field}
+                            className={`w-full py-6 px-4 ${
+                              meta.touched && meta.error ? "border-red-500" : ""
+                            }`}
+                          />
                           {meta.touched && meta.error && (
                             <div className="text-red-500 text-sm mt-1">
                               {meta.error}
@@ -1122,12 +838,10 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                 <div className="flex w-full gap-3 mt-8 h-14">
                   <button
                     type="button"
-                    onClick={() =>
-                      !updateEmployeeMutation.isPending && onClose()
-                    }
-                    disabled={updateEmployeeMutation.isPending}
+                    onClick={() => !isSubmitting && onClose()}
+                    disabled={isSubmitting}
                     className={`w-1/2 h-full px-6 py-2 border border-[#E328AF] text-[#E328AF] rounded-md transition-colors cursor-pointer ${
-                      updateEmployeeMutation.isPending
+                      isSubmitting
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-pink-100 duration-300 ease-in"
                     }`}
@@ -1137,16 +851,14 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                   <button
                     type="button"
                     onClick={formikProps.submitForm}
-                    disabled={
-                      updateEmployeeMutation.isPending || !formikProps.isValid
-                    }
+                    disabled={isSubmitting || !formikProps.isValid}
                     className={`w-1/2 h-full px-6 py-2 bg-[#E328AF] text-white rounded-md transition-colors cursor-pointer ${
-                      updateEmployeeMutation.isPending || !formikProps.isValid
+                      isSubmitting || !formikProps.isValid
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-pink-400 duration-300 ease-in"
                     }`}
                   >
-                    {updateEmployeeMutation.isPending ? (
+                    {isSubmitting ? (
                       <span className="flex items-center">
                         <Loader className="animate-spin h-4 w-4 mr-2" />
                         Processing...
