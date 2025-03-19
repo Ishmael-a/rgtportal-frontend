@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Column, ActionObject } from "@/types/tables";
 import { DataTable } from '@/components/common/DataTable';
-import StepProgress from "@/components/StepProgress";
-import { Check, Eye, Pencil, X } from "lucide-react";
+import StepProgress from "@/components/common/StepProgress";
+import { Check, X } from "lucide-react";
 import EmployeeManagementTableSkeleton from './EmployeeManagementTableSkeleton';
+import {EditEmployeeForm} from './EditEmployeeForm';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
 import { Employee, EmployeeType } from "@/types/employee"; 
+import {Link} from "react-router-dom"
 
- const employeeTypeLabels: Record<EmployeeType, string> = {
-  "full_time": "FT",
-  "part_time": "PT",
-  "contractor": "FT",
-  "nsp": "PT"
-};
+
+const employeeTypeLabels: Record<EmployeeType, string> = {
+   full_time: "FT",
+   part_time: "PT",
+   contractor: "FT",
+   nsp: "PT",
+ };
+
+
 
 
 interface EmployeeManagementTableProps {
@@ -31,6 +36,8 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   searchByField = [], 
   searchTerm = "" 
 }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
@@ -79,6 +86,66 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     return !!leaveType;
   };
 
+
+  const getEmployeeFieldValue = (
+  employee: Employee | null | undefined, 
+  field: string
+): string => {
+  // Early guard clauses
+  if (!employee) return '';
+
+  const fieldMappings: Record<string, (emp: Employee) => string> = {
+    'name': (emp) => `${emp.firstName || ''} ${emp.lastName || ''}`.trim(),
+    'email': (emp) => emp.user?.email || '',
+    'phoneNumber': (emp) => emp.phone || '',
+    'birthday': (emp) => emp.birthDate?.toISOString().split('T')[0] || '',
+    'age': (emp) => emp.birthDate 
+      ? calculateAge(emp.birthDate).toString()
+      : '',
+    'city': (emp) => emp.contactDetails?.city || '',
+    'homeAddress': (emp) => emp.contactDetails?.address || '',
+    'region': (emp) => emp.contactDetails?.region || '',
+    'country': (emp) => emp.contactDetails?.country || '',
+    'startDate': (emp) => emp.hireDate?.toISOString().split('T')[0] || '',
+    'endDate': (emp) => emp.endDate?.toISOString().split('T')[0] || '',
+    'seniority': (emp) => calculateSeniority(emp.hireDate),
+    'skills': (emp) => emp.skills?.join(', ') || '',
+    'ftpt': (emp) => employeeTypeLabels[emp.employeeType as EmployeeType] || '',
+    'department': (emp) => emp.department?.name || '',
+    'agency': (emp) => emp.agency || '',
+    'onLeave': (emp) => isOnLeave(emp.leaveType) ? 'On Leave' : 'Active'
+  };
+
+  // Precise age calculation function
+  function calculateAge(birthDate: Date): number {
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDifference < 0 || 
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    return age;
+  }
+
+  // Safe field mapping retrieval
+  if (fieldMappings[field]) {
+    return fieldMappings[field](employee);
+  }
+
+  // Type-safe fallback with optional chaining
+  try {
+    const value = (employee as any)[field];
+    return value != null ? String(value) : '';
+  } catch {
+    console.warn(`Unhandled field: ${field}`);
+    return '';
+  }
+};
+
+
   // Filter and paginate data
   useEffect(() => {
     let result = [...employees];
@@ -97,10 +164,11 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     }
 
     if (searchTerm && searchByField.length > 0) {
+      const searchLower = searchTerm.toLowerCase();
       result = result.filter(emp => 
         searchByField.some(field => {
-          const value = emp[field as keyof Employee];
-          return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+          const value = getEmployeeFieldValue(emp, field);
+          return String(value).toLowerCase().includes(searchLower);
         })
       );
     }
@@ -119,11 +187,8 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   }, [employeeData]);
 
   // Action handlers
-  const handleView = (id?: number): void => {
-    console.log(`Viewing employee with ID: ${id}`);
-  };
-
-  const handleEdit = (id?: number): void => {
+  const handleEdit = (id: number): void => {
+    setSelectedEmployeeId(id);
     console.log(`Editing employee with ID: ${id}`);
   };
 
@@ -133,6 +198,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
       key: "name",
       header: "Employee Name",
       render: (row) => (
+        <Link to={`/hr/manageemployees/employee/${row.id}`}>
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gray-200">
             {row.photoUrl ? (
@@ -148,6 +214,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
             <div className="text-xs text-gray-500">{row.user?.role?.name || "N/A"}</div>
           </div>
         </div>
+        </Link>
       ),
     },
     {
@@ -245,20 +312,17 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
         </div>
       ),
     },
-    {
-      key: "actions",
-      header: "Action",
-      render: (_row) => (
-        <div className="flex space-x-2">
-          <button className="cursor-pointer w-8 h-8 bg-pink-400 rounded-md flex items-center justify-center">
-            <Eye className="text-white" size={16} />
-          </button>
-          <button className="cursor-pointer w-8 h-8 bg-purple-400 rounded-md flex items-center justify-center">
-            <Pencil className="text-white" size={16} />
-          </button>
-        </div>
-      ),
-    },
+    // {
+    //   key: "actions",
+    //   header: "Action",
+    //   render: (_row) => (
+    //     <div className="flex space-x-2">
+    //       <button className="cursor-pointer w-8 h-8 bg-purple-400 rounded-md flex items-center justify-center">
+    //         <Pencil className="text-white" size={16} />
+    //       </button>
+    //     </div>
+    //   ),
+    // },
   ];
 
   const visibleColumnsData = columnsToShow 
@@ -267,12 +331,12 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
 
   const actionObj: ActionObject[] = [
     {
-      name: "view",
-      action: handleView,
-    },
-    {
       name: "edit",
-      action: handleEdit,
+      action: (id, _row) => {
+        setSelectedEmployeeId(id as number);
+        setIsEditModalOpen(true);
+        console.log(`Editing employee with ID: ${id}`);
+      },
     },
   ];
 
@@ -357,7 +421,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
             columns={visibleColumnsData} 
             data={paginatedData} 
             dividers={false}
-            actionBool={activeSection === "leave"} 
+            actionBool={true} 
             actionObj={actionObj}
           />
         </div>
@@ -369,6 +433,17 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
           currentPage={currentPage} 
           setCurrentPage={setCurrentPage} 
           totalPages={totalPages}
+        />
+      )}
+
+      {selectedEmployeeId && (
+        <EditEmployeeForm 
+          employeeId={selectedEmployeeId}
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setSelectedEmployeeId(null)
+            setIsEditModalOpen(false)
+          }}
         />
       )}
     </div>

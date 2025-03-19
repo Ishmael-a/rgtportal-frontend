@@ -26,14 +26,20 @@ export const useGetDepartmentById = (
   }
 ) => {
   return useRbacQuery(
-    'employeeRecords',
-    'view',
-    ['departments', id],
-    () => departmentService.getDepartmentById(
-        id, {
+    "employeeRecords",
+    "view",
+    ["departments", id],
+    () =>
+      departmentService.getDepartmentById(id, {
         includeEmployees: options?.includeEmployees,
-    }),
-    {}
+      }),
+    {
+      placeholderData: (previousData) => {
+        return previousData;
+      },
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    }
   );
 };
 

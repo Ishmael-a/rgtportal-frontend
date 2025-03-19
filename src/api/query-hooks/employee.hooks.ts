@@ -1,7 +1,7 @@
 import { useRbacQuery, usePrefetchWithPermission } from '@/features/data-access/rbacQuery';
 import { employeeService } from '../services/employee.service';
 import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
-import {Employee} from "@/types/employee"
+import { Employee, UpdateEmployeeInterface } from "@/types/employee";
 import { toast } from '@/hooks/use-toast';
 import { useMemo } from 'react';
 
@@ -24,12 +24,15 @@ export const useAllEmployees = (
     "employeeRecords",
     "view",
     ["employees", stableParams],
-    () => employeeService.getAllEmployees(stableParams),
+    async () => {
+      const response = await employeeService.getAllEmployees(stableParams);
+      return response.data; 
+    },
     {
-        ...options,
-        placeholderData: (previousData) => {
-            return previousData;
-        },
+      ...options,
+      placeholderData: (previousData) => {
+          return previousData;
+      },
     }
   );
 };
@@ -50,22 +53,22 @@ export const useUpdateEmployee = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Employee> }) =>
+    mutationFn: ({ id, data }: { id: number; data: UpdateEmployeeInterface }) =>
       employeeService.updateEmployee(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["employee", variables.id] });
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-    toast({
-      title: "Success",
-      description: "Employee updated successfully",
-    });
+      toast({
+        title: "Success",
+        description: "Employee updated successfully",
+      });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
-      })
+      });
     },
   });
 };

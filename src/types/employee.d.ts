@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { ClassNameValue } from "tailwind-merge";
 import { Poll } from "./polls";
+import { User } from "./authUser";
+import { Department } from "./department";
 interface IProjectCard {
   id: string | number;
   members: IProjectMembers[] | Employee[];
@@ -54,7 +56,18 @@ interface EmployeeCardType {
 
 export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp"
 
-type WorkType =  "hybrid" | "remote"
+
+
+export type WorkType =  "hybrid" | "remote"
+
+
+
+enum LeaveType {
+  QUIT = "quit",
+  LAYOFF = "layoff",
+  DISMISSED = "dismissed",
+  OTHER = "other",
+}
 
 
 
@@ -80,6 +93,7 @@ export interface Employee {
   leaveType?: string | null;
   leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
+  notes?: string | null;
 
   givenRecognitions?: EmployeeRecognition[];
   receivedRecognitions?: EmployeeRecognition[];
@@ -95,4 +109,49 @@ export interface Employee {
   attendanceRecords?: AttendanceRecord[];
   createdPolls?: Poll[];
   pollVotes?: PollVote[];
+}
+
+
+export interface Agency {
+  name: string;
+  paid: boolean;
+  invoiceReceived: boolean;
+  invoiceAmount?: number;
+  invoiceNumber?: string;
+  invoiceDate?: Date;
+  invoiceDueDate?: Date;
+}
+
+export interface UserReference {
+  id: number;
+}
+
+
+
+export interface CreateEmployeeInterface {
+  user: UserReference;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  birthDate?: Date;
+  departmentId?: number;
+  position?: string;
+  hireDate?: Date;
+  contactDetails?: Record<string, any> | null;
+  agency?: Agency;
+}
+
+export interface UpdateEmployeeInterface extends CreateEmployeeInterface {
+  sickDaysBalance?: number;
+  vacationDaysBalance?: number;
+  annualDaysOff?: number;
+  leaveType?: LeaveType;
+  leaveExplanation?: string;
+  employeeType?: EmployeeType;
+  workType?: WorkType;
+  endDate?: Date;
+  skills?: string[] | null;
+  notes?: string;
+  roleId?: number;
+  department?: Department;
 }

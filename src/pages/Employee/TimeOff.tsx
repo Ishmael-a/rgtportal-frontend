@@ -3,7 +3,7 @@ import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import CustomSelect from "@/components/common/Select";
 import SuccessCard from "@/components/common/SuccessCard";
-import { SideFormModal } from "@/components/Modal";
+import { SideFormModal } from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { timeOffTableColumns } from "@/constants";
