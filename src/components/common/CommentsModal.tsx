@@ -5,6 +5,9 @@ import FeedActions from "../feedActions";
 import NoComments from "@/assets/icons/NoComments";
 import CommentBlck from "../CommentBlck";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
+import { SampleNextArrow, SamplePrevArrow } from "../Feed/PaginationArrows";
+import Slider from "react-slick";
+import Media from "../Media";
 
 interface CommentsModalProps {
   isOpen: boolean;
@@ -13,7 +16,7 @@ interface CommentsModalProps {
   postId: number;
   userPrevLiked: boolean | undefined;
   onComments: (val: boolean) => void;
-  image?: string[] | undefined;
+  images?: string[] | undefined;
 }
 
 const CommentsModal: React.FC<CommentsModalProps> = ({
@@ -23,26 +26,51 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   postId,
   userPrevLiked,
   onComments,
-  image,
+  images,
 }) => {
   const { currentUser } = useAuthContextProvider();
+
+  const renderMedia = () => {
+    if (!images || images.length === 0) return null;
+
+    const settings = {
+      dots: true,
+      infinite: false,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      nextArrow: <SampleNextArrow />,
+      prevArrow: <SamplePrevArrow />,
+      customPaging: () => (
+        <div className="w-[10px] h-[10px] bg-white rounded-full transition-all absolute -top-7 duration-300 ease-in-out hover:bg-gray-400"></div>
+      ),
+    };
+
+    return (
+      <Slider
+        {...settings}
+        className="hidden sm:block h-full  rounded-[30px] w-full "
+      >
+        {images.map((item, index) => (
+          <div key={index}>
+            <Media url={item} className="h-[440px] hidden sm:block" />
+          </div>
+        ))}
+      </Slider>
+    );
+  };
+
   if (!isOpen) return null;
   return (
     <div
       className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center py-15"
       style={{ zIndex: "100" }}
     >
-      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[75%] w-[90%] md:w-[80%] lg:w-[1027px]">
-        <div className="max-w-[300px] md:max-w-[500px] flex">
-          {image?.map((item, index) => (
-            <img
-              key={index}
-              src={item}
-              className="hidden sm:block w-full h-full object-cover rounded-[30px]"
-            />
-          ))}
+      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[80%] w-[90%] md:w-[80%] lg:w-[1027px]">
+        <div className="max-w-[300px] md:max-w-[500px] hidden sm:flex ">
+          {renderMedia()}
         </div>
-        <div className="h-full w-  flex-1 space-y-1">
+        <div className="h-full  flex-1 space-y-1">
           <div className="flex w-full justify-end">
             <button
               onClick={onClose}
@@ -76,6 +104,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                 postId={postId}
                 userPrevLiked={userPrevLiked}
                 onComments={onComments}
+                showText={false}
               />
               <div className="">
                 <p className="text-sm font-medium">Liked by</p>

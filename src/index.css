@@ -161,3 +161,10 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .slick-dots li.slick-active div {
+    @apply bg-[#6418C3]; /* Highlight color for the active dot */
+  }
+ 
+}

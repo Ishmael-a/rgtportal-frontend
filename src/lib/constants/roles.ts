@@ -1,6 +1,6 @@
-import {RolesWithPermissions} from "@/types/permissions"
-import {User} from "@/types/authUser";
-import {PTORequest} from "@/types/PTOS"
+import { RolesWithPermissions } from "@/types/permissions";
+import { User } from "@/types/authUser";
+import { PTORequest } from "@/types/PTOS";
 
 export const ROLES: RolesWithPermissions = {
   HR: {
@@ -12,7 +12,18 @@ export const ROLES: RolesWithPermissions = {
   },
   MANAGER: {
     ptoRequests: {
-      approve: (user: User, request?: PTORequest) => request?.department_id === user.employee?.departmentId?.toString()
+      approve: (user: User, request?: PTORequest) =>
+        request?.department_id === user.employee?.departmentId?.toString(),
+    },
+    employeeRecords: {
+      view: true,
+    },
+  },
+  MARKETER: {
+    ptoRequests: {
+      create: true,
+      view: (user: User, request?: PTORequest) =>
+        request?.employee_id === user.id.toString(),
     },
     employeeRecords: {
       view: true,

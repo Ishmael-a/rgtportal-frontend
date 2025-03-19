@@ -1,14 +1,15 @@
 import { Employee } from "./employee";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type ROLE = "HR" | "MANAGER" | "EMPLOYEE" | "ADMIN" | "MODERATOR";
-type lROLE = "hr" | "manager" | "employee" | "admin" | "moderator";
+type ROLE = "HR" | "MANAGER" | "EMPLOYEE" | "ADMIN" | "MODERATOR" | "MARKETER";
+type lROLE = "hr" | "manager" | "employee" | "admin" | "moderator" | "marketer";
 
 export enum RoleType {
   HR = "hr",
   EMPLOYEE = "emp",
   MANAGER = "manager", 
   ADMIN = "admin",
+  MARKETER = "marketer"
 }
 
 interface Role {

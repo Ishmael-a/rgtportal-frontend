@@ -88,21 +88,27 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple sticky top-0 z-50 rounded-[20px] text-white flex flex-col  max-w-full p-3 space-y-1"
+          className="bg-rgtpurple sticky min-h-32 top-0 z-50 rounded-[20px] text-white flex flex-col  max-w-full p-3 space-y-1 items-center justify-center"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
             backgroundPosition: "center",
           }}
         >
-          <header className="">
-            <p className="font-semibold text-xl md:text-2xl text-center">
-              Employees of the Week!!
-            </p>
-            <p className="font-semibold text-xs sm:text-sm text-center">
-              Theme of the week: Dedication... Let's Lock in
-            </p>
-          </header>
+          {departments.length > 0 ? (
+            <header className="">
+              <p className="font-semibold text-xl md:text-2xl text-center">
+                Employees of the Week!!
+              </p>
+              <p className="font-semibold text-xs sm:text-sm text-center">
+                Theme of the week: Dedication... Let's Lock in
+              </p>
+            </header>
+          ) : (
+            <div className="flex items-center w-full font-bold justify-center h-20">
+              <p>Recognitions will be shown here</p>
+            </div>
+          )}
 
           <div
             className="w-full flex justify-center gap-1 items-center overflow-x-scroll"
@@ -118,37 +124,38 @@ const Feed = () => {
               }
               `}
             </style>
-            {departments[1].employees.map((item, index) => {
-              const randomColor = getRandomColor();
-              return (
-                <div className="flex flex-col items-center justify-end">
-                  <div
-                    className={`border-3 rounded-full p-1 flex w-fit items-center justify-center relative ${
-                      randomColor.name === "pink"
-                        ? "border-[#EA5E9C]"
-                        : randomColor.name === "yellow"
-                        ? "border-[#F9B500]"
-                        : "border-[#C0AFFF]"
-                    }`}
-                    key={index}
-                  >
-                    <Avtr
-                      url={item.user.profileImage as string}
-                      name={item.firstName as string}
-                      className={`w-[55px] h-[55px]`}
-                    />
-                    <img
-                      src={fume}
-                      className="absolute bottom-0 right-0  "
-                      style={{ zIndex: "100" }}
-                    />
+            {departments.length > 1 &&
+              departments[1].employees.map((item, index) => {
+                const randomColor = getRandomColor();
+                return (
+                  <div className="flex flex-col items-center justify-end">
+                    <div
+                      className={`border-3 rounded-full p-1 flex w-fit items-center justify-center relative ${
+                        randomColor.name === "pink"
+                          ? "border-[#EA5E9C]"
+                          : randomColor.name === "yellow"
+                          ? "border-[#F9B500]"
+                          : "border-[#C0AFFF]"
+                      }`}
+                      key={index}
+                    >
+                      <Avtr
+                        url={item.user.profileImage as string}
+                        name={item.firstName as string}
+                        className={`w-[55px] h-[55px]`}
+                      />
+                      <img
+                        src={fume}
+                        className="absolute bottom-0 right-0  "
+                        style={{ zIndex: "100" }}
+                      />
+                    </div>
+                    <p className="font-semibold text-xs  sm:text-sm w-20 truncate  text-center">
+                      {item.firstName}
+                    </p>
                   </div>
-                  <p className="font-semibold text-xs  sm:text-sm w-20 truncate  text-center">
-                    {item.firstName}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </section>
 
@@ -166,17 +173,23 @@ const Feed = () => {
               For you
             </header>
             <div className="space-y-5">
-              {mergedFeed.map((item) => (
-                <React.Fragment key={item.id}>
-                  {item.feedType === "post" ? (
-                    <Post post={item} postId={item.id} />
-                  ) : item.feedType === "poll" ? (
-                    <PollUI pollId={item.id} />
-                  ) : (
-                    <div>No post or poll data available</div>
-                  )}
-                </React.Fragment>
-              ))}
+              {mergedFeed.length > 0 ? (
+                mergedFeed.map((item) => (
+                  <React.Fragment key={item.id}>
+                    {item.feedType === "post" ? (
+                      <Post post={item} postId={item.id} />
+                    ) : item.feedType === "poll" ? (
+                      <PollUI pollId={item.id} />
+                    ) : (
+                      <div>No post or poll data available</div>
+                    )}
+                  </React.Fragment>
+                ))
+              ) : (
+                <div className="flex w-full bg-slate-200 h-96 text-rgtpurple font-semibold justify-center items-center">
+                  <p>No posts available</p>
+                </div>
+              )}
             </div>
           </div>
         </section>
