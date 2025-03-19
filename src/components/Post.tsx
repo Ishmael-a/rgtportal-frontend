@@ -124,7 +124,6 @@ const Post: React.FC<IFeed> = ({ post }) => {
               firstName={post.author?.firstName as string}
               lastName={post.author?.lastName as string}
               profileImage={post.author?.profileImage as string}
-              
             />
             <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
           </section>
@@ -147,7 +146,7 @@ const Post: React.FC<IFeed> = ({ post }) => {
           <CommentsModal
             isOpen={isComments}
             onClose={() => setIsComments(false)}
-            comments={[]}
+            comments={stats.comments}
             postId={post?.id}
             userPrevLiked={
               post?.likes.find(
@@ -155,6 +154,7 @@ const Post: React.FC<IFeed> = ({ post }) => {
               )?.isLike
             }
             onComments={handleIsComments}
+            image={post.media}
           />
 
           {/* <div className="hidden sm:block">

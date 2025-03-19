@@ -1,37 +1,38 @@
+import LikeIcon from "@/assets/icons/LikeIcon";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
 const Comments = (comment: IComment) => {
   return (
-    <>
+    <div className="flex items-start gap-2">
       <Avatar>
         <AvatarImage
           src={comment.author.profileImage}
           alt={comment.author.firstName}
         />
       </Avatar>
-      <div className="w-full">
-        <div>
-          <div className="flex justify-between items-center w-full">
-            {/* <p className="text-sm font-semibold">You</p> */}
-            <p className="text-sm font-semibold max-w-[200px] truncate">
-              {comment.author.firstName + comment.author.lastName}
-            </p>
-            <span className="text-sm text-slate-500">
-              {new Date(comment.createdAt).toLocaleString()}
+      <div className="w-full flex items-center">
+        <div className="flex flex-col items-center w-[90%] gap-1">
+          <p className="text-sm text-[#1E293B] font-semibold text-wrap w-full line-clamp-3 truncate">
+            {
+              comment.author.firstName
+              // + comment.author.lastName
+            }
+            <span className="text-[#706D8A] font-[400] text-sm">
+              {comment.content} 
             </span>
+          </p>
+
+          <div className="flex w-full font-semibold text-[12px] space-x-2 text-[#8A8A8C]">
+            <p>0d</p>
+            <p>1 like</p>
+            <p>Reply</p>
           </div>
-          <p> {comment.content}</p>
         </div>
-        {/* <div className="flex space-x-2 items-center">
-                <p>like</p>
-                <p>unlike</p>
-                <p className="text-sm text-rgtpink">Reply</p>
-              </div>
-              <div>
-                <p>replies</p>
-              </div> */}
+        <div className="flex flex-1 items-center justify-center h-full">
+          <LikeIcon size={15} stroke="#6418C3" className="cursor-pointer"/>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

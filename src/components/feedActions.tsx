@@ -45,14 +45,14 @@ const FeedActions = ({
               stroke={`${liked ? "" : "#94A3B8"}`}
             />
           </div>
-          <p className="text-sm font-medium">{stats?.likesCount} Likes</p>
+          <p className="text-sm font-medium">{stats?.likesCount}</p>
         </div>
 
         <div className="flex items-center">
           <div className="pr-1 cursor-pointer" onClick={showComments}>
             <MessageIcon size={24} />
           </div>
-          <p className="text-sm font-medium">{stats?.commentsCount} Comments</p>
+          <p className="text-sm font-medium">{stats?.commentsCount}</p>
         </div>
       </div>
     </div>
