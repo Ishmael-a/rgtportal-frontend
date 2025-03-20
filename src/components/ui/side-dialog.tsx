@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const sideModalVariants = cva(
