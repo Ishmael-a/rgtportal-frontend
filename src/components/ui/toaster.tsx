@@ -8,7 +8,11 @@ import {
   ToastViewport,
 } from "./toast";
 
-export function Toaster() {
+interface ToasterProps {
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center" | "bottom-center";
+}
+
+export function Toaster({ position = "bottom-right" }: ToasterProps) {
   const { toasts } = useToast();
 
   return (
@@ -39,7 +43,7 @@ export function Toaster() {
           </Toast>
         );
       })}
-      <ToastViewport />
+      <ToastViewport position={position} />
     </ToastProvider>
   );
 }
