@@ -106,11 +106,13 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
       <SideModal
         isOpen={isOpen}
         onOpenChange={() => {
+          console.log("Before Closing The Modal. Befre isSubmitting");
           if (!isSubmitting) {
+            console.log("About to Close The Modal");
             onClose();
           }
         }}
-        title="Edit Employee"
+        title={`Edit ${employee.firstName} ${employee.lastName}`}
         position="right"
         size={"xl"}
         contentClassName=" max-w-xl"
@@ -121,7 +123,6 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
           onSubmit={handleSubmit}
         >
           {(formikProps) => {
-
 
             return (
               <>
@@ -861,7 +862,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                         Processing...
                       </span>
                     ) : (
-                      "Create"
+                      "Edit"
                     )}
                   </button>
                 </div>

@@ -29,13 +29,13 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
     );
 
   const handleSubmit = useCallback(
-    (values: any, { setSubmitting }: any) => {
+    async (values: any, { setSubmitting }: any) => {
       try {
         const selectedCountry = countries.find(c => c.id === values.countryId);
             
         const selectedState = states.find(s => s.id === values.stateId );
         
-            // Transform form values to UpdateEmployeeInterface
+        // Transform form values to UpdateEmployeeInterface
         const updateEmployeeDto: UpdateEmployeeInterface = {
           user: { id: employee?.user?.id || 0 },
           firstName: values.firstName || employee?.firstName,
@@ -99,7 +99,8 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
     
         // Call the update mutation
         console.log("Update Employee DTO", updateEmployeeDto);
-        updateEmployeeMutation.mutate({ id: employeeId, data: updateEmployeeDto });
+        await updateEmployeeMutation.mutateAsync({ id: employeeId, data: updateEmployeeDto });
+        setSubmitting(false);
 
       } catch (error) {
         const errorMessage = getApiErrorMessage(error);
@@ -108,6 +109,9 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
           description: "Failed To Edit Employee" + errorMessage.message,
           variant: "destructive",
         });
+        setSubmitting(false);
+      }
+      finally{
         setSubmitting(false);
       }
     },

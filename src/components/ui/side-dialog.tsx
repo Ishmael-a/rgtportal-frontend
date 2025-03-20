@@ -82,7 +82,6 @@ export const SideModal = ({
     }
   };
 
-    const modalContentRef = useRef<HTMLDivElement>(null);
 
 
 

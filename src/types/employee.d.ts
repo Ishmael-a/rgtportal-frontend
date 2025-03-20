@@ -99,7 +99,7 @@ export interface Employee {
   sickDaysBalance: number;
   annualDaysOff: number;
   vacationDaysBalance: number;
-  leaveType?: LeaveTypes | null;
+  leaveType?: LeaveType | null;
   leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
   notes?: string | null;
