@@ -1,5 +1,6 @@
 import { defaultApiClient } from "../axios";
 import { ApiResponse } from "../types";
+import { User, ResponseUser } from "@/types/authUser";
 
 export interface LoginRequest {
   email: string;

@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
-import { DataTable } from '../../common/DataTable';
-import StepProgress from "../../StepProgress";
-import { Column, ActionObject } from "@/types/tables";
-import { usePermission } from '@/hooks/use-permission';
+import { useState, useEffect } from "react";
+import { DataTable } from "../../common/DataTable";
+import StepProgress from "../../common/StepProgress";
+import { Column } from "@/types/tables";
+import { usePermission } from "@/hooks/use-permission";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
@@ -31,13 +37,13 @@ interface FilterState {
 }
 
 const EmployeeTable: React.FC = () => {
-  const [searchName, setSearchName] = useState('');
+  const [searchName, setSearchName] = useState("");
   const { departments } = useSelector((state: RootState) => state.sharedState);
   const { hasAccess } = usePermission();
   const [filter, setFilter] = useState<FilterState>({
     department: "All Departments",
     type: "All Type",
-    status: "All Status"
+    status: "All Status",
   });
 
   const {
@@ -45,7 +51,7 @@ const EmployeeTable: React.FC = () => {
     isLoading: isEmployeesLoading,
     isError: isEmployeesError,
     error: employeeError,
-    refetch: refetchEmployees
+    refetch: refetchEmployees,
   } = useAllEmployees({}, {});
 
   const [state, setState] = useState<EmployeeTableState>({
@@ -54,48 +60,59 @@ const EmployeeTable: React.FC = () => {
     loading: true,
     error: null,
     totalPages: 1,
-    itemsPerPage: 10
+    itemsPerPage: 10,
   });
 
-  const { currentPage, filteredEmployees, loading, error, totalPages, itemsPerPage } = state;
+  const {
+    currentPage,
+    filteredEmployees,
+    loading,
+    error,
+    totalPages,
+    itemsPerPage,
+  } = state;
 
   useEffect(() => {
     if (employeeData) {
       let filtered = [...employeeData];
 
-      if (searchName.trim() !== '') {
-        filtered = filtered.filter(emp =>
-          emp.firstName?.toLowerCase().includes(searchName.toLowerCase()) ||
-          emp.lastName?.toLowerCase().includes(searchName.toLowerCase())
+      if (searchName.trim() !== "") {
+        filtered = filtered.filter(
+          (emp) =>
+            emp.firstName?.toLowerCase().includes(searchName.toLowerCase()) ||
+            emp.lastName?.toLowerCase().includes(searchName.toLowerCase())
         );
       }
 
-      if (filter.department !== 'All Departments') {
-        filtered = filtered.filter(emp => emp.department?.name === filter.department);
+      if (filter.department !== "All Departments") {
+        filtered = filtered.filter(
+          (emp) => emp.department?.name === filter.department
+        );
       }
 
-      if (filter.type !== 'All Type') {
-        filtered = filtered.filter(emp => emp.workType === filter.type);
+      if (filter.type !== "All Type") {
+        filtered = filtered.filter((emp) => emp.workType === filter.type);
       }
 
-      if (filter.status !== 'All Status') {
-        filtered = filtered.filter(emp => emp.employeeType === filter.status);
+      if (filter.status !== "All Status") {
+        filtered = filtered.filter((emp) => emp.employeeType === filter.status);
       }
 
-      const newTotalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+      const newTotalPages = Math.max(
+        1,
+        Math.ceil(filtered.length / itemsPerPage)
+      );
       const adjustedCurrentPage = currentPage > newTotalPages ? 1 : currentPage;
 
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         filteredEmployees: filtered,
         totalPages: newTotalPages,
         currentPage: adjustedCurrentPage,
-        loading: false
+        loading: false,
       }));
     }
   }, [employeeData, searchName, filter, itemsPerPage, currentPage]);
-
-
 
   if (isEmployeesLoading) {
     return <EmployeeTableSkeleton />;
@@ -129,63 +146,70 @@ const EmployeeTable: React.FC = () => {
 
   const resetFilter = () => {
     setFilter({
-      department: 'All Departments',
-      type: 'All Type',
-      status: 'All Status'
+      department: "All Departments",
+      type: "All Type",
+      status: "All Status",
     });
-    setState(prev => ({ ...prev, currentPage: 1 }));
+    setState((prev) => ({ ...prev, currentPage: 1 }));
   };
 
   const columns: Column[] = [
     {
       key: "name",
       header: "Employee Name",
-      render: (row) => `${row.firstName} ${row.lastName}`
+      render: (row) => `${row.firstName} ${row.lastName}`,
     },
     {
       key: "department",
       header: "Department",
-      render: (row) => row.department?.name || "N/A"
+      render: (row) => row.department?.name || "N/A",
     },
     {
       key: "role",
       header: "Role",
-      render: (row) => row.position || "N/A"
+      render: (row) => row.position || "N/A",
     },
     {
       key: "type",
       header: "Type",
-      render: (row) => row.workType || "N/A"
+      render: (row) => row.workType || "N/A",
     },
     {
       key: "status",
       header: "Status",
       render: (row) => (
-        <div className={`px-3 py-2 rounded-[5px] text-center text-xs
-          ${row.employeeType === 'Permanent'
-            ? 'bg-yellow-100 text-yellow-800'
-            : 'bg-purple-100 text-purple-800'
-          }`}>
+        <div
+          className={`px-3 py-2 rounded-[5px] text-center text-xs
+          ${
+            row.employeeType === "Permanent"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-purple-100 text-purple-800"
+          }`}
+        >
           {row.employeeType || "N/A"}
         </div>
       ),
       cellClassName: () => "flex items-center justify-center",
-    }
+    },
   ];
 
   const actionObj = [
-    ...(hasAccess("employeeRecords", 'view')
-      ? [{
-        name: "view",
-        action: (id?: number, row?: any) => handleView(id)
-      }]
+    ...(hasAccess("employeeRecords", "view")
+      ? [
+          {
+            name: "view",
+            action: (id?: number, _row?: any) => handleView(id),
+          },
+        ]
       : []),
-    ...(hasAccess("employeeRecords", 'edit')
-      ? [{
-        name: "edit",
-        action: (id?: number, row? : any) => handleEdit(id)
-      }]
-      : [])
+    ...(hasAccess("employeeRecords", "edit")
+      ? [
+          {
+            name: "edit",
+            action: (id?: number, _row?: any) => handleEdit(id),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -211,7 +235,9 @@ const EmployeeTable: React.FC = () => {
             {/* Department Filter */}
             <Select
               value={filter.department}
-              onValueChange={(value) => setFilter(prev => ({ ...prev, department: value }))}
+              onValueChange={(value) =>
+                setFilter((prev) => ({ ...prev, department: value }))
+              }
             >
               <SelectTrigger className="w-[320px] py-[25px] rounded-lg text-gray-500 hover:text-black font-normal bg-gray-100 border-none">
                 <SelectValue placeholder="All Departments" />
@@ -229,7 +255,9 @@ const EmployeeTable: React.FC = () => {
             {/* Type Filter */}
             <Select
               value={filter.type}
-              onValueChange={(value) => setFilter(prev => ({ ...prev, type: value }))}
+              onValueChange={(value) =>
+                setFilter((prev) => ({ ...prev, type: value }))
+              }
             >
               <SelectTrigger className="w-[320px] py-[25px] rounded-lg text-gray-500 hover:text-black font-normal bg-gray-100 border-none">
                 <SelectValue placeholder="All Type" />
@@ -244,7 +272,9 @@ const EmployeeTable: React.FC = () => {
             {/* Status Filter */}
             <Select
               value={filter.status}
-              onValueChange={(value) => setFilter(prev => ({ ...prev, status: value }))}
+              onValueChange={(value) =>
+                setFilter((prev) => ({ ...prev, status: value }))
+              }
             >
               <SelectTrigger className="w-[320px] py-[25px] rounded-lg text-gray-500 hover:text-black font-normal bg-gray-100 border-none">
                 <SelectValue placeholder="All Status" />
@@ -296,7 +326,9 @@ const EmployeeTable: React.FC = () => {
       {!loading && filteredEmployees.length > 0 && (
         <StepProgress
           currentPage={currentPage}
-          setCurrentPage={(page) => setState(prev => ({ ...prev, currentPage: page }))}
+          setCurrentPage={(page) =>
+            setState((prev) => ({ ...prev, currentPage: page }))
+          }
           totalPages={totalPages}
         />
       )}

@@ -13,7 +13,8 @@ export const useInitializeSharedData = () => {
     data: departments, 
     isLoading: isDepartmentsLoading, 
     isError: isDepartmentsError,
-    error: departmentsError 
+    error: departmentsError,
+    refetch: refetchDepartments
   } = useDepartments({includeEmployees: true});
 
   useEffect(() => {
@@ -37,7 +38,9 @@ export const useInitializeSharedData = () => {
   }, [departments, dispatch]);
 
   return {
-    isLoading: isDepartmentsLoading,
-    isError: isDepartmentsError
+    isDepartmentsLoading,
+    isDepartmentsError,
+    refetchDepartments,
+    departmentsError
   };
 };

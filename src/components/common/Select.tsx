@@ -1,49 +1,31 @@
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-interface ICustomSelect {
+interface CustomSelectProps {
   placeholder?: string;
   options: string[];
-  selectLabel?: string;
+  value: string;
+  onChange: (value: string) => void;
   className?: string;
-  onChange?: (value: string) => void;
-  value?: string;
 }
 
-const CustomSelect: React.FC<ICustomSelect> = ({
-  options,
+const CustomSelect: React.FC<CustomSelectProps> = ({
   placeholder,
-  selectLabel,
-  className,
-  onChange,
+  options,
   value,
+  onChange,
+  className,
 }) => {
-  console.log("value", value);
   return (
-    <Select onValueChange={onChange} value={value || ""}>
-      <div className={className}>
-        <SelectTrigger className="w-full h-full">
-          <SelectValue placeholder={placeholder || "Select"} />
-        </SelectTrigger>
-        <SelectContent className="w-full h-full">
-          <SelectGroup>
-            {selectLabel && <SelectLabel>{selectLabel}</SelectLabel>}
-            {options.map((item, index) => (
-              <SelectItem value={item.toLowerCase()} key={index}>
-                {item}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </div>
-    </Select>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={className}
+    >
+      {placeholder && <option value="">{placeholder}</option>}
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   );
 };
 

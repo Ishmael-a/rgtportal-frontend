@@ -101,11 +101,13 @@ export const useRecruitments = (
 
       return response.data.data;
     },
-    keepPreviousData: true,
+    placeholderData: (previousData) => {
+      return previousData;
+    },
     staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false, 
-    enabled, 
-    retry: 1, 
+    refetchOnWindowFocus: false,
+    enabled,
+    retry: 1,
   });
 }; 
 

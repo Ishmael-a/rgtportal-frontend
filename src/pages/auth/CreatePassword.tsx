@@ -26,7 +26,7 @@ const CreatePassword = () => {
   const navigate = useNavigate();
 
   const { mutate, isPending } = useSetPassword({
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       toast({
         title: 'Success',
         description: 'Login successful',

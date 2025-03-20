@@ -59,7 +59,7 @@ export function DataTable({
                       <button
                         key="edit"
                         className="bg-[#C0AFFF] text-white p-1 rounded-md hover:bg-purple-300 duration-300 ease-in transition-colors cursor-pointer"
-                        onClick={() =>action.action(row.id, row)}
+                        onClick={() => action.action(row.id, row)}
                       >
                         <img src="/Edit 2.svg" alt="edit" />
                       </button>
@@ -74,6 +74,9 @@ export function DataTable({
                             setCellToDelete(row.id);
                             if (setShowDelete) {
                               setShowDelete(true);
+                            }
+                            else{
+                              action.action(row.id, row);
                             }
                           }}
                         >
@@ -92,7 +95,7 @@ export function DataTable({
     : columns;
 
   return (
-    <div className=" sm:max-w-full flex flex-col ">
+    <div className=" sm:max-w-full">
       {loading ? (
         <DataTableSkeleton columns={columns} actionBool={actionBool} />
       ) : (
@@ -100,7 +103,7 @@ export function DataTable({
           className={
             dividers
               ? ""
-              : "border-none bg-white rounded-md min-h-60 space-y-6  "
+              : "border-none bg-white rounded-md "
           }
         >
           <TableHeader>
@@ -108,7 +111,9 @@ export function DataTable({
               {tableColumns.map((column) => (
                 <TableHead
                   key={column.key}
-                  className={"border-none text-[#A3A7AA] text-xs p-6 text-left"}
+                  className={
+                    "border-none text-nowrap text-[#A3A7AA] text-xs p-4 text-left"
+                  }
                 >
                   {column.header}
                 </TableHead>
@@ -128,18 +133,18 @@ export function DataTable({
                       className={`${
                         dividers
                           ? ""
-                          : "border-none text-xs font-semibold text-[#898989] text-nowrap"
+                          : "border-none text-xs font-semibold text-[#898989] text-nowrap py-4"
                       }`}
                     >
                       <div
-                        className={`w-fit ${
+                        className={`${
                           typeof column.cellClassName === "function"
                             ? column.cellClassName(row)
                             : column.cellClassName ?? ""
                         } ${
                           column.render
-                            ? "flex gap-2 px-4 py-4 space-x-4"
-                            : "p-2 px-4 text-center"
+                            ? "flex gap-2"
+                            : ""
                         }`}
                       >
                         {column.render ? column.render(row) : row[column.key]}

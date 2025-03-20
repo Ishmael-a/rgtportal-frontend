@@ -99,7 +99,7 @@ export const CreateRecruitment: React.FC<CreateRecruitmentProps> = ({
       setSubmissionStatus("loading");
       return RecruitmentService.createRecruitment(recruitmentData);
     },
-    onSuccess: () => {
+    onSuccess: (_data) => {
       setSubmissionStatus("success");
       queryClient.invalidateQueries({ queryKey: ["recruitments"] });
       toast({

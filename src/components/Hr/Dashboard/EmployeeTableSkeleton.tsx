@@ -39,7 +39,7 @@ const EmployeeTableSkeleton: React.FC = () => {
         <div className="space-y-4">
         {/* Table Header */}
         <div className="flex mb-4">
-            {['Employee Name', 'Department', 'Role', 'Type', 'Status', 'Actions'].map((header, index) => (
+            {['Employee Name', 'Department', 'Role', 'Type', 'Status', 'Actions'].map((_header, index) => (
             <Skeleton key={index} className="h-8 flex-1 mr-4" />
             ))}
         </div>

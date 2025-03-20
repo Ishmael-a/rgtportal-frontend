@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Column {
-  key: string;
-  header: string;
+  key: string | React.Node;
+  header: string | React.Node;
   cellClassName?: (row: Record<string, any>) => string | string;
   render?: (row: Record<string, any>) => React.ReactNode;
 }
 
 export interface DataTableProps {
   columns: Column[];
-  data: PtoLeave[] | undefined;
+  data: any[] | undefined;
   dividers?: boolean;
   actionBool?: boolean;
-  actionObj: { name: string; action: (id?: number, row?: T) => void }[];
+  actionObj?: { name: string; action: (id?: number, row?: T) => void }[];
   showDelete?: boolean;
   onDelete?: (id: number) => Promise<void>;
   setShowDelete?: React.Dispatch<React.SetStateAction<boolean>>;

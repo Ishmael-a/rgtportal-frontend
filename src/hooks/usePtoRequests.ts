@@ -1,6 +1,7 @@
 import { PtoRequestService } from "@/api/services/pto-request.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "./use-toast";
+import {PtoLeave} from "@/types/PTOS"
 
 export const useRequestPto = () => {
   const queryClient = useQueryClient();
@@ -15,6 +16,7 @@ export const useRequestPto = () => {
       PtoRequestService.createPtoRequest(newPto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ptoData"] });
+      queryClient.invalidateQueries({ queryKey: ["ptos"] });
       toast({
         title: "Success",
         description: "PTO created successfully",
@@ -33,6 +35,7 @@ export const useRequestPto = () => {
     mutationFn: (ptoId: number) => PtoRequestService.deletePtoRequest(ptoId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ptoData"] });
+      queryClient.invalidateQueries({ queryKey: ["ptos"] });
       toast({
         title: "Success",
         description: "PTO deleted",

@@ -1,3 +1,5 @@
+import { IconTypes } from "./types";
+
 const UsersIcon: React.FC<IconTypes> = ({ color }) => {
   return (
     <svg

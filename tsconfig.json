@@ -11,6 +11,10 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "skipLibCheck": false,
   }
 }
  

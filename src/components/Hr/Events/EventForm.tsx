@@ -44,7 +44,6 @@ interface IEventForm {
 
 const EventForm = memo(
   ({
-    formik,
     selectedFormType,
     selectedSpecialEventType,
     setSelectedSpecialEventType,
@@ -216,7 +215,7 @@ const EventForm = memo(
                                     ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}`
                                     : ""
                                 }
-                                onChange={(e) => {
+                                onChange={(_e) => {
                                   setOpen(true);
                                 }}
                                 onClick={() => setOpen(true)}

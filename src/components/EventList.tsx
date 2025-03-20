@@ -1,5 +1,3 @@
-import { Bell } from "lucide-react";
-import { useState } from "react";
 import { ClassNameValue } from "tailwind-merge";
 
 export interface IEventList {
@@ -10,12 +8,6 @@ export interface IEventList {
 }
 
 const EventList: React.FC<IEventList> = ({ event, date, title, className }) => {
-  const [ringBell, setRingBell] = useState(false);
-
-  const handleRingBell = () => {
-    setRingBell(!ringBell);
-  };
-
   return (
     <div
       className={`flex items-center justify-between border-b pb-4 ${className}`}
@@ -30,21 +22,13 @@ const EventList: React.FC<IEventList> = ({ event, date, title, className }) => {
               : "/UsersFour.svg"
           }
           alt="calendar"
-          className="bg-[#EEF2FF] p-2 rounded-[8px]"
+          className="bg-[#EEF2FF] p-3 rounded-[8px]"
         />
-        <div>
-          <p className="text-rgtgray text-sm font-medium">{title}</p>
-          <p className="text-rgtgray text-xs font-medium">{date}</p>
+        <div className="space-y-1">
+          <p className="text-rgtgray text-sm font-semibold">{title}</p>
+          <p className="text-rgtgray text-xs font-[400]">{date}</p>
         </div>
       </div>
-
-      <Bell
-        onClick={handleRingBell}
-        className={`cursor-pointer text-rgtgray ${
-          ringBell ? "fill-rgtpurple stroke-0" : ""
-        }`}
-        size={20}
-      />
     </div>
   );
 };
