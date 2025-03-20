@@ -4,13 +4,13 @@ import { Search, Plus, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useGetDepartmentById } from "@/api/query-hooks/department.hooks";
-import ErrorMessage from "@/components/common/ErrorMessage"
-import ProfileAdd from "@/assets/icons/ProfileAdd"
-import LinearRightArrow from "@/assets/icons/LinearRightArrow"
-import DepartmentEmployeeTable from "@/components/Hr/Employees/DepartmentEmployeeTable"
-import { SideFormModal } from "@/components/Modal";
-import { Field, FieldArray, FormikHelpers, FieldProps } from 'formik';
-import * as Yup from 'yup';
+import ErrorMessage from "@/components/common/ErrorMessage";
+import ProfileAdd from "@/assets/icons/ProfileAdd";
+import LinearRightArrow from "@/assets/icons/LinearRightArrow";
+import DepartmentEmployeeTable from "@/components/Hr/Employees/DepartmentEmployeeTable";
+import { SideFormModal } from "@/components/common/Modal";
+import { Field, FieldArray, FormikHelpers, FieldProps } from "formik";
+import * as Yup from "yup";
 import {
   Select,
   SelectContent,
@@ -43,9 +43,7 @@ const DepartmentPage = () => {
     emails: [""],
   };
 
-  const {
-    data: users,
-  } = useAllEmployees(
+  const { data: users } = useAllEmployees(
     {},
     {
       enabled: isModalOpen && !!id,
@@ -202,7 +200,6 @@ const DepartmentPage = () => {
           }
         >
           {({ values }) => {
-
             return (
               <FieldArray name="emails">
                 {({ push, remove }) => {
@@ -212,11 +209,10 @@ const DepartmentPage = () => {
                       department.managerId !== user.id
                   );
 
-                    return (
-                      <div className="space-y-4">
-                        {values.emails && values.emails.length > 0 ? (
-                          values.emails.map((email, index) => {
-
+                  return (
+                    <div className="space-y-4">
+                      {values.emails && values.emails.length > 0
+                        ? values.emails.map((email, index) => {
                             return (
                               <div key={email} className="space-y-2">
                                 {" "}
@@ -305,7 +301,7 @@ const DepartmentPage = () => {
                               </div>
                             );
                           })
-                        ) : null}
+                        : null}
 
                       <Button
                         type="button"

@@ -10,11 +10,16 @@ import { departmentService } from '../services/department.service';
 
 export const useDepartments = (options?: { includeEmployees?: boolean }) => {
   return useRbacQuery(
-    'employeeRecords',
-    'view',
-    ['departments', options],
-    () => departmentService.getAllDepartments({includeEmployees: options?.includeEmployees}),
-    {}
+    "employeeRecords",
+    "view",
+    ["departments", options],
+    () =>
+      departmentService.getAllDepartments({
+        includeEmployees: options?.includeEmployees,
+      }),
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 };
 
@@ -26,14 +31,20 @@ export const useGetDepartmentById = (
   }
 ) => {
   return useRbacQuery(
-    'employeeRecords',
-    'view',
-    ['departments', id],
-    () => departmentService.getDepartmentById(
-        id, {
+    "employeeRecords",
+    "view",
+    ["departments", id],
+    () =>
+      departmentService.getDepartmentById(id, {
         includeEmployees: options?.includeEmployees,
-    }),
-    {}
+      }),
+    {
+      placeholderData: (previousData) => {
+        return previousData;
+      },
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    }
   );
 };
 
@@ -86,6 +97,35 @@ export const useAddEmployeeToDepartment = () => {
     onError: (error) => {
       toast({
         title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      })
+    }
+  });
+};
+export const useRemoveEmployeesFromDepartment = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, employeeId }: { id: string, employeeId: string }) => 
+      departmentService.removeEmployeeFromDepartment(id, employeeId),
+
+    onSuccess: (_, variables) => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["employee", variables.employeeId] });
+      queryClient.invalidateQueries({ queryKey: ['departments', variables.id] });
+      queryClient.invalidateQueries({
+        queryKey: ['departments'],
+        exact: false 
+      });
+      toast({
+        title: 'Success',
+        description: 'Employee Removed From Department Successfully',
+      })
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error Removing Employee From Department',
         description: error.message,
         variant: 'destructive',
       })

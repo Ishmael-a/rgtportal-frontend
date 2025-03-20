@@ -1,6 +1,6 @@
 import { createApiClient } from "../axios";
 import { PaginatedResponse } from "../types";
-import { Employee } from "@/types/employee";
+import { Employee, UpdateEmployeeInterface } from "@/types/employee";
 
 const employeeApiClient = createApiClient(
   `${import.meta.env.VITE_API_URL}/employees`
@@ -41,10 +41,20 @@ export const employeeService = {
   },
 
   updateEmployee: async (
-    id: string,
-    data: Partial<Employee>
-  ): Promise<Employee> => {
-    const response = await employeeApiClient.put<Employee>(`/${id}`, data);
+    id: number,
+    data: UpdateEmployeeInterface
+  ): Promise<{data: Employee, message:string}> => {
+    const response = await employeeApiClient.put<{
+      data: Employee;
+      message: string;
+    }>(`/${id}`, data);
+    return response.data;
+  },
+
+  removeEmployeeFromDepartment: async (
+    id: number
+  ): Promise<{message: string}> => {
+    const response = await employeeApiClient.delete<{message: string}>(`/${id}/department`);
     return response.data;
   },
 };

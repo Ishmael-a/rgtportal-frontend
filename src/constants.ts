@@ -445,3 +445,38 @@ export const dummyProjects: Project[] = [
     assignments: [],
   },
 ];
+
+
+export const EMPLOYEE_TYPES = {
+  FULL_TIME: "full_time",
+  PART_TIME: "part_time",
+  CONTRACTOR: "contractor",
+  NSP: "nsp",
+} as const;
+
+export const WORK_TYPES = {
+  HYBRID: "hybrid",
+  REMOTE: "remote",
+} as const;
+
+export const LEAVE_TYPES = {
+  QUIT: "quit",
+  LAYOFF: "layoff",
+  DISMISSED: "dismissed",
+  OTHER: "other",
+} as const;
+
+export const ROLE_TYPES = {
+  EMPLOYEE: "1",
+  HR: "2",
+  MANAGER: "3",
+  ADMIN: "4",
+  MARKETER: "5",
+} as const;
+
+export const LeaveType = {
+  QUIT: "quit",
+  LAYOFF: "layoff",
+  DISMISSED: "dismissed",
+  OTHER: "other",
+} as const;

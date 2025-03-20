@@ -12,10 +12,16 @@ import { Employee } from "@/types/employee"; // Import the Employee type
 import { employeeService } from "@/api/services/employee.service";
 import { debounce } from "lodash";
 import { useMemo } from "react";
+import ErrorMessage from "@/components/common/ErrorMessage";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  const { isLoading, isError } = useInitializeSharedData();
+  const {
+    isDepartmentsLoading,
+    isDepartmentsError,
+    refetchDepartments,
+    departmentsError,
+  } = useInitializeSharedData();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -54,7 +60,7 @@ export const BaseLayout = () => {
     debouncedFetchSearchResults(query);
   };
 
-  if (isLoading) {
+  if (isDepartmentsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner label="Fetching Shared Data..." size={32} />;
@@ -62,10 +68,14 @@ export const BaseLayout = () => {
     );
   }
 
-  if (isError) {
+  if (isDepartmentsError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div>Error loading shared data</div>
+        <ErrorMessage
+          title="Error Loading Shared Data"
+          error={departmentsError}
+          refetchFn={refetchDepartments}
+        />
       </div>
     );
   }
@@ -119,7 +129,7 @@ export const BaseLayout = () => {
                       }}
                     >
                       {employee.firstName} {employee.lastName} -{" "}
-                      {employee.user.email}
+                      {employee.user?.email}
                     </div>
                   ))
                 ) : (

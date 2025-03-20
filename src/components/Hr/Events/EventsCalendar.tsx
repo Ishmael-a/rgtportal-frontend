@@ -168,7 +168,7 @@ const renderDayView = () => {
   );
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="overflow-x-scroll">
       {hours.map(hour => {
         // Find events that overlap with this hour
         const hourEvents = dayEvents.filter(event => 
@@ -223,7 +223,7 @@ const renderWeekView = () => {
   const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
   
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="">
       <div className="grid grid-cols-8 bg-purple-50">
         <div className="p-2 border-r"></div>
         {weekDays.map((day, index) => (
@@ -287,32 +287,39 @@ const renderMonthView = () => {
   
   return (
     <>
-      <div className="grid grid-cols-7 py-4 bg-purple-50 rounded-t-md">
-        {getShortDays().map(day => (
-          <div key={day} className="p-3 text-left font-semibold text-purple-700">
+      <div className=" grid grid-cols-7 py-4 bg-purple-50 rounded-t-md">
+        {getShortDays().map((day) => (
+          <div
+            key={day}
+            className="p-3 text-left font-semibold text-purple-700"
+          >
             {day}
           </div>
         ))}
       </div>
-      
+
       <div className="grid grid-cols-7 gap-px bg-gray-200">
         {days.map((day, index) => {
           const isDateInCurrentMonth = isCurrentMonth(day);
           const isDateToday = isToday(day);
-          const dayEvents = events.filter(event => isEventOnDate(event, day));
-          
+          const dayEvents = events.filter((event) => isEventOnDate(event, day));
+
           return (
-            <div 
-              key={index} 
-              className={`min-h-24 font-bold ${!isDateInCurrentMonth ? 'bg-gray-50' : 'bg-white'}`}
+            <div
+              key={index}
+              className={`min-h-24 font-bold ${!isDateInCurrentMonth ? "bg-gray-50" : "bg-white"}`}
             >
-              <div className={`text-left px-3 py-1 ${!isDateInCurrentMonth ? 'text-gray-400' : ''} ${isDateToday ? 'bg-purple-100 text-purple-700 font-bold' : ''}`}>
+              <div
+                className={`text-left px-3 py-1 ${!isDateInCurrentMonth ? "text-gray-400" : ""} ${isDateToday ? "bg-purple-100 text-purple-700 font-bold" : ""}`}
+              >
                 {day.getDate()}
               </div>
-              
+
               <div className="space-y-1 px-1">
-                {dayEvents.slice(0, 2).map((event, _idx) => renderEventCard(event, true))}
-                
+                {dayEvents
+                  .slice(0, 2)
+                  .map((event, _idx) => renderEventCard(event, true))}
+
                 {dayEvents.length > 2 && (
                   <div className="text-xs text-gray-500 text-center">
                     +{dayEvents.length - 2} more
@@ -473,13 +480,16 @@ const handleViewChange = (newView: 'date' | 'week' | 'month' | 'year') => {
 };
 
 return (
-  <div className="w-full border rounded-lg bg-white shadow p-4">
+  <div className="w-full h-[680px] overflow-y-scroll border rounded-lg bg-white shadow p-4">
     {/* Calendar header with navigation and view options */}
     <div className="flex items-center mb-4">
       <div className="flex items-center w-[40%] justify-between">
         <h2 className="text-2xl font-bold">{formatHeader(currentDate)}</h2>
         <div className="ml-2 text-gray-400 flex gap-4">
-          <button onClick={navigatePrevious} className="p-1 rotate-180 hover:bg-gray-200">
+          <button
+            onClick={navigatePrevious}
+            className="p-1 rotate-180 hover:bg-gray-200"
+          >
             <BtnNext />
           </button>
           <button onClick={navigateNext} className="p-1 hover:bg-gray-200">
@@ -487,13 +497,13 @@ return (
           </button>
         </div>
       </div>
-      
+
       {/* View selection tabs */}
       <div className="flex text-gray-400 border-b border-gray-300 mx-auto items-center justify-center overflow-hidden">
-        {(['date', 'week', 'month', 'year'] as const).map((viewOption) => (
-          <button 
+        {(["date", "week", "month", "year"] as const).map((viewOption) => (
+          <button
             key={viewOption}
-            className={`px-4 py-1 ${view === viewOption ? 'bg-gray-100 border-b-4 border-gray-400' : ''}`}
+            className={`px-4 py-1 ${view === viewOption ? "bg-gray-100 border-b-4 border-gray-400" : ""}`}
             onClick={() => handleViewChange(viewOption)}
           >
             {viewOption.charAt(0).toUpperCase() + viewOption.slice(1)}
@@ -501,12 +511,12 @@ return (
         ))}
       </div>
     </div>
-    
+
     {/* Render appropriate view */}
-    {view === 'date' && renderDayView()}
-    {view === 'week' && renderWeekView()}
-    {view === 'month' && renderMonthView()}
-    {view === 'year' && renderYearView()}
+      {view === "date" && renderDayView()}
+      {view === "week" && renderWeekView()}
+      {view === "month" && renderMonthView()}
+      {view === "year" && renderYearView()}
   </div>
 );
 };

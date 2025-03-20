@@ -16,6 +16,7 @@ export const useRequestPto = () => {
       PtoRequestService.createPtoRequest(newPto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ptoData"] });
+      queryClient.invalidateQueries({ queryKey: ["ptos"] });
       toast({
         title: "Success",
         description: "PTO created successfully",
@@ -34,6 +35,7 @@ export const useRequestPto = () => {
     mutationFn: (ptoId: number) => PtoRequestService.deletePtoRequest(ptoId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ptoData"] });
+      queryClient.invalidateQueries({ queryKey: ["ptos"] });
       toast({
         title: "Success",
         description: "PTO deleted",

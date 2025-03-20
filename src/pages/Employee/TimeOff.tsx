@@ -3,7 +3,7 @@ import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
 import Filters, { FilterConfig } from "@/components/common/Filters";
 import SuccessCard from "@/components/common/SuccessCard";
-import { SideFormModal } from "@/components/Modal";
+import { SideFormModal } from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SideModal } from "@/components/ui/side-dialog";

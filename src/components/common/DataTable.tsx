@@ -75,6 +75,9 @@ export function DataTable({
                             if (setShowDelete) {
                               setShowDelete(true);
                             }
+                            else{
+                              action.action(row.id, row);
+                            }
                           }}
                         >
                           <img src="/Delete.svg" alt="delete" />

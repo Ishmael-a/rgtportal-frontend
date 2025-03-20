@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { SideFormModal } from "@/components/Modal";
+import { SideFormModal } from "@/components/common/Modal";
 import { Field, FieldInputProps } from "formik";
 import * as Yup from "yup";
 import { Mail } from "lucide-react";

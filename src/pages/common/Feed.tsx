@@ -46,7 +46,6 @@ const Feed = () => {
     queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
   });
 
-
   const mergedFeed = useMemo(() => {
     const postsWithType =
       posts?.map((p) => ({ ...p, feedType: "post" as const })) || [];
@@ -93,7 +92,7 @@ const Feed = () => {
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
             backgroundPosition: "center",
-            zIndex:50
+            zIndex: 50,
           }}
         >
           {departments.length > 0 ? (
@@ -141,7 +140,7 @@ const Feed = () => {
                       key={index}
                     >
                       <Avtr
-                        url={item.user.profileImage as string}
+                        url={item.user?.profileImage as string}
                         name={item.firstName as string}
                         className={`w-[55px] h-[55px]`}
                       />

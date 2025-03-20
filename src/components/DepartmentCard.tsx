@@ -104,7 +104,7 @@ const DepartmentCard: React.FC<IDepartmentCard> = ({
               <Avtr
                 key={index}
                 index={index}
-                url={employee.user.profileImage as string}
+                url={employee.user?.profileImage as string}
                 name={getAvatarFallback(employee)}
                 className="w-9 h-9 rounded-full absolute borde-0 border-3 text-white font-semibold text-sm"
                 avtBg="bg-[#E328AF]"

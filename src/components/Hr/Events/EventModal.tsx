@@ -1,4 +1,4 @@
-import { SideFormModal } from "@/components/Modal";
+import { SideFormModal } from "@/components/common/Modal";
 import EventForm from "./EventForm";
 import { useEventForm, formTypes } from "@/hooks/useEventForm";
 import { Field, FieldProps } from "formik";

@@ -8,12 +8,14 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import StepProgress from "@/components/StepProgress";
-import { Column } from "@/types/tables";
+import StepProgress from "@/components/common/StepProgress";
+import { ActionObject, Column } from "@/types/tables";
 import { DataTable } from "../../common/DataTable";
 import { usePermission } from "@/hooks/use-permission";
-import { EmployeeType } from "@/types/employee";
-import { Department } from "../../../types/department";
+import { Employee, EmployeeType } from "@/types/employee";
+import { Department } from "@/types/department";
+import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
+import {useRemoveEmployeeFromDepartment} from "@/api/query-hooks/employee.hooks"
 
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
@@ -39,6 +41,8 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
   filterByName,
   department,
 }) => {
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [employeesPerPage] = useState<number>(5);
   const { hasAccess } = usePermission();
@@ -48,6 +52,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     employeeType: "All Employee Type",
     status: "All Status",
   });
+  const removeEmployeeFromDepartment = useRemoveEmployeeFromDepartment();
 
   // const {
   //   data: employeeData,
@@ -123,23 +128,36 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     setCurrentPage(page);
   };
 
+  const handleSubmit = async () => {
+    console.log("SelectedEMployeeId", selectedEmployeeId)
+    console.log("Selected DepartmentId",  department.id)
+    if (selectedEmployeeId && department.id) {
+      try {
+        await removeEmployeeFromDepartment.mutateAsync({
+          id: selectedEmployeeId, 
+          departmentId: department.id,
+        });
+
+        setDeleteModalOpen(false);
+        setSelectedEmployeeId(null);
+      } catch (error) {
+        console.error("Failed to remove employee", error);
+      }
+    }
+  };
+
   const actionObj = [
-    ...(hasAccess("employeeRecords", "view")
-      ? [
-          {
-            name: "view",
-            action: () => console.log("View clicked"),
-          },
-        ]
-      : []),
     ...(hasAccess("employeeRecords", "edit")
       ? [
           {
             name: "delete",
-            action: () => console.log("Delete clicked"),
+            action: (_, row:Employee) => {
+              setSelectedEmployeeId(row.id);
+              setDeleteModalOpen(true)
+            },
           },
-        ]
-      : []),
+        ] 
+      : []) as ActionObject[],
   ];
 
   const columns: Column[] = [
@@ -318,6 +336,36 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
           No Employees In This Department{" "}
         </div>
       )}
+
+      <ConfirmCancelModal
+        isOpen={deleteModalOpen}
+        onOpenChange={(open) => {
+          if (!removeEmployeeFromDepartment.isPending) {
+            setDeleteModalOpen(open);
+            if (!open) {
+              setSelectedEmployeeId(null);
+            }
+          }
+        }}
+        title="Remove Employee?"
+        className="text-center"
+        submitText={removeEmployeeFromDepartment.isPending ? "Deleting..." : "Delete"}
+        isSubmitting={removeEmployeeFromDepartment.isPending}
+        onSubmit={handleSubmit}
+        onCancel={() => {
+          if (!removeEmployeeFromDepartment.isPending) {
+            setSelectedEmployeeId(null);
+            setDeleteModalOpen(false);
+          }
+        }}
+      >
+        <div className="space-y-2 ">
+          <p className="text-sm text-gray-500">Remove Employee From This Department?</p>
+          <p className="text-xs text-gray-400">
+            This action cannot be undone
+          </p>
+        </div>
+      </ConfirmCancelModal>
     </div>
   );
 };
