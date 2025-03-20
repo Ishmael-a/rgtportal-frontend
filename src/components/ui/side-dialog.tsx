@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -97,12 +97,11 @@ export const SideModal = ({
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
             }}
-            // onClick={(e) =>{
-            //   console.log("Clicked On Dialog")
-            //   if (e.target === e.currentTarget && closeOnClickOutside) {
-            //     onOpenChange(false);
-            //   }
-            // }}
+            onClick={(e) =>{
+              if (e.target === e.currentTarget && closeOnClickOutside) {
+                onOpenChange(false);
+              }
+            }}
           />
         )}
 
@@ -110,7 +109,7 @@ export const SideModal = ({
           className={`${sideModalVariants({ position, size })} ${className}`}
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
-          onInteractOutside={(e) => {
+          onInteractOutside={(_e) => {
             closeOnClickOutside && onOpenChange(false)
           }}
         >
