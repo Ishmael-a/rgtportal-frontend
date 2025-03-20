@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const sideModalVariants = cva(
@@ -91,15 +90,7 @@ export const SideModal = ({
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
             }}
-<<<<<<< HEAD
-            onClick={(e) =>{
-              if (e.target === e.currentTarget && closeOnClickOutside) {
-                onOpenChange(false);
-              }
-            }}
-=======
             onClick={() => closeOnClickOutside && onOpenChange(false)}
->>>>>>> dev
           />
         )}
 
@@ -107,13 +98,7 @@ export const SideModal = ({
           className={`${sideModalVariants({ position, size })} ${className}`}
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
-<<<<<<< HEAD
-          onInteractOutside={(_e) => {
-            closeOnClickOutside && onOpenChange(false)
-          }}
-=======
           onInteractOutside={() => closeOnClickOutside && onOpenChange(false)}
->>>>>>> dev
         >
           {showCloseButton && (
             <Dialog.Close asChild>
