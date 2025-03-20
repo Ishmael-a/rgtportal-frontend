@@ -42,8 +42,6 @@ import { cn } from "@/lib/utils";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import {
-  GetCountries,
-  GetState,
   CountrySelect,
   StateSelect,
 } from "react-country-state-city";
@@ -75,7 +73,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
         (state: RootState) => state.sharedState
     );
     const { data: employeeData, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
-    const employee = employeeData?.data|| {} as Employee;
+    const employee = employeeData || {} as Employee;
     const { validationSchema } = useEmployeeValidation();
 
     const { 
