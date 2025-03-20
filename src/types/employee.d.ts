@@ -5,33 +5,26 @@ import { User } from "./authUser";
 import { Department } from "./department";
 import { LEAVE_TYPES, WORK_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
 
-interface IProjectCard {
+interface IDepartmentCard {
   id: string | number;
-  members: IProjectMembers[] | Employee[];
+  employees: Employee[];
   name: string;
   leadName?: string;
-  path: string;
-  includeBgImg?: boolean
-}
-interface IProjectType {
-  id: string | number;
-  members: IProjectMembers[];
-  name: string;
-  leadName?: string;
+  includeBgImg?: boolean;
 }
 
-interface IProjectMembers {
-  id: number;
-  name: string;
-  avtr: { url: string; fallBack: string };
-  department: string;
-  role: string;
-}
+// interface IDepartmentMembers {
+//   id: number;
+//   name: string;
+//   avtr: { url: string; fallBack: string };
+//   department: string;
+//   role: string;
+// }
 
 interface IFeed {
   poll?: Poll;
   post?: IPost;
-  postId?:number
+  postId?: number;
 }
 
 interface IAnnouncementCard {
@@ -102,13 +95,13 @@ export interface Employee {
   leaveType?: LeaveType | null;
   leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
-  notes?: string | null;
-
+  activePtoRequest?: boolean;
   givenRecognitions?: EmployeeRecognition[];
   receivedRecognitions?: EmployeeRecognition[];
   user?: User;
   department: Department;
   departmentId: number | null;
+  notes?: string| null;
 
   ptoRequests?: PtoRequest[];
   projectAssignments?: ProjectAssignment[];

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DataTable } from "@/components/common/DataTable";
 import DatePicker from "@/components/common/DatePicker";
-import CustomSelect from "@/components/common/Select";
+import Filters, { FilterConfig } from "@/components/common/Filters";
 import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/common/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SideModal } from "@/components/ui/side-dialog";
 import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { PtoLeave } from "@/types/PTOS";
@@ -21,6 +22,9 @@ export default function TimeOff() {
   const [selectedPtoId, setSelectedPtoId] = useState<number | undefined>(
     undefined
   );
+  const [selectedType, setSelectedType] = useState<string>("All Types");
+  const [selectedStatus, setSelectedStatus] = useState<string>("All Statuses");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const {
     createPto,
@@ -33,6 +37,8 @@ export default function TimeOff() {
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
+    status: (item.status ?? "").toUpperCase(),
+    type: item.type.toUpperCase(),
     total: `${Math.ceil(
       (new Date(item.endDate as Date).getTime() -
         new Date(item.startDate as Date).getTime()) /
@@ -84,6 +90,55 @@ export default function TimeOff() {
 
   const viewPtoData = ptoData?.find((item) => item.id === selectedPtoId);
 
+  const filteredPtoData = formattedPtoData?.filter((item) => {
+    // Filter by type
+    const typeMatch =
+      selectedType === "All Types" ||
+      item.type.toLowerCase() === selectedType.toLowerCase();
+
+    // Filter by status
+    const statusMatch =
+      selectedStatus === "All Statuses" ||
+      item.status.toLowerCase() === selectedStatus.toLowerCase();
+
+    // Filter by date
+    const dateMatch =
+      !selectedDate ||
+      (item.startDate &&
+        new Date(item.startDate) <= selectedDate &&
+        item.endDate &&
+        new Date(item.endDate) >= selectedDate);
+
+    return typeMatch && statusMatch && dateMatch;
+  });
+
+  const handleResetFilters = () => {
+    setSelectedType("All Types");
+    setSelectedStatus("All Statuses");
+    setSelectedDate(null);
+  };
+
+  const filters: FilterConfig[] = [
+    {
+      type: "select",
+      options: ["All Types", "Vacation", "Sick"],
+      value: selectedType,
+      onChange: setSelectedType,
+    },
+    {
+      type: "select",
+      options: ["All Statuses", "Pending", "Approved", "Declined"],
+      value: selectedStatus,
+      onChange: setSelectedStatus,
+    },
+    {
+      type: "date",
+      placeholder: "Select a date",
+      value: selectedDate,
+      onChange: setSelectedDate,
+    },
+  ];
+
   return (
     <main className="px-4">
       <div className="bg-white p-4 rounded-md">
@@ -92,29 +147,24 @@ export default function TimeOff() {
             Request Time List
           </h1>
           <Button
-            className="bg-rgtpink hover:bg-pink-500 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
+            className="bg-[#6418C3] hover:bg-purple-800 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
             onClick={() => setIsModalOpen(true)}
           >
             <img src="/Add.svg" alt="add" />
-            Add New Request
+            <p className="hidden sm:block">Add New Request</p>
           </Button>
         </header>
 
-        <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:h-[50px] my-8">
-          <DatePicker className="sm:h-full" />
-          <CustomSelect options={["plnt"]} />
-          <CustomSelect options={["plnt"]} />
-        </div>
+        <Filters filters={filters} onReset={handleResetFilters} />
 
         <DataTable
           columns={timeOffTableColumns}
-          data={formattedPtoData}
+          data={filteredPtoData || []}
           actionBool={true}
           actionObj={[
             {
               name: "view",
               action: (rowData) => {
-                console.log("rowData:", rowData);
                 setAppRej(!appRej);
                 setSelectedPtoId(rowData);
               },
@@ -273,73 +323,72 @@ export default function TimeOff() {
       )}
 
       {/* modal for viewing old request */}
-      {appRej && (
-        <SideFormModal
-          title="Approve or Reject Request"
-          back={true}
-          backFn={() => setAppRej(false)}
-          initialFormValues={{}}
-        >
-          {viewPtoData && (
-            <>
-              <section className="flex gap-2">
-                <div>
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    From
-                  </label>
-                  <Input
-                    value={
-                      viewPtoData.startDate
-                        ? new Date(viewPtoData.startDate).toDateString()
-                        : ""
-                    }
-                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                    disabled
-                  />
-                </div>
 
-                <div>
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    To
-                  </label>
-                  <Input
-                    value={
-                      viewPtoData.endDate
-                        ? new Date(viewPtoData.endDate).toDateString()
-                        : ""
-                    }
-                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                    disabled
-                  />
-                </div>
-              </section>
-              <section className="space-y-5 pt-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    Reason
-                  </label>
-                  <textarea
-                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                    value={viewPtoData.reason}
-                    disabled
-                  />
-                </div>
+      <SideModal
+        title="Approve or Reject Request"
+        onOpenChange={() => setAppRej(false)}
+        isOpen={appRej}
+        className="w-1/2 md:w-[30%]"
+      >
+        {viewPtoData && (
+          <>
+            <section className="flex gap-2">
+              <div>
+                <label className="text-slate-500 font-semibold text-sm">
+                  From
+                </label>
+                <Input
+                  value={
+                    viewPtoData.startDate
+                      ? new Date(viewPtoData.startDate).toDateString()
+                      : ""
+                  }
+                  className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-slate-500 font-medium text-base"
+                  disabled
+                />
+              </div>
 
-                <div className="flex flex-col gap-1">
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    HR reason
-                  </label>
-                  <textarea
-                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                    value={"We can't let you go at the moment"}
-                    disabled
-                  />
-                </div>
-              </section>
-            </>
-          )}
-        </SideFormModal>
-      )}
+              <div>
+                <label className="text-slate-500 font-semibold text-sm">
+                  To
+                </label>
+                <Input
+                  value={
+                    viewPtoData.endDate
+                      ? new Date(viewPtoData.endDate).toDateString()
+                      : ""
+                  }
+                  className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-slate-500 font-medium text-base"
+                  disabled
+                />
+              </div>
+            </section>
+            <section className="space-y-5 pt-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-slate-500 font-semibold text-sm">
+                  Reason
+                </label>
+                <textarea
+                  className="resize-none bg-[#F6F6F9] p-2 text-slate-500 font-medium text-base rounded-md"
+                  value={viewPtoData.reason}
+                  disabled
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-slate-500 font-semibold text-sm">
+                  HR reason
+                </label>
+                <textarea
+                  className="resize-none bg-[#F6F6F9] p-2 text-slate-500 font-medium text-base rounded-md"
+                  value={viewPtoData.statusReason}
+                  disabled
+                />
+              </div>
+            </section>
+          </>
+        )}
+      </SideModal>
 
       {/* Success modal for timeoff creation */}
       {isSuccess && <SuccessCard handleClick={handleCheckNow} />}

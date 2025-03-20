@@ -1,3 +1,5 @@
+import { IconTypes } from "./types";
+
 const RgtPattern: React.FC<IconTypes> = ({ color }) => {
   return (
     <svg

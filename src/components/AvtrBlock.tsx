@@ -1,23 +1,21 @@
-import { User } from "@/types/authUser";
 import { Avatar, AvatarImage } from "./ui/avatar";
 
-const AvtrBlock: React.FC<{ user: User | null }> = ({ user }) => {
-  if (!user) return;
+const AvtrBlock: React.FC<{
+  profileImage?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+}> = ({ profileImage, firstName, lastName, role }) => {
   return (
     <div className="flex gap-2 items-center">
       <Avatar>
-        <AvatarImage
-          src={user.profileImage || "https://randomuser.me/api/portraits/med/women/75.jpg"}
-          alt={user.employee?.firstName || "AvtrImg"}
-        />
+        <AvatarImage src={profileImage} alt={firstName || "AvtrImg"} />
       </Avatar>
       <div className="">
         <p className="font-bold">
-          {user.employee?.firstName ||
-            "No Employee FirstName" + user.employee?.lastName ||
-            "No Employee LastName"}
+          {firstName || "No"} {lastName || "Name"}
         </p>
-        <p className="text-rgtgray text-xs">{user.role.name.toUpperCase()}</p>
+        <p className="text-rgtgray text-xs">{role?.toUpperCase()}</p>
       </div>
     </div>
   );

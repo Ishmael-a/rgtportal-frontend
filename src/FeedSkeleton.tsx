@@ -1,139 +1,106 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import PostSkeleton from "./components/common/PostSkeleton";
 
 export const FeedSkeleton = () => {
   return (
-    <main className="flex  gap-2 h-full px-5 w-full">
-      {/* Left Column - Posts Section */}
-      <div className="space-y-10 md:w-[60%] w-full">
+    <main className="flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end">
+      {/* Left Column - Main Content */}
+      <div
+        className="space-y-[18px] flex-1 overflow-y-auto"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         {/* Recognition Section Skeleton */}
-        <div className="bg-muted rounded-lg p-4 min-h-44">
-          <Skeleton className="h-8 w-3/4 mx-auto mb-4" />
-          <Skeleton className="h-6 w-1/2 mx-auto mb-8" />
-          <div className="flex justify-center gap-4">
-            {[1, 2, 3].map((i) => (
+        <div className="bg-muted sticky min-h-32 top-0 rounded-[20px] flex flex-col max-w-full p-3 space-y-4 items-center justify-center">
+          <Skeleton className="h-7 w-3/5 mx-auto" />
+          <Skeleton className="h-5 w-2/5 mx-auto" />
+          <div className="flex gap-4 w-full overflow-x-hidden justify-center items-center">
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <Skeleton className="w-20 h-20 rounded-full" />
-                <Skeleton className="h-4 w-16" />
+                <Skeleton className="w-14 h-14 rounded-full" />
+                <Skeleton className="h-4 w-20" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Posts Section Skeleton */}
+        {/* Posts Section */}
         <div className="space-y-7">
           {/* Create Post Skeleton */}
-          <div className="p-4 rounded-lg bg-muted space-y-3">
-            <Skeleton className="h-10 w-full" />
-            <div className="flex gap-2">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-24" />
-            </div>
+          <div className="space-y-3">
+            <Skeleton className="h-24 rounded-xl" />
           </div>
 
-          {/* Feed Items Skeleton */}
-          <div className="space-y-3">
-            <Skeleton className="h-6 w-32 mb-4" />
+          {/* Feed Items */}
+          <div className="space-y-5">
+            <Skeleton className="h-6 w-1/4 mb-4" />
             {[1, 2, 3].map((i) => (
-              <div key={i} className="p-4 rounded-lg bg-muted space-y-4">
-                {/* Post Header */}
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-10 h-10 rounded-full" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-
-                {/* Content */}
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-4/5" />
-                  <Skeleton className="h-4 w-3/4" />
-
-                  {/* Poll Skeleton */}
-                  {i % 2 === 0 && (
-                    <div className="space-y-2">
-                      {[1, 2, 3].map((j) => (
-                        <div key={j} className="space-y-1">
-                          <Skeleton className="h-6 w-full" />
-                          <Skeleton className="h-2 w-3/4" />
-                        </div>
-                      ))}
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  )}
-
-                  {/* Media Skeleton */}
-                  <div className="grid grid-cols-2 gap-2">
-                    {[1, 2].map((j) => (
-                      <Skeleton key={j} className="h-32 w-full" />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-4">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-6 w-16" />
-                </div>
-              </div>
+              <PostSkeleton key={i} />
             ))}
           </div>
         </div>
       </div>
 
-      <div className="hidden md:block w-[30.5%] md:fixed right-0 h-screen overflow-auto">
-        {/* Events Section */}
-        <section className="flex justify-center w-full">
-          <div className="pt-5 space-y-3 h-fit bg-muted rounded-t-2xl w-full">
-            {/* Calendar Skeleton */}
-            <div className="shadow-md shadow-gray-300 p-2 rounded-md">
-              <div className="grid grid-cols-7 gap-2 mb-3">
-                {[...Array(7)].map((_, i) => (
-                  <Skeleton key={i} className="h-6 w-full" />
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-2">
-                {[...Array(42)].map((_, i) => (
-                  <Skeleton
-                    key={i}
-                    className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"
-                  />
-                ))}
-              </div>
+      {/* Right Column - Events Section */}
+      <div
+        className="hidden custom1:flex space-y-10 w-[380px] overflow-y-auto"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
+        <div className="pt-5 space-y-3 h-fit bg-muted rounded-t-2xl w-full flex flex-col items-center">
+          {/* Calendar Section */}
+          <Skeleton className="h-6 w-32 mb-4" />
+          <div className="shadow-lg shadow-muted-foreground/20 p-2 rounded-md w-[348px]">
+            <div className="grid grid-cols-7 gap-2 mb-3">
+              {[...Array(7)].map((_, i) => (
+                <Skeleton key={i} className="h-6 w-full rounded-sm" />
+              ))}
             </div>
-
-            {/* Events List Skeleton */}
-            <div className="p-6 bg-muted rounded-lg space-y-5">
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-6 w-6 rounded-full" />
-              </div>
-
-              <div className="flex flex-col space-y-5">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-1/4" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Announcements Skeleton */}
-            <div className="p-4 bg-muted rounded-lg space-y-2">
-              <div className="flex items-center justify-between pb-4">
-                <Skeleton className="h-6 w-32" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-cols-7 gap-2">
+              {[...Array(42)].map((_, i) => (
+                <Skeleton key={i} className="h-8 w-8 rounded-full" />
+              ))}
             </div>
           </div>
-        </section>
+
+          {/* Events List */}
+          <div className="px-4 py-6 bg-muted rounded-lg space-y-5 w-full">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-6 w-6 rounded-full" />
+            </div>
+            <div className="flex flex-col space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Announcements */}
+          <div className="px-4 bg-muted rounded-lg space-y-2 w-full">
+            <div className="flex items-center justify-between pb-4">
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-6 w-6 rounded-full" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

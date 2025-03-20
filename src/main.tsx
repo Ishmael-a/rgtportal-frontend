@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")!).render(
         <AuthContextProvider>
           <TooltipProvider>
             <App />
-            <Toaster />
+            <Toaster position="bottom-right" />
           </TooltipProvider>
         </AuthContextProvider>
         <ReactQueryDevtools />

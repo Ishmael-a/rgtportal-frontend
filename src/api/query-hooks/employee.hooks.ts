@@ -25,8 +25,8 @@ export const useAllEmployees = (
     "view",
     ["employees", stableParams],
     async () => {
-      const response = await employeeService.getAllEmployees(stableParams);
-      return response.data; 
+      const response = await employeeService.getAllEmployees();
+      return response; 
     },
     {
       ...options,

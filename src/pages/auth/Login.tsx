@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Field, Form as FormikForm, Formik, FieldInputProps } from "formik";
@@ -20,12 +19,10 @@ interface FormValues {
 
 const LoginSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Required'),
-  password: Yup.string().required('Required'),
 });
 
 const Login = () => {
   const queryClient = useQueryClient();
-  const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const { mutate, isPending } = useLogin({
@@ -34,7 +31,6 @@ const Login = () => {
       if (data.requiresOtp) {
         navigate('/verify-email', { state: { email: data.message, otpId: data.otpId, userId: data.userId } });
       }
-
       else {
         navigate('/emp/feed', { replace: true });
         toast({
@@ -42,8 +38,6 @@ const Login = () => {
           description: 'Login successful',
         });
       }
-
-      // navigate('/emp/feed');
     },
     onError: (error: any) => {
       const errorMessage =
@@ -63,7 +57,10 @@ const Login = () => {
   };
 
   const handleSubmit = (values: FormValues) => {
-    mutate(values);
+    mutate({
+      email: values.email,
+      password: values.email,
+    });
   };
 
   return (
@@ -105,7 +102,7 @@ const Login = () => {
                           type="email"
                           placeholder="Enter your email"
                           {...field}
-                          className={`w-full py-2 px-4 ${
+                          className={`w-full py-2 px-4 border border-gray-300 rounded-md ${
                             touched.email && errors.email
                               ? 'border-red-500'
                               : ''
@@ -114,57 +111,6 @@ const Login = () => {
                         {touched.email && errors.email && (
                           <div className="text-red-500 text-sm mt-1">
                             {errors.email}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </Field>
-                </div>
-
-                <div className="space-y-3 flex flex-col">
-                  <div className="flex justify-between">
-                    <label htmlFor="password" className="text-sm font-bold">
-                      Password
-                    </label>
-                    <a
-                      href="#"
-                      className="text-sm text-pink-500 hover:text-pink-600"
-                    >
-                      Forgot Password?
-                    </a>
-                  </div>
-                  <Field name="password">
-                    {({ field }: { field: FieldInputProps<string> }) => (
-                      <div>
-                        <div className="relative">
-                          <Input
-                            id="password"
-                            type={isPasswordVisible ? 'text' : 'password'}
-                            placeholder="••••••"
-                            {...field}
-                            className={`w-full py-2 px-4 ${
-                              touched.password && errors.password
-                                ? 'border-red-500'
-                                : ''
-                            }`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setPasswordVisible((currentVal) => !currentVal)
-                            }
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                          >
-                            {isPasswordVisible ? (
-                              <Eye className="h-5 w-5 text-gray-500" />
-                            ) : (
-                              <EyeOff className="h-5 w-5 text-gray-500" />
-                            )}
-                          </button>
-                        </div>
-                        {touched.password && errors.password && (
-                          <div className="text-red-500 text-sm mt-1">
-                            {errors.password}
                           </div>
                         )}
                       </div>

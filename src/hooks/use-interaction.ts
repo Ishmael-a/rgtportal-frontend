@@ -8,7 +8,7 @@ export const useInteraction = (postId: number | undefined) => {
     throw new Error("postId is undefined");
   }
 
-  const { data: stats, refetch: refetchStats } = useQuery({
+  const { data: stats, refetch: refetchStats, isLoading } = useQuery({
     queryKey: ["postStats", postId],
     queryFn: () => PostInteractionService.getStats(postId),
   });
@@ -94,5 +94,6 @@ export const useInteraction = (postId: number | undefined) => {
     isCommentLoading: commentMutation.isPending,
     toggleLike,
     refetchStats,
+    isLoading
   };
 };
