@@ -17,6 +17,7 @@ import DatePicker from "./common/DatePicker";
 import PollIcon from "@/assets/icons/PollIcon";
 import VideoIcon from "@/assets/icons/VideoIcon";
 import PhotoIcon from "@/assets/icons/PhotoIcon";
+import Globe from "@/assets/icons/Globe";
 
 interface UploadStatus {
   images?: "idle" | "loading" | "success" | "error";
@@ -362,16 +363,6 @@ const CreatePost = () => {
     submissionStatus === "loading" ||
     createPollMutation.isPending;
 
-  useEffect(() => {
-    console.log("issubmiting:", isSubmitting);
-  }, [isSubmitting]);
-
-  useEffect(() => {
-    console.log("message:", message);
-    console.log("images:", images);
-    console.log("videos:", videos);
-  }, [images, videos, message]);
-
   return (
     <main className="flex-col flex space-y-1">
       <div className="relative flex items-start gap-1">
@@ -639,7 +630,10 @@ const CreatePost = () => {
           )}
         </>
       ) : null}
-
+      <div className="bg-[#EFE7FF] text-[#2D264B] font-semibold text-sm py-1 px-2 rounded-[8px] w-fit flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in hover:bg-rgtpurpleaccent2">
+        <Globe />
+        <p>Everyone can view</p>
+      </div>
       <div className="flex">
         {/* Creating actions */}
         <div className="bg-rgtpink w-[75%] sm:w-[85%] p-4 rounded-bl-2xl flex items-center justify-evenly text-white font-medium">
