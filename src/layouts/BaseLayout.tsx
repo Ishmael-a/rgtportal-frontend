@@ -8,10 +8,9 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
 import { useNotifications } from "@/api/query-hooks/notification";
 import { NotificationContainer } from "@/components/common/NotificationsContainer";
-import { useState } from "react";
 import WithRole from "@/common/WithRole";
 import { useState, useEffect } from "react";
-import { Employee } from "@/types/employee"; // Import the Employee type
+import { Employee } from "@/types/employee";
 import { employeeService } from "@/api/services/employee.service";
 import { debounce } from "lodash";
 import { useMemo } from "react";

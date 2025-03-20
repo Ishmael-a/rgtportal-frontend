@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const sideModalVariants = cva(
@@ -92,17 +93,6 @@ export const SideModal = ({
             }}
             onClick={() => closeOnClickOutside && onOpenChange(false)}
           />
-          <Dialog.Overlay
-            className={`fixed inset-0 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${overlayClassName} ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
-            style={{
-              zIndex: 170,
-              backdropFilter: "blur(4px)",
-              WebkitBackdropFilter: "blur(4px)",
-            }}
-            onClick={() => closeOnClickOutside && onOpenChange(false)}
-          />
         )}
 
         <Dialog.Content
@@ -110,25 +100,22 @@ export const SideModal = ({
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
           onInteractOutside={() => closeOnClickOutside && onOpenChange(false)}
-          onInteractOutside={() => closeOnClickOutside && onOpenChange(false)}
         >
           {showCloseButton && (
-          <Dialog.Close asChild>
-            <img
-              src="/Down 2.svg"
-              className="-rotate-90 bg-white p-2 rounded-full shadow-neutral-400 shadow-lg top-10 border hover:bg-slate-100 transition-all duration-300 ease-in cursor-pointer"
-            />
-          </Dialog.Close>
+            <Dialog.Close asChild>
+              <img
+                src="/Down 2.svg"
+                className="-rotate-90 bg-white p-2 rounded-full shadow-neutral-400 shadow-lg top-10 border hover:bg-slate-100 transition-all duration-300 ease-in cursor-pointer"
+              />
+            </Dialog.Close>
           )}
 
           {title && (
             <div
               className={`flex justify-between items-center p-4 ${headerClassName}`}
-              className={`flex justify-between items-center p-4 ${headerClassName}`}
             >
               <div>
                 {title && (
-                  <Dialog.Title className="text-lg font-semibold">
                   <Dialog.Title className="text-lg font-semibold">
                     {title}
                   </Dialog.Title>
@@ -142,7 +129,6 @@ export const SideModal = ({
             </div>
           )}
 
-          <div className={`${contentClassName}`}>{children}</div>
           <div className={`${contentClassName}`}>{children}</div>
 
           {footerContent && (
