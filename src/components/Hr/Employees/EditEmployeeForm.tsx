@@ -75,7 +75,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
         (state: RootState) => state.sharedState
     );
     const { data: employeeData, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
-    const employee = employeeData?.data|| {} as Employee;
+    const employee = employeeData || {} as Employee;
     const { validationSchema } = useEmployeeValidation();
 
     const { 
@@ -114,8 +114,8 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
         }}
         title={`Edit ${employee.firstName} ${employee.lastName}`}
         position="right"
-        size={"xl"}
-        contentClassName=" max-w-xl"
+        size={"full"}
+        contentClassName=" max-w-2xl px-6 "
       >
         <Formik
           initialValues={initialValues}
@@ -126,7 +126,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
 
             return (
               <>
-                <FormikForm className="space-x-6 space-y-12 max-w-xl grid grid-cols-2 my-6 ">
+                <FormikForm className="space-x-6 space-y-12 max-w-2xl grid grid-cols-2 my-6 ">
                   {/* Department Field */}
                   <div className="space-y-2">
                     <Label htmlFor="department" className="text-sm font-medium">
@@ -833,7 +833,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                   </div>
                 </FormikForm>
 
-                <div className="flex w-full gap-3 mt-8 h-14">
+                <div className="flex w-full gap-3 pb-2  h-14">
                   <button
                     type="button"
                     onClick={() => !isSubmitting && onClose()}

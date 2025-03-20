@@ -128,7 +128,7 @@ const VerifyEmail = () => {
               Email Verification?
             </h1>
             <p className="text-gray-500 text-sm">
-              we sent a reset link to your email, open it and type in the 4
+              we sent a reset link to your email, open it and type in the 6
               digit OTP to proceed
             </p>
           </div>

@@ -44,6 +44,26 @@ export const recruitmentSchema: any = [
     required: true,
   },
   {
+    name: "asignees",
+    label: "Asignees",
+    type: "select",
+    options: [
+      "KNUST",
+      "ASHESI",
+      "LEGON",
+      "UDS",
+      "UCC",
+      "UEW",
+      "UMAT",
+      "UNER",
+      "WISCONSIN",
+      "UPSA",
+      "ACADEMIC CITY",
+    ],
+    gridColumn: "full",
+    required: true,
+  },
+  {
     name: "university",
     label: "University",
     type: "select",
@@ -81,7 +101,7 @@ export const recruitmentSchema: any = [
   },
   {
     name: "location",
-    label: "Location",
+    label: "Region",
     type: "select",
     options: [
       "Greater Accra",
