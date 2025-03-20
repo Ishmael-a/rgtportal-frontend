@@ -46,7 +46,6 @@ const Feed = () => {
     queryFn: () => PostService.getPosts().then((res) => res.data as IPost[]),
   });
 
-  console.log("posts:", posts);
 
   const mergedFeed = useMemo(() => {
     const postsWithType =
@@ -73,11 +72,7 @@ const Feed = () => {
   };
 
   if (pollsLoading || postsLoading) {
-    return (
-      <main className="flex flex-col gap-2 md:flex-row h-full px-5 sm:px-0">
-        <FeedSkeleton />
-      </main>
-    );
+    return <FeedSkeleton />;
   }
 
   return (
