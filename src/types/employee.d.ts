@@ -3,6 +3,8 @@
 import { Poll } from "./polls";
 import { User } from "./authUser";
 import { Department } from "./department";
+import { LEAVE_TYPES, WORK_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
+
 interface IProjectCard {
   id: string | number;
   members: IProjectMembers[] | Employee[];
@@ -54,20 +56,25 @@ interface EmployeeCardType {
 }
 
 
-export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp"
+// export type EmployeeType = "full_time" | "part_time" | "contractor" | "nsp"
+
+// enum LeaveType {
+//   QUIT = "quit",
+//   LAYOFF = "layoff",
+//   DISMISSED = "dismissed",
+//   OTHER = "other",
+// }
+
+
+// export type WorkType =  "hybrid" | "remote"
 
 
 
-export type WorkType =  "hybrid" | "remote"
+export type EmployeeType = (typeof EMPLOYEE_TYPES)[keyof typeof EMPLOYEE_TYPES];
+export type WorkType = (typeof WORK_TYPES)[keyof typeof WORK_TYPES];
+export type LeaveType = (typeof LEAVE_TYPES)[keyof typeof LEAVE_TYPES];
+export type RoleType = (typeof ROLE_TYPES)[keyof typeof ROLE_TYPES];
 
-
-
-enum LeaveType {
-  QUIT = "quit",
-  LAYOFF = "layoff",
-  DISMISSED = "dismissed",
-  OTHER = "other",
-}
 
 
 
@@ -80,17 +87,19 @@ export interface Employee {
   birthDate?: Date | null;
   skills?: string[] | null;
   photoUrl?: string | null;
-  role?: string | null;
+  role?: ROLE_TYPES | null;
   employeeType?: EmployeeType | null;
-  workType?: WorkType | null;
+  workType?: WorkTypes | null;
+  isJuniorTeamLead?: boolean;
+  isSeniorTeamLead?: boolean;
   position: string | null;
-  agency?: string | null;
+  agency?: Agency | null;
   hireDate: Date | null;
   endDate?: Date | null;
   sickDaysBalance: number;
   annualDaysOff: number;
   vacationDaysBalance: number;
-  leaveType?: string | null;
+  leaveType?: LeaveTypes | null;
   leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
   notes?: string | null;
@@ -142,6 +151,8 @@ export interface CreateEmployeeInterface {
 }
 
 export interface UpdateEmployeeInterface extends CreateEmployeeInterface {
+  isJuniorTeamLead?: boolean;
+  isSeniorTeamLead?: boolean;
   sickDaysBalance?: number;
   vacationDaysBalance?: number;
   annualDaysOff?: number;

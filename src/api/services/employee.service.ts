@@ -50,8 +50,18 @@ export const employeeService = {
   updateEmployee: async (
     id: number,
     data: UpdateEmployeeInterface
-  ): Promise<Employee> => {
-    const response = await employeeApiClient.put<Employee>(`/${id}`, data);
+  ): Promise<{data: Employee, message:string}> => {
+    const response = await employeeApiClient.put<{
+      data: Employee;
+      message: string;
+    }>(`/${id}`, data);
+    return response.data;
+  },
+
+  removeEmployeeFromDepartment: async (
+    id: number
+  ): Promise<{message: string}> => {
+    const response = await employeeApiClient.delete<{message: string}>(`/${id}/department`);
     return response.data;
   },
 };

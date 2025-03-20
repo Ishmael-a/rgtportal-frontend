@@ -15,7 +15,7 @@ import { usePermission } from "@/hooks/use-permission";
 import { Employee, EmployeeType } from "@/types/employee";
 import { Department } from "@/types/department";
 import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
-import {useRemoveEmployeesFromDepartment} from "@/api/query-hooks/department.hooks"
+import {useRemoveEmployeeFromDepartment} from "@/api/query-hooks/employee.hooks"
 
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
@@ -52,7 +52,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     employeeType: "All Employee Type",
     status: "All Status",
   });
-  const removeEmployeesFromDepartment = useRemoveEmployeesFromDepartment();
+  const removeEmployeeFromDepartment = useRemoveEmployeeFromDepartment();
 
   // const {
   //   data: employeeData,
@@ -133,9 +133,9 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
     console.log("Selected DepartmentId",  department.id)
     if (selectedEmployeeId && department.id) {
       try {
-        await removeEmployeesFromDepartment.mutateAsync({
-          id: department.id.toString(), 
-          employeeId: selectedEmployeeId.toString()
+        await removeEmployeeFromDepartment.mutateAsync({
+          id: selectedEmployeeId, 
+          departmentId: department.id,
         });
 
         setDeleteModalOpen(false);
@@ -340,7 +340,7 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
       <ConfirmCancelModal
         isOpen={deleteModalOpen}
         onOpenChange={(open) => {
-          if (!removeEmployeesFromDepartment.isPending) {
+          if (!removeEmployeeFromDepartment.isPending) {
             setDeleteModalOpen(open);
             if (!open) {
               setSelectedEmployeeId(null);
@@ -348,17 +348,18 @@ const DepartmentEmployeeTable: React.FC<DepartmentEmployeeTableProps> = ({
           }
         }}
         title="Remove Employee?"
-        submitText={removeEmployeesFromDepartment.isPending ? "Deleting..." : "Delete"}
-        isSubmitting={removeEmployeesFromDepartment.isPending}
+        className="text-center"
+        submitText={removeEmployeeFromDepartment.isPending ? "Deleting..." : "Delete"}
+        isSubmitting={removeEmployeeFromDepartment.isPending}
         onSubmit={handleSubmit}
         onCancel={() => {
-          if (!removeEmployeesFromDepartment.isPending) {
+          if (!removeEmployeeFromDepartment.isPending) {
             setSelectedEmployeeId(null);
             setDeleteModalOpen(false);
           }
         }}
       >
-        <div className="space-y-2">
+        <div className="space-y-2 ">
           <p className="text-sm text-gray-500">Remove Employee From This Department?</p>
           <p className="text-xs text-gray-400">
             This action cannot be undone

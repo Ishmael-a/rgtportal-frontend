@@ -7,10 +7,13 @@ import EmployeeManagementTableSkeleton from './EmployeeManagementTableSkeleton';
 import {EditEmployeeForm} from './EditEmployeeForm';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
+import {
+  useAllEmployees,
+  useUpdateEmployee
+} from "@/api/query-hooks/employee.hooks";
 import { Employee, EmployeeType } from "@/types/employee"; 
 import {Link} from "react-router-dom"
-
+import {TeamLeadToggle} from "./TeamLeadToggle";
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
    full_time: "FT",
@@ -55,6 +58,9 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = filteredEmployees.slice(startIndex, endIndex);
+
+
+
 
   const {
     data: employeeData,
@@ -112,7 +118,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     'skills': (emp) => emp.skills?.join(', ') || '',
     'ftpt': (emp) => employeeTypeLabels[emp.employeeType as EmployeeType] || '',
     'department': (emp) => emp.department?.name || '',
-    'agency': (emp) => emp.agency || '',
+    'agency': (emp) => emp.agency?.name || '',
     'onLeave': (emp) => isOnLeave(emp.leaveType) ? 'On Leave' : 'Active'
   };
 
@@ -186,11 +192,7 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     }
   }, [employeeData]);
 
-  // Action handlers
-  const handleEdit = (id: number): void => {
-    setSelectedEmployeeId(id);
-    console.log(`Editing employee with ID: ${id}`);
-  };
+
 
   // Define the complete list of columns
   const allColumns: Column[] = [
@@ -199,21 +201,29 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
       header: "Employee Name",
       render: (row) => (
         <Link to={`/hr/manageemployees/employee/${row.id}`}>
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gray-200">
-            {row.photoUrl ? (
-              <img src={row.photoUrl} alt={`${row.firstName} ${row.lastName}`} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-purple-200 text-purple-700">
-                {row.firstName?.charAt(0) || "N/A"}
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full overflow-hidden mr-2 bg-gray-200">
+              {row.photoUrl ? (
+                <img
+                  src={row.photoUrl}
+                  alt={`${row.firstName} ${row.lastName}`}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-purple-200 text-purple-700">
+                  {row.firstName?.charAt(0) || "N/A"}
+                </div>
+              )}
+            </div>
+            <div>
+              <div className="font-medium">
+                {row.firstName} {row.lastName}
               </div>
-            )}
+              <div className="text-xs text-gray-500">
+                {row.user?.role?.name || "N/A"}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="font-medium">{row.firstName} {row.lastName}</div>
-            <div className="text-xs text-gray-500">{row.user?.role?.name || "N/A"}</div>
-          </div>
-        </div>
         </Link>
       ),
     },
@@ -225,7 +235,11 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     {
       key: "birthday",
       header: "Birth Date",
-      render: (row) => <div>{row.birthDate ? new Date(row.birthDate).toLocaleDateString() : "N/A"}</div>,
+      render: (row) => (
+        <div>
+          {row.birthDate ? new Date(row.birthDate).toLocaleDateString() : "N/A"}
+        </div>
+      ),
     },
     {
       key: "email",
@@ -285,7 +299,11 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
     {
       key: "ftpt",
       header: "FT/PT",
-      render: (row) => <div>{employeeTypeLabels[row.employeeType as EmployeeType] || "N/A"}</div>,
+      render: (row) => (
+        <div>
+          {employeeTypeLabels[row.employeeType as EmployeeType] || "N/A"}
+        </div>
+      ),
     },
     {
       key: "department",
@@ -293,9 +311,53 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
       render: (row) => <div>{row.department?.name || "N/A"}</div>,
     },
     {
+      key: "seniorTeamLead",
+      header: "Team Leader",
+      render: (row) => (
+        <TeamLeadToggle employee={row as Employee} isJuniorTeamLead={false} />
+      ),
+    },
+    {
+      key: "juniorTeamLead",
+      header: "Jr. Team Leader",
+      render: (row) => (
+        <TeamLeadToggle employee={row as Employee} isJuniorTeamLead={true} />
+      ),
+    },
+    {
       key: "agency",
       header: "Agency",
-      render: (row) => <div>{row.agency || "N/A"}</div>,
+      render: (row) => <div>{row.agency?.name || "N/A"}</div>,
+    },
+    {
+      key: "invoiceReceived",
+      header: "Got Invoice",
+      render: (row) => (
+        <div className="flex justify-center">
+          {row.agency?.invoiceReceived ? (
+            <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
+              <Check className="text-white" size={16} />
+            </div>
+          ) : (
+            <div className="w-6 h-6 rounded-md bg-gray-300"></div>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "paid",
+      header: "Paid",
+      render: (row) => (
+        <div className="flex justify-center">
+          {row.agency?.paid ? (
+            <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
+              <Check className="text-white" size={16} />
+            </div>
+          ) : (
+            <div className="w-6 h-6 rounded-md bg-gray-300"></div>
+          )}
+        </div>
+      ),
     },
     {
       key: "onLeave",
@@ -332,10 +394,9 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   const actionObj: ActionObject[] = [
     {
       name: "edit",
-      action: (id, _row) => {
-        setSelectedEmployeeId(id as number);
+      action: (id, row) => {
+        setSelectedEmployeeId(row.id as number);
         setIsEditModalOpen(true);
-        console.log(`Editing employee with ID: ${id}`);
       },
     },
   ];

@@ -1,8 +1,32 @@
 import { useState, useEffect } from "react";
 import { GetCountries, GetState } from "react-country-state-city";
 import { Country, State } from "react-country-state-city/dist/esm/types";
-import { WORK_TYPES, EMPLOYEE_TYPES } from "@/constants";
-import { Employee } from "@/types/employee";
+import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
+import { Employee, LeaveType, EmployeeType, RoleType } from "@/types/employee";
+
+
+interface EmployeeFormInitialValues {
+  department: {
+    id: number;
+    name: string;
+  };
+  personalEmail: string;
+  phone: string;
+  employeeType: EmployeeType;
+  roleId: RoleType;
+  leaveType: LeaveType | null;
+  hireDate: Date | null;
+  endDate: Date | null;
+  leaveExplanation: string;
+  notes: string;
+  homeAddress: string;
+  city: string;
+  stateId: string;
+  countryId: number | null;
+  birthDate: Date | null;
+}
+
+
 
 export const useEmployeeForm = (employee: Employee) => {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -40,18 +64,20 @@ export const useEmployeeForm = (employee: Employee) => {
   }, [selectedCountry]);
 
     // Initial form values
-    const initialValues = {
+    const initialValues: EmployeeFormInitialValues = {
       department: {
         id: employee?.department?.id || 0,
         name: employee?.department?.name || "",
       },
       personalEmail: employee?.contactDetails?.personalEmail || "",
       phone: employee?.phone || "",
-      employeeType: employee?.employeeType || EMPLOYEE_TYPES.FULL_TIME,
-      workType: employee?.workType || WORK_TYPES.HYBRID,
+      employeeType: (employee?.employeeType ||
+        EMPLOYEE_TYPES.FULL_TIME) as EmployeeType,
+      roleId: (employee?.user?.role?.id?.toString() ||
+        ROLE_TYPES.EMPLOYEE) as RoleType,
+      leaveType: (employee?.leaveType || null) as LeaveType | null,
       hireDate: employee?.hireDate || null,
       endDate: employee?.endDate || null,
-      leaveType: employee?.leaveType || "",
       leaveExplanation: employee?.leaveExplanation || "",
       notes: employee?.notes || "",
       homeAddress: employee?.contactDetails?.homeAddress || "",

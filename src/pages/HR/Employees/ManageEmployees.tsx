@@ -48,7 +48,6 @@ const {
   isError: isEmployeesError,
   error,
   refetch,
-  isFetching,
 } = useAllEmployees({}, {});
 
 
@@ -69,7 +68,11 @@ const allColumns = [
   { key: "skills", header: "Skills" },
   { key: "ftpt", header: "FT/PT" },
   { key: "department", header: "Department" },
+  { key: "seniorTeamLead", header: "Team Leader" },
+  { key: "juniorTeamLead", header: "Jr. Team Leader" },
   { key: "agency", header: "Agency" },
+  { key: "invoiceReceived", header: "Got Invoice" },
+  { key: "paid", header: "Paid" },
   { key: "onLeave", header: "On Leave" },
   // { key: "actions", header: "Action" },
 ];
@@ -154,7 +157,7 @@ const filteredSearchByFieldOptions = useMemo(
 
 // Render Methods
 const renderEmployeeContent = () => {
-  if (isEmployeesLoading || isFetching) {
+  if (isEmployeesLoading) {
     return viewMode === "table" ? (
       <EmployeesTableSkeleton />
     ) : (

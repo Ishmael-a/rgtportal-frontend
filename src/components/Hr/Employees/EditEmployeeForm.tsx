@@ -55,7 +55,7 @@ import { useEmployeeValidation } from "@/hooks/useEmployeeValidation";
 import { useEmployeeSubmission } from "@/hooks/useEmployeeSubmission";
 import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES  } from "@/constants";
 import { toast } from "@/hooks/use-toast";
-import {Employee} from "@/types/employee"
+import {Employee, LeaveType, EmployeeType, RoleType} from "@/types/employee"
 
 
 
@@ -112,8 +112,8 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
         }}
         title="Edit Employee"
         position="right"
-        size={"full"}
-        contentClassName=" min-w-4xl"
+        size={"xl"}
+        contentClassName=" max-w-xl"
       >
         <Formik
           initialValues={initialValues}
@@ -125,7 +125,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
 
             return (
               <>
-                <FormikForm className="space-x-6 space-y-12 min-w-4xl grid grid-cols-2 my-6 ">
+                <FormikForm className="space-x-6 space-y-12 max-w-xl grid grid-cols-2 my-6 ">
                   {/* Department Field */}
                   <div className="space-y-2">
                     <Label htmlFor="department" className="text-sm font-medium">
@@ -345,12 +345,12 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                     </Field>
                   </div>
 
-                  {/* Work Type Field */}
+                  {/* Role Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="workType" className="text-sm font-medium">
+                    <Label htmlFor="roleId" className="text-sm font-medium">
                       User Type
                     </Label>
-                    <Field name="workType">
+                    <Field name="roleId">
                       {({ field, form, meta }: FieldProps) => (
                         <div className="relative">
                           <Select
@@ -359,11 +359,8 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                             }
                             defaultValue={field.value}
                           >
-                            <SelectTrigger
-                              id="workType"
-                              className="w-full py-6"
-                            >
-                              <SelectValue placeholder="Select work type" />
+                            <SelectTrigger id="roleId" className="w-full py-6">
+                              <SelectValue placeholder="Change User Role" />
                             </SelectTrigger>
                             <SelectContent
                               position="popper"
@@ -782,7 +779,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                       Region/State
                     </Label>
                     <Field name="stateId">
-                      {({  form, meta }: FieldProps) => (
+                      {({ form, meta }: FieldProps) => (
                         <div className="relative">
                           <StateSelect
                             countryid={formikProps.values.countryId as number}
@@ -790,7 +787,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                               form.setFieldValue("stateId", state?.id || null);
                               form.setFieldValue("city", "");
                             }}
-                            value={formikProps.values.stateId || null}
+                            value={formikProps.values.stateId}
                             placeHolder="Select State/Region"
                             containerClassName="w-full shadow-xs rounded-md "
                             inputClassName="w-full border-none rounded-md px-3"

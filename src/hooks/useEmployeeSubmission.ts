@@ -9,6 +9,7 @@ import { RootState } from "@/state/store";
 import { Country, State } from "react-country-state-city/dist/esm/types";
 import { toast } from "@/hooks/use-toast";
 import { getApiErrorMessage } from "@/api/errorHandler";
+import { EMPLOYEE_TYPES, ROLE_TYPES, LEAVE_TYPES } from "@/constants";
 
 
 
@@ -36,46 +37,64 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
         
             // Transform form values to UpdateEmployeeInterface
         const updateEmployeeDto: UpdateEmployeeInterface = {
-            user: { id: employee?.user?.id || 0 },
-            firstName: values.firstName || employee?.firstName,
-            lastName: values.lastName || employee?.lastName,
-            phone: values.phone || employee?.phone,
-            departmentId: values.department?.id || employee?.departmentId,
-            department:
-            departments.find(
+          user: { id: employee?.user?.id || 0 },
+          firstName: values.firstName || employee?.firstName,
+          lastName: values.lastName || employee?.lastName,
+          phone: values.phone || employee?.phone,
+          departmentId: values.department?.id || employee?.departmentId,
+          department: values.department?.id
+            ? departments.find(
                 (department) => department.id === values.department?.id
-            ) || employee?.department,
-            position: values.position || employee?.position,
-            hireDate: values.hireDate || employee?.hireDate,
-            endDate: values.endDate || employee?.endDate,
-            employeeType:
-            (values.employeeType as EmployeeType) || employee?.employeeType,
-            workType: (values.workType as WorkType) || employee?.workType,
-            leaveType: (values.leaveType as LeaveType) || employee?.leaveType,
-            leaveExplanation: values.leaveExplanation || employee?.leaveExplanation,
-            notes: values.notes || employee?.notes,
-            contactDetails:
+              )
+            : employee?.department,
+          position: values.position || employee?.position,
+          hireDate: values.hireDate || employee?.hireDate,
+          endDate: values.endDate || employee?.endDate,
+          employeeType: (() => {
+            // Type guard to ensure correct type
+            const type = values.employeeType || employee?.employeeType;
+            return Object.values(EMPLOYEE_TYPES).includes(type as EmployeeType)
+              ? (type as EmployeeType)
+              : EMPLOYEE_TYPES.FULL_TIME;
+          })(),
+          roleId: employee?.user?.role?.id
+            ? Number(employee.user.role.id)
+            : Number(ROLE_TYPES.EMPLOYEE),
+          leaveType: (() => {
+            // Type guard to ensure correct type
+            const type = values.leaveType || employee?.leaveType;
+            return type &&
+              Object.values(LEAVE_TYPES).includes(type as LeaveType)
+              ? (type as LeaveType)
+              : undefined;
+          })(),
+          leaveExplanation:
+            values.leaveExplanation || employee?.leaveExplanation,
+          notes: values.notes || employee?.notes,
+          contactDetails:
             values.personalEmail ||
             values.homeAddress ||
             values.city ||
             values.stateId ||
             values.countryId
-                ? {
-                    personalEmail:
-                    values.personalEmail || employee?.contactDetails?.personalEmail,
-                    homeAddress:
+              ? {
+                  personalEmail:
+                    values.personalEmail ||
+                    employee?.contactDetails?.personalEmail,
+                  homeAddress:
                     values.homeAddress || employee?.contactDetails?.homeAddress,
-                    country: selectedCountry?.name || "",
-                    region: selectedState?.name || "",
-                    city: values.city,
+                  country: selectedCountry?.name || "",
+                  region: selectedState?.name || "",
+                  city: values.city,
                 }
-                : employee?.contactDetails,
-            birthDate: values.birthDate || employee?.birthDate,
-            sickDaysBalance: employee?.sickDaysBalance || employee?.sickDaysBalance,
-            vacationDaysBalance:
+              : employee?.contactDetails,
+          birthDate: values.birthDate || employee?.birthDate,
+          sickDaysBalance:
+            employee?.sickDaysBalance || employee?.sickDaysBalance,
+          vacationDaysBalance:
             employee?.vacationDaysBalance || employee?.vacationDaysBalance,
-            annualDaysOff: employee?.annualDaysOff || employee?.annualDaysOff,
-            skills: values?.skills || employee?.skills,
+          annualDaysOff: employee?.annualDaysOff || employee?.annualDaysOff,
+          skills: values?.skills || employee?.skills,
         };
     
         // Call the update mutation
