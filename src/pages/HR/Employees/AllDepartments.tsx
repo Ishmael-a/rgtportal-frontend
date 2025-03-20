@@ -21,7 +21,7 @@ import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
 import { useCreateDepartment } from "@/api/query-hooks/department.hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
-import ProjectCard from "@/components/DepartmentCard";
+import DepartmentCard from "@/components/DepartmentCard";
 import NoDepartmentsPage from "../../common/NoDepartmentsPage";
 
 const NewDepSchema = Yup.object({
@@ -131,9 +131,9 @@ export const AllDepartments = () => {
           {filteredDepartments.length > 0 ? (
             <div className="grid grid-cols-3 gap-4">
               {filteredDepartments.map((department) => (
-                <ProjectCard
+                <DepartmentCard
                   key={department.id}
-                  id={department.id}
+                  id={`department/${department.id}`}
                   // path={`department/${department.id}`}
                   name={department.name}
                   employees={department.employees ?? []}
@@ -212,7 +212,9 @@ export const AllDepartments = () => {
                     type="text"
                     placeholder="Enter department name"
                     {...field}
-                    className={`w-full py-6 px-4 ${touched.name && errors.name ? "border-red-500" : ""}`}
+                    className={`w-full py-6 px-4 ${
+                      touched.name && errors.name ? "border-red-500" : ""
+                    }`}
                   />
                   <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                 </div>
@@ -237,7 +239,11 @@ export const AllDepartments = () => {
                     id="description"
                     placeholder="Enter department description"
                     {...field}
-                    className={`w-full min-h-[100px] px-6 py-2 ${touched.description && errors.description ? "border-red-500" : ""}`}
+                    className={`w-full min-h-[100px] px-6 py-2 ${
+                      touched.description && errors.description
+                        ? "border-red-500"
+                        : ""
+                    }`}
                   />
                   <FileText className="absolute right-3 top-2 h-5 w-5 text-gray-500" />
                 </div>
