@@ -1,22 +1,38 @@
-import AvtrBlock from "./AvtrBlock";
-import FeedActions from "./feedActions";
-import CommentBlck from "./CommentBlck";
-import { MoreVertical } from "lucide-react";
-import Media from "./Media";
+import { useInteraction } from "@/hooks/use-interaction";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { IFeed } from "@/types/employee";
-import { useInteraction } from "@/hooks/use-interaction";
-import Comments from "./Feed/Comments";
 import { useState } from "react";
+import Slider from "react-slick";
+import Media from "./Media";
+import PostSkeleton from "./common/PostSkeleton";
+import AvtrBlock from "./AvtrBlock";
+import FeedActions from "./feedActions";
+import { MoreVertical, X } from "lucide-react";
+import CommentsModal from "./common/CommentsModal";
+import { SampleNextArrow, SamplePrevArrow } from "./Feed/PaginationArrows";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const Post: React.FC<IFeed> = ({ post }) => {
   const { currentUser } = useAuthContextProvider();
-  const { stats } = useInteraction(post?.id);
+  const { stats, isLoading } = useInteraction(post?.id);
 
   const [isComments, setIsComments] = useState(false);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [selectedMediaUrl, setSelectedMediaUrl] = useState<string | null>(null);
 
   const handleIsComments = (val: boolean) => {
     setIsComments(val);
+  };
+
+  const openMediaModal = (url: string) => {
+    setSelectedMediaUrl(url);
+    setIsMediaModalOpen(true);
+  };
+
+  const closeMediaModal = () => {
+    setSelectedMediaUrl(null);
+    setIsMediaModalOpen(false);
   };
 
   const formatText = (text: string | undefined) => {
@@ -38,120 +54,121 @@ const Post: React.FC<IFeed> = ({ post }) => {
   const renderMedia = () => {
     if (!post?.media || post?.media.length === 0) return null;
 
-    if (post?.media.length === 1) {
-      // Single media item takes full width
-      return (
-        <div className="w-full">
-          <Media url={post.media[0]} />
+    const settings = {
+      dots: true,
+      infinite: false,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      nextArrow: <SampleNextArrow />,
+      prevArrow: <SamplePrevArrow />,
+      customPaging: () => (
+        <div className="group flex items-center justify-center w-fit rounded-full">
+          <div className="w-[10px] absolute -top-7 h-[10px] group-[.slick-inactive]:bg-white rounded-full transition-all duration-300 ease-in-out hover:bg-gray-400 group-[.slick-active]:bg-[#6418C3]"></div>
         </div>
-      );
-    } else if (post.media.length === 2) {
-      // Two items side by side
-      return (
-        <div className="grid grid-cols-2 gap-2">
+      ),
+    };
+
+    return (
+      <div className="relative">
+        <Slider {...settings}>
           {post.media.map((item, index) => (
-            <Media key={index} url={item} />
-          ))}
-        </div>
-      );
-    } else if (post.media.length === 3) {
-      // First Media takes half width, other two stacked in second column
-      return (
-        <div className="grid grid-cols-2 gap-2">
-          <div className="row-span-2">
-            <Media url={post.media[0]} />
-          </div>
-          <div>
-            <Media url={post.media[1]} />
-          </div>
-          <div>
-            <Media url={post.media[2]} />
-          </div>
-        </div>
-      );
-    } else if (post.media.length === 4) {
-      // Grid of 2x2
-      return (
-        <div className="grid grid-cols-2 gap-2">
-          {post.media.map((item, index) => (
-            <Media key={index} url={item} />
-          ))}
-        </div>
-      );
-    } else {
-      //5+ Medias, show first 4 and indicate there are more
-      return (
-        <div className="grid grid-cols-2 gap-2">
-          {post?.media.slice(0, 4).map((item, index) => (
-            <div key={index} className="relative">
-              <Media url={item} />
-              {index === 3 && post?.media && post.media.length > 4 && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">
-                    +{post.media.length - 4}
-                  </span>
-                </div>
-              )}
+            <div key={index}>
+              <Media
+                url={item}
+                className="h-72"
+                onClick={() => openMediaModal(item)}
+              />
             </div>
           ))}
-        </div>
-      );
-    }
+        </Slider>
+      </div>
+    );
   };
-  let recentlyPostedComment;
 
-  if (stats.comments.length > 0) {
-    console.log("commentsShow:", stats.comments);
-    recentlyPostedComment = stats.comments
-      .filter((item) => item.author.id === currentUser?.employee?.id)
-      .sort(
-        (a, b) =>
-          new Date(b?.createdAt).getTime() - new Date(a?.createdAt).getTime()
-      )[0];
-    console.log("recentlyPostedComment:", recentlyPostedComment);
+  if (isLoading) {
+    return <PostSkeleton />;
   }
 
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
-      <section className="w-full border-b py-3 flex justify-between">
-        <AvtrBlock user={currentUser} />
-        <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
-      </section>
+      {post && currentUser && (
+        <div>
+          <section className="w-full border-b py-3 flex justify-between">
+            <AvtrBlock
+              firstName={post.author?.firstName as string}
+              lastName={post.author?.lastName as string}
+              profileImage={post.author?.profileImage as string}
+            />
+            <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
+          </section>
 
-      <section className="pt-3 space-y-3">
-        <p className="text-sm">{formatText(post?.content)}</p>
-        <div className="">{renderMedia()}</div>
-        {post && currentUser && (
-          <FeedActions
-            postId={post.id}
+          <section className="pt-3 space-y-3">
+            <p className="text-sm">{formatText(post?.content)}</p>
+            <div className="">{renderMedia()}</div>
+            <FeedActions
+              postId={post.id}
+              userPrevLiked={
+                post.likes.find(
+                  (item) => item.employeeId === currentUser.employee.id
+                )?.isLike
+              }
+              onComments={handleIsComments}
+            />
+          </section>
+
+          {/* Render the CommentsModal */}
+          <CommentsModal
+            isOpen={isComments}
+            onClose={() => setIsComments(false)}
+            comments={stats.comments}
+            postId={post?.id}
             userPrevLiked={
-              post.likes.find(
-                (item) => item.employeeId === currentUser.employee.id
+              post?.likes.find(
+                (item) => item.employeeId === currentUser?.employee.id
               )?.isLike
             }
             onComments={handleIsComments}
+            images={post.media}
           />
-        )}
-      </section>
-
-      <div className="hidden sm:block">
-        <CommentBlck user={currentUser} postId={post?.id} />
-      </div>
-      <div className="sm:hidden pt-2 border-t">
-        <p className="text-sm font-medium text-rgtpink">Reply Post</p>
-      </div>
-
-      <section className="space-y-6">
-        <div className="w-full border-t mt-5 pt-4 flex gap-3">
-          {recentlyPostedComment && <Comments {...recentlyPostedComment} />}
         </div>
-        {isComments &&
-          stats.comments.map((item, index) => (
-            <div className="w-full flex gap-3">
-              <Comments {...item} key={index} />
-            </div>
-          ))}
-      </section>
+      )}
+
+      {/* Render the Media Modal */}
+      {isMediaModalOpen && selectedMediaUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+          onClick={closeMediaModal}
+        >
+          <div className="relative flex justify-center max-w-[80vw] sm:max-w-[50vw] sm:max-h-[70vh]">
+            {selectedMediaUrl.endsWith(".mp4") ||
+            selectedMediaUrl.endsWith(".mov") ||
+            selectedMediaUrl.includes("video") ? (
+              <video
+                controls
+                className="w-full h-auto rounded-md"
+                onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking video
+              >
+                <source src={selectedMediaUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <img
+                src={selectedMediaUrl}
+                alt="Media"
+                className="w-full h-auto rounded-md object-cover"
+                onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking image
+              />
+            )}
+            <button
+              className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-200 transition-colors duration-300 ease-in"
+              onClick={closeMediaModal}
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -95,7 +95,7 @@ export const NavDropdown = ({
                   transition-all duration-300 font-medium
                   ${
                     isActive
-                      ? "bg-gray-100 text-purple-600"
+                      ? " text-purple-600"
                       : "text-gray-600 hover:bg-gray-50"
                   }
                 `}

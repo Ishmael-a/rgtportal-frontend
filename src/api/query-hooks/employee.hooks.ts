@@ -1,7 +1,7 @@
 import { useRbacQuery, usePrefetchWithPermission } from '@/features/data-access/rbacQuery';
 import { employeeService } from '../services/employee.service';
 import { useMutation, useQueryClient, UseQueryOptions, QueryKey} from '@tanstack/react-query';
-import {Employee} from "@/types/employee"
+import { Employee, UpdateEmployeeInterface } from "@/types/employee";
 import { toast } from '@/hooks/use-toast';
 import { useMemo } from 'react';
 
@@ -24,12 +24,15 @@ export const useAllEmployees = (
     "employeeRecords",
     "view",
     ["employees", stableParams],
-    () => employeeService.getAllEmployees(stableParams),
+    async () => {
+      const response = await employeeService.getAllEmployees();
+      return response; 
+    },
     {
-        ...options,
-        placeholderData: (previousData) => {
-            return previousData;
-        },
+      ...options,
+      placeholderData: (previousData) => {
+          return previousData;
+      },
     }
   );
 };
@@ -46,26 +49,59 @@ export const useEmployeeDetails = (id: string) => {
   );
 };
 
+
+
 export const useUpdateEmployee = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Employee> }) =>
+    mutationFn: ({ id, data }: { id: number; data: UpdateEmployeeInterface }) =>
       employeeService.updateEmployee(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["employee", variables.id] });
+    onSuccess: (result, variables) => {
+      // queryClient.setQueryData(["employees",{ id: variables.id}], result.data);
       queryClient.invalidateQueries({ queryKey: ["employees"] });
-    toast({
-      title: "Success",
-      description: "Employee updated successfully",
-    });
+
+      toast({
+        title: "Success",
+        description: "Employee updated successfully",
+      });
     },
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
-      })
+      });
+    },
+  });
+};
+
+
+
+
+
+export const useRemoveEmployeeFromDepartment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, departmentId }: { id: number, departmentId: number }) =>
+      employeeService.removeEmployeeFromDepartment(id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["department", variables.departmentId] });
+      queryClient.invalidateQueries({ queryKey: ["employee", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["departments"] });
+      toast({
+        title: "Success",
+        description: "Employee removed from department successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 };

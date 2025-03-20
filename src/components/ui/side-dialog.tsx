@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const sideModalVariants = cva(
@@ -82,32 +81,41 @@ export const SideModal = ({
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         {showOverlay && (
-         <Dialog.Overlay
-          className={`fixed inset-0 bg-black/30 z-40 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
-            isOpen ? "opacity-100" : "opacity-0"
-          }`}
-          style={{
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)", 
-          }}
-          onClick={() => closeOnClickOutside && onOpenChange(false)}
-        />
-
+          <Dialog.Overlay
+            className={`fixed inset-0 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${overlayClassName} ${
+              isOpen ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              zIndex: 170,
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+            }}
+            onClick={() => closeOnClickOutside && onOpenChange(false)}
+          />
         )}
 
         <Dialog.Content
           className={`${sideModalVariants({ position, size })} ${className}`}
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
-          onInteractOutside={(_e) => closeOnClickOutside && onOpenChange(false)}
+          onInteractOutside={() => closeOnClickOutside && onOpenChange(false)}
         >
-          {(title || showCloseButton) && (
+          {showCloseButton && (
+            <Dialog.Close asChild>
+              <img
+                src="/Down 2.svg"
+                className="-rotate-90 bg-white p-2 rounded-full shadow-neutral-400 shadow-lg top-10 border hover:bg-slate-100 transition-all duration-300 ease-in cursor-pointer"
+              />
+            </Dialog.Close>
+          )}
+
+          {title && (
             <div
-              className={`flex justify-between items-center p-4 border-b ${headerClassName}`}
+              className={`flex justify-between items-center p-4 ${headerClassName}`}
             >
               <div>
                 {title && (
-                  <Dialog.Title className="text-lg font-semibold text-gray-900">
+                  <Dialog.Title className="text-lg font-semibold">
                     {title}
                   </Dialog.Title>
                 )}
@@ -117,18 +125,10 @@ export const SideModal = ({
                   </Dialog.Description>
                 )}
               </div>
-
-              {showCloseButton && (
-                <Dialog.Close asChild>
-                  <button className="rounded-full p-1 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </Dialog.Close>
-              )}
             </div>
           )}
 
-          <div className={`p-4 ${contentClassName}`}>{children}</div>
+          <div className={`${contentClassName}`}>{children}</div>
 
           {footerContent && (
             <div className={`p-4 border-t ${footerClassName}`}>

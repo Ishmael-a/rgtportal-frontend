@@ -1,10 +1,13 @@
 import Header from "@/components/common/Header";
-import ProjectCard from "@/components/ProjectCard";
+import DepartmentCard from "@/components/DepartmentCard";
 import { Input } from "@/components/ui/input";
-import { projectCards } from "@/constants";
+import { RootState } from "@/state/store";
 import { Search } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const AllDepartments = () => {
+  const { departments } = useSelector((state: RootState) => state.sharedState);
+
   return (
     <main>
       <Header
@@ -21,8 +24,12 @@ const AllDepartments = () => {
       </Header>
 
       <section className="flex flex-wrap gap-6 pt-10">
-        {projectCards.map((item, index) => (
-          <ProjectCard path={''} name={item.name} members={item.members} id={index} />
+        {departments.map((item, index) => (
+          <DepartmentCard
+            name={item.name}
+            employees={item.employees}
+            id={index}
+          />
         ))}
       </section>
     </main>

@@ -7,9 +7,6 @@ interface RoleProps {
 }
 
 const WithRole: React.FC<RoleProps> = ({ roles, userRole, children }) => {
-  console.log("userRole:", userRole)
-  console.log("roles:", roles)
-
   if (roles.includes(userRole.toLowerCase())) return <>{children}</>;
   else return null;
 };

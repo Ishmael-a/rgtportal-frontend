@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IEventList } from "./components/EventList";
-import {
-  IAnnouncementCard,
-  IProjectType,
-  IProjectMembers,
-  EmployeeCardType,
-} from "./types/employee";
+import { IAnnouncementCard, EmployeeCardType } from "./types/employee";
 import { Project } from "./types/project";
 import { Column } from "./types/tables";
 
@@ -13,58 +8,58 @@ export enum ParticipantStatus {
   INVITED = "invited",
   ACCEPTED = "accepted",
   DECLINED = "declined",
-  MAYBE = "maybe"
+  MAYBE = "maybe",
 }
 export enum EventType {
   BIRTHDAY = "birthday",
   HOLIDAY = "holiday",
-  ANNOUNCEMENT = "announcement", 
+  ANNOUNCEMENT = "announcement",
   TRAINING = "training",
-  OTHER = "other"
+  OTHER = "other",
 }
 
-export const avtrDets: Partial<IProjectMembers>[] = [
-  {
-    name: "Annette Black",
-    role: "President Of Americas",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-  },
-  {
-    name: "Annette Black",
-    role: "President Of Americas",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-  },
-  {
-    name: "Annette Black",
-    role: "President Of Americas",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-  },
-  {
-    name: "Annette Black",
-    role: "President Of Americas",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-  },
-  {
-    name: "Annette Black",
-    role: "President Of Americas",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-  },
-];
+// export const avtrDets: Partial<IDepartmentMembers>[] = [
+//   {
+//     name: "Annette Black",
+//     role: "President Of Americas",
+//     avtr: {
+//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+//       fallBack: "AB",
+//     },
+//   },
+//   {
+//     name: "Annette Black",
+//     role: "President Of Americas",
+//     avtr: {
+//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+//       fallBack: "AB",
+//     },
+//   },
+//   {
+//     name: "Annette Black",
+//     role: "President Of Americas",
+//     avtr: {
+//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+//       fallBack: "AB",
+//     },
+//   },
+//   {
+//     name: "Annette Black",
+//     role: "President Of Americas",
+//     avtr: {
+//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+//       fallBack: "AB",
+//     },
+//   },
+//   {
+//     name: "Annette Black",
+//     role: "President Of Americas",
+//     avtr: {
+//       url: "https://randomuser.me/api/portraits/med/women/75.jpg",
+//       fallBack: "AB",
+//     },
+//   },
+// ];
 
 export const postText1 =
   "Lorem ipsum dolor sit amet, #consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui. Nulla nec purus feugiat, molestie #ipsum et, consequat nibh. Etiam non #elit dui.";
@@ -122,17 +117,15 @@ export const eventList: IEventList[] = [
   },
 ];
 
-
 export interface IEvent {
   id: string;
   title: string;
   date: Date;
   startTime?: string;
   endTime?: string;
-  type: 'exam' | 'meeting' | 'evaluation' | 'holiday' | 'birthday';
+  type: "exam" | "meeting" | "evaluation" | "holiday" | "birthday";
   color?: string;
 }
-
 
 export interface IAnnouncementItem {
   title: string;
@@ -143,58 +136,58 @@ export interface IAnnouncementItem {
 }
 
 export const events: IEvent[] = [
-    {
-      id: '1',
-      title: 'Graphic Design Exam',
-      date: new Date(2025, 0, 2), // January 2, 2025
-      startTime: '08:00',
-      endTime: '10:00',
-      type: 'exam'
-    },
-    {
-      id: '2',
-      title: 'Meeting with Candidate',
-      date: new Date(2025, 0, 11), // January 11, 2025
-      startTime: '08:00',
-      endTime: '10:00',
-      type: 'meeting'
-    },
-    {
-      id: '3',
-      title: 'Evaluate',
-      date: new Date(2025, 0, 15), // January 15, 2025
-      startTime: '08:00',
-      endTime: '10:00',
-      type: 'evaluation'
-    },
-    {
-      id: '4',
-      title: 'Web Design Exam',
-      date: new Date(2025, 0, 25), // January 25, 2025
-      startTime: '08:00',
-      endTime: '10:00',
-      type: 'exam'
-    }
-  ];
-  
-  // Sample announcements
-  export const hrannouncements: IAnnouncementItem[] = [
-    {
-      title: "Independence Day",
-      date: new Date(2025, 2, 6), // March 6, 2025
-      description: "National holiday"
-    },
-    {
-      title: "Group Meetup",
-      date: new Date(2025, 3, 25), // April 25, 2025
-      startTime: "14:00",
-      endTime: "16:00"
-    },
-    {
-      title: "Fatimah's Birthday",
-      date: new Date(2025, 5, 25) // June 25, 2025
-    }
-  ];
+  {
+    id: "1",
+    title: "Graphic Design Exam",
+    date: new Date(2025, 0, 2), // January 2, 2025
+    startTime: "08:00",
+    endTime: "10:00",
+    type: "exam",
+  },
+  {
+    id: "2",
+    title: "Meeting with Candidate",
+    date: new Date(2025, 0, 11), // January 11, 2025
+    startTime: "08:00",
+    endTime: "10:00",
+    type: "meeting",
+  },
+  {
+    id: "3",
+    title: "Evaluate",
+    date: new Date(2025, 0, 15), // January 15, 2025
+    startTime: "08:00",
+    endTime: "10:00",
+    type: "evaluation",
+  },
+  {
+    id: "4",
+    title: "Web Design Exam",
+    date: new Date(2025, 0, 25), // January 25, 2025
+    startTime: "08:00",
+    endTime: "10:00",
+    type: "exam",
+  },
+];
+
+// Sample announcements
+export const hrannouncements: IAnnouncementItem[] = [
+  {
+    title: "Independence Day",
+    date: new Date(2025, 2, 6), // March 6, 2025
+    description: "National holiday",
+  },
+  {
+    title: "Group Meetup",
+    date: new Date(2025, 3, 25), // April 25, 2025
+    startTime: "14:00",
+    endTime: "16:00",
+  },
+  {
+    title: "Fatimah's Birthday",
+    date: new Date(2025, 5, 25), // June 25, 2025
+  },
+];
 
 export const announcements: IAnnouncementCard[] = [
   {
@@ -223,208 +216,56 @@ export const announcements: IAnnouncementCard[] = [
   },
 ];
 
-export const recognees = [
-  {
-    name: "Bernard Parry",
-    project: "Lauder",
-  },
-  {
-    name: "Yusif Ishmael",
-    project: "RGT Portal",
-  },
-  {
-    name: "Simon Boateng",
-    project: "MediBoard",
-  },
-  {
-    name: "Bernard Parry",
-    project: "Lauder",
-  },
-  {
-    name: "Yusif Ishmael",
-    project: "RGT Portal",
-  },
-  {
-    name: "Simon Boateng",
-    project: "MediBoard",
-  },
-];
-
 const imgSrc = "https://randomuser.me/api/portraits/med/women/75.jpg";
 
-export const employeeCards:EmployeeCardType[] = [
-    {
-      id: '1',
-      name: 'Samantha William',
-      position: 'Web Developer',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    },
-    {
-      id: '2',
-      name: 'Johanna',
-      position: 'UI Designer',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    },
-    {
-      id: '3',
-      name: 'Frans Ferdinand',
-      position: 'Translator',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    },
-    {
-      id: '4',
-      name: 'Michael Black',
-      position: 'English Teacher',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    },
-    {
-      id: '5',
-      name: 'Jordy Ahmad',
-      position: 'Web Developer',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    },
-    {
-      id: '6',
-      name: 'Kimmy Yam',
-      position: 'Web Developer',
-      phone: '+12 345 6789 0',
-      email: 'email@mail.com',
-      imgSrc: imgSrc
-    }
-  ];
-
-const membersArray = [
+export const employeeCards: EmployeeCardType[] = [
   {
-    id: 1,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "Design",
-    role: "UI/UX",
+    id: "1",
+    name: "Samantha William",
+    position: "Web Developer",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
   {
-    id: 2,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "FullStack",
-    role: "FE",
+    id: "2",
+    name: "Johanna",
+    position: "UI Designer",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
   {
-    id: 3,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "DevOps",
-    role: "AWS",
+    id: "3",
+    name: "Frans Ferdinand",
+    position: "Translator",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
   {
-    id: 4,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "AI",
-    role: "LLM",
+    id: "4",
+    name: "Michael Black",
+    position: "English Teacher",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
   {
-    id: 5,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "AI",
-    role: "Data Analysis",
+    id: "5",
+    name: "Jordy Ahmad",
+    position: "Web Developer",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
   {
-    id: 6,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "FullStack",
-    role: "BE",
-  },
-  {
-    id: 7,
-    name: "Enchill Beckham",
-    avtr: {
-      url: "https://randomuser.me/api/portraits/med/women/75.jpg",
-      fallBack: "AB",
-    },
-    department: "QA",
-    role: "QA",
-  },
-];
-
-// for all project page
-export const projectCards: IProjectType[] = [
-  {
-    id: 0,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 1,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 2,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 3,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 4,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 5,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 6,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
-  },
-  {
-    id: 7,
-    name: "Design",
-    leadName: "Razak Wasiu",
-    members: membersArray,
+    id: "6",
+    name: "Kimmy Yam",
+    position: "Web Developer",
+    phone: "+12 345 6789 0",
+    email: "email@mail.com",
+    imgSrc: imgSrc,
   },
 ];
 
@@ -456,20 +297,18 @@ export const timeOffDummy = [
 ];
 
 export const timeOffTableColumns: Column[] = [
-  // { key: "startDate", header: "From" },
-  // { key: "endDate", header: "To" },
   { key: "total", header: "Total" },
   { key: "reason", header: "Reason" },
   {
     key: "status",
     header: "Status",
     cellClassName: (row: Record<string, any>) => {
-      const status = row.status; // Access the status value from the row
-      return `${
+      const status = row.status.toLowerCase();
+      return `py-3 text-center ${
         status === "pending"
-          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md"
           : status === "approved" || status === "manager_approved"
-          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
+          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md "
           : status === "declined" || status === "manager_declined"
           ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
           : ""
@@ -480,18 +319,17 @@ export const timeOffTableColumns: Column[] = [
     key: "type",
     header: "Type",
     cellClassName: (row: Record<string, any>) => {
-      const type = row.type; // Access the type value from the row
-      return `${
+      const type = row.type.toLowerCase();
+      return `py-3 text-center ${
         type === "vacation"
-          ? "font-semibold text-[#7ABB9E]  bg-[#E5F6EF] rounded-md w-fit"
+          ? "font-semibold text-[#6418C3] bg-[#C9ADFF] rounded-md"
           : type === "sick"
-          ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md"
           : ""
       }`;
     },
   },
 ];
-
 
 export interface timeOffData {
   id?: number;
@@ -501,63 +339,61 @@ export interface timeOffData {
   to: string;
   total: string;
   reason: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: "pending" | "approved" | "rejected";
 }
 
-
-export const timeOffManagementData:timeOffData[] = [
+export const timeOffManagementData: timeOffData[] = [
   {
     id: 1,
-    employeeName: 'Erdil Beckman',
-    email: 'erdil.beckman@example.com',
-    from: '01 Mar 2023',
-    to: '03 Mar 2023',
-    total: '3 Days',
-    reason: 'Engagement',
-    status: 'pending'
+    employeeName: "Erdil Beckman",
+    email: "erdil.beckman@example.com",
+    from: "01 Mar 2023",
+    to: "03 Mar 2023",
+    total: "3 Days",
+    reason: "Engagement",
+    status: "pending",
   },
   {
     id: 2,
-    employeeName: 'Ben Barker',
-    email: 'ben.barker@example.com',
-    from: '01 Mar 2023',
-    to: '02 Mar 2023',
-    total: '1 Day',
-    reason: 'Unwell',
-    status: 'pending'
+    employeeName: "Ben Barker",
+    email: "ben.barker@example.com",
+    from: "01 Mar 2023",
+    to: "02 Mar 2023",
+    total: "1 Day",
+    reason: "Unwell",
+    status: "pending",
   },
   {
     id: 3,
-    employeeName: 'Eddy Goell',
-    email: 'eddy.goell@example.com',
-    from: '01 Mar 2023',
-    to: '04 Mar 2023',
-    total: '4 Days',
-    reason: 'Emergency',
-    status: 'pending'
+    employeeName: "Eddy Goell",
+    email: "eddy.goell@example.com",
+    from: "01 Mar 2023",
+    to: "04 Mar 2023",
+    total: "4 Days",
+    reason: "Emergency",
+    status: "pending",
   },
   {
     id: 4,
-    employeeName: 'Carmelo Keen',
-    email: 'carmelo.keen@example.com',
-    from: '01 Mar 2023',
-    to: '04 Mar 2023',
-    total: '1 Day',
-    reason: 'Emergency',
-    status: 'pending'
+    employeeName: "Carmelo Keen",
+    email: "carmelo.keen@example.com",
+    from: "01 Mar 2023",
+    to: "04 Mar 2023",
+    total: "1 Day",
+    reason: "Emergency",
+    status: "pending",
   },
   {
     id: 5,
-    employeeName: 'Anthony Daily',
-    email: 'anthony.daily@example.com',
-    from: '01 Mar 2023',
-    to: '04 Mar 2023',
-    total: '4 Days',
-    reason: 'Emergency',
-    status: 'pending'
-  }
+    employeeName: "Anthony Daily",
+    email: "anthony.daily@example.com",
+    from: "01 Mar 2023",
+    to: "04 Mar 2023",
+    total: "4 Days",
+    reason: "Emergency",
+    status: "pending",
+  },
 ];
-
 
 export const dummyProjects: Project[] = [
   {
@@ -574,7 +410,7 @@ export const dummyProjects: Project[] = [
       lastName: "Doe",
       // ... other employee fields
     },
-    assignments: []
+    assignments: [],
   },
   {
     id: 2,
@@ -590,7 +426,7 @@ export const dummyProjects: Project[] = [
       lastName: "Smith",
       // ... other employee fields
     },
-    assignments: []
+    assignments: [],
   },
   {
     id: 3,
@@ -606,6 +442,41 @@ export const dummyProjects: Project[] = [
       lastName: "Johnson",
       // ... other employee fields
     },
-    assignments: []
-  }
+    assignments: [],
+  },
 ];
+
+
+export const EMPLOYEE_TYPES = {
+  FULL_TIME: "full_time",
+  PART_TIME: "part_time",
+  CONTRACTOR: "contractor",
+  NSP: "nsp",
+} as const;
+
+export const WORK_TYPES = {
+  HYBRID: "hybrid",
+  REMOTE: "remote",
+} as const;
+
+export const LEAVE_TYPES = {
+  QUIT: "quit",
+  LAYOFF: "layoff",
+  DISMISSED: "dismissed",
+  OTHER: "other",
+} as const;
+
+export const ROLE_TYPES = {
+  EMPLOYEE: "1",
+  HR: "2",
+  MANAGER: "3",
+  ADMIN: "4",
+  MARKETER: "5",
+} as const;
+
+export const LeaveType = {
+  QUIT: "quit",
+  LAYOFF: "layoff",
+  DISMISSED: "dismissed",
+  OTHER: "other",
+} as const;

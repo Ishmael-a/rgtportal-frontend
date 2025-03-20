@@ -11,7 +11,7 @@ const AnnouncementCard: React.FC<IAnnouncementCard> = ({ date, title }) => {
   const dayOfWeek = date.toDateString().split(" ")[0];
   console.log("day, time:", day, time, dayOfWeek);
   return (
-    <section className="flex bg-[#F6F6F9] p-2 sm:w-[174px] space-x-3 w-full">
+    <section className="flex bg-[#F6F6F9] space-x-3 w-[177px] rounded-[6px]">
       <div className=" bg-[#E328AF] text-white p-3 rounded-md flex flex-col items-center justify-center text-sm">
         <p>{dayOfWeek}</p>
         <p>{day}</p>

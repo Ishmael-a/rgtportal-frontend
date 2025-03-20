@@ -1,11 +1,14 @@
-const MessageIcon: React.FC<IconTypes> = ({ color }) => {
+import { IconTypes } from "./types";
+
+const MessageIcon: React.FC<IconTypes> = ({ color, size = 31, fill, className }) => {
   return (
     <svg
-      width="31"
-      height="32"
+      width={size}
+      height={size}
       viewBox="0 0 31 32"
-      fill={color ?? "#706D8A"}
+      fill={fill ?? color ?? "#706D8A"}
       xmlns="http://www.w3.org/2000/svg"
+      className={`${className}`}
     >
       <path
         fill-rule="evenodd"
