@@ -134,7 +134,6 @@ export const AllDepartments = () => {
                 <DepartmentCard
                   key={department.id}
                   id={`department/${department.id}`}
-                  // path={`department/${department.id}`}
                   name={department.name}
                   employees={department.employees ?? []}
                   includeBgImg={true}
