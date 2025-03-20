@@ -75,7 +75,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
         (state: RootState) => state.sharedState
     );
     const { data: employeeData, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
-    const employee = employeeData?.data|| {} as Employee;
+    const employee = employeeData || {} as Employee;
     const { validationSchema } = useEmployeeValidation();
 
     const { 
