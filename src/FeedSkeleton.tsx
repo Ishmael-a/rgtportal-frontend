@@ -22,14 +22,7 @@ export const FeedSkeleton = () => {
 
         {/* Posts Section Skeleton */}
         <div className="space-y-7">
-          {/* Create Post Skeleton */}
-          {/* <div className="p-4 rounded-lg bg-muted space-y-3">
-            <Skeleton className="h-10 w-full" />
-            <div className="flex gap-2">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-24" />
-            </div>
-          </div> */}
+          
 
           {/* Feed Items Skeleton */}
           <div className="space-y-3">

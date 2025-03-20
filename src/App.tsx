@@ -21,6 +21,8 @@ import VerifyEmail from "./pages/auth/VerifyEmail";
 import EmployeeDirectory from "./pages/HR/Employees/EmployeeDirectory";
 import Events from "./pages/HR/Events/Events";
 import DepartmentPage from "@/pages/HR/Employees/DepartmentPage";
+import Messages from "./pages/common/Messages";
+import FindEmployee from "./pages/common/FindEmployee";
 
 function App() {
   return (
@@ -35,7 +37,14 @@ function App() {
         <Route
           element={
             <ProtectedRoute
-              allowedRoles={["EMPLOYEE", "MANAGER", "HR", "ADMIN", "MODERATOR", "MARKETER"]}
+              allowedRoles={[
+                "EMPLOYEE",
+                "MANAGER",
+                "HR",
+                "ADMIN",
+                "MODERATOR",
+                "MARKETER",
+              ]}
             />
           }
         >
@@ -45,6 +54,8 @@ function App() {
             <Route path="all-departments/" element={<Departments />} />
             <Route path="all-departments/:id" element={<DepartmentDetails />} />
             <Route path="time-off" element={<TimeOff />} />
+            <Route path="messages" element={<Messages />} />
+            <Route path=":id" element={<FindEmployee />} />
           </Route>
         </Route>
 

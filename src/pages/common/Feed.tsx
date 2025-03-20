@@ -20,7 +20,6 @@ import Avtr from "@/components/Avtr";
 import fume from "../../assets/images/fume.png";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import ToTop from "@/components/common/ToTop";
-import { useGetAllRecognitions } from "@/api/query-hooks/recognition.hooks";
 
 const Feed = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -28,10 +27,10 @@ const Feed = () => {
 
   const { departments } = useSelector((state: RootState) => state.sharedState);
 
-  const { data: recognitions, isLoading: recsLoading } =
-    useGetAllRecognitions();
+  // const { data: recognitions, isLoading: recsLoading } =
+  //   useGetAllRecognitions();
 
-  console.log("recognition:", recognitions);
+  // console.log("recognition:", recognitions);
 
   const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],
@@ -94,11 +93,12 @@ const Feed = () => {
       >
         {/* Recognition Section */}
         <section
-          className="bg-rgtpurple sticky min-h-32 top-0 z-50 rounded-[20px] text-white flex flex-col  max-w-full p-3 space-y-1 items-center justify-center"
+          className="bg-rgtpurple sticky min-h-32 top-0 rounded-[20px] text-white flex flex-col  max-w-full p-3 space-y-1 items-center justify-center"
           style={{
             backgroundImage: `url(${confetti})`,
             backgroundSize: "contain",
             backgroundPosition: "center",
+            zIndex:50
           }}
         >
           {departments.length > 0 ? (

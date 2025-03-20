@@ -513,7 +513,6 @@ const CreatePost = () => {
                     Type
                   </label>
                   <CustomSelect
-                    selectLabel="Poll type"
                     placeholder="Choose poll type"
                     options={["Single Choice", "Multiple Choice"]}
                     value={
@@ -541,13 +540,19 @@ const CreatePost = () => {
                     <label className="text-xs text-slate-500 font-semibold">
                       From
                     </label>
-                    <DatePicker className="bg-transparent" />
+                    <DatePicker
+                      className="bg-transparent"
+                      onChange={() => console.log("")}
+                    />
                   </div>
                   <div className="flex flex-col">
                     <label className="text-xs text-slate-500 font-semibold">
                       To
                     </label>
-                    <DatePicker className="bg-transparent" />
+                    <DatePicker
+                      className="bg-transparent"
+                      onChange={() => console.log("")}
+                    />
                   </div>
                 </div>
               </div>

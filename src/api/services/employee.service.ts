@@ -23,20 +23,21 @@ export const employeeService = {
     return response.data;
   },
 
-  getAllEmployees: async (params?: {
-    departmentId?: string;
-    status?: string;
-    search?: string;
-  }): Promise<Employee[]> => {
-    const response = await employeeApiClient.get<Employee[]>("/", {
-      params,
-    });
-    return response.data;
+  getAllEmployees: async (query?: string): Promise<Employee[]> => {
+    let key;
+    if (query) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const isEmail = emailRegex.test(query);
+      key = isEmail ? "email" : "name";
+    }
+    const response = await employeeApiClient.get(`/?${key}=${query}`);
+    return response.data.data;
   },
 
   getEmployeeById: async (id: string): Promise<Employee> => {
-    const response = await employeeApiClient.get<Employee>(`/${id}`);
-    return response.data;
+    const response = await employeeApiClient.get(`/${id}`);
+    console.log('get emps:', response.data.data)
+    return response.data.data;
   },
 
   updateEmployee: async (
