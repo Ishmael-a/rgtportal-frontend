@@ -6,6 +6,7 @@ import SuccessCard from "@/components/common/SuccessCard";
 import { SideFormModal } from "@/components/Modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SideModal } from "@/components/ui/side-dialog";
 import { timeOffTableColumns } from "@/constants";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { PtoLeave } from "@/types/PTOS";
@@ -36,6 +37,8 @@ export default function TimeOff() {
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
+    status: (item.status ?? "").toUpperCase(),
+    type: item.type.toUpperCase(),
     total: `${Math.ceil(
       (new Date(item.endDate as Date).getTime() -
         new Date(item.startDate as Date).getTime()) /
@@ -90,12 +93,13 @@ export default function TimeOff() {
   const filteredPtoData = formattedPtoData?.filter((item) => {
     // Filter by type
     const typeMatch =
-      selectedType === "All Types" || item.type === selectedType.toLowerCase();
+      selectedType === "All Types" ||
+      item.type.toLowerCase() === selectedType.toLowerCase();
 
     // Filter by status
     const statusMatch =
       selectedStatus === "All Statuses" ||
-      item.status === selectedStatus.toLowerCase();
+      item.status.toLowerCase() === selectedStatus.toLowerCase();
 
     // Filter by date
     const dateMatch =
@@ -319,73 +323,72 @@ export default function TimeOff() {
       )}
 
       {/* modal for viewing old request */}
-      {appRej && (
-        <SideFormModal
-          title="Approve or Reject Request"
-          back={true}
-          backFn={() => setAppRej(false)}
-          initialFormValues={{}}
-        >
-          {viewPtoData && (
-            <>
-              <section className="flex gap-2">
-                <div>
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    From
-                  </label>
-                  <Input
-                    value={
-                      viewPtoData.startDate
-                        ? new Date(viewPtoData.startDate).toDateString()
-                        : ""
-                    }
-                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                    disabled
-                  />
-                </div>
 
-                <div>
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    To
-                  </label>
-                  <Input
-                    value={
-                      viewPtoData.endDate
-                        ? new Date(viewPtoData.endDate).toDateString()
-                        : ""
-                    }
-                    className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
-                    disabled
-                  />
-                </div>
-              </section>
-              <section className="space-y-5 pt-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    Reason
-                  </label>
-                  <textarea
-                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                    value={viewPtoData.reason}
-                    disabled
-                  />
-                </div>
+      <SideModal
+        title="Approve or Reject Request"
+        onOpenChange={() => setAppRej(false)}
+        isOpen={appRej}
+        className="w-1/2 md:w-[30%]"
+      >
+        {viewPtoData && (
+          <>
+            <section className="flex gap-2">
+              <div>
+                <label className="text-slate-500 font-semibold text-sm">
+                  From
+                </label>
+                <Input
+                  value={
+                    viewPtoData.startDate
+                      ? new Date(viewPtoData.startDate).toDateString()
+                      : ""
+                  }
+                  className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-slate-500 font-medium text-base"
+                  disabled
+                />
+              </div>
 
-                <div className="flex flex-col gap-1">
-                  <label className="text-[#73727675] font-semibold text-sm">
-                    HR reason
-                  </label>
-                  <textarea
-                    className="resize-none bg-[#F6F6F9] p-2 text-[#73727675] font-medium text-base rounded-md"
-                    value={viewPtoData.statusReason}
-                    disabled
-                  />
-                </div>
-              </section>
-            </>
-          )}
-        </SideFormModal>
-      )}
+              <div>
+                <label className="text-slate-500 font-semibold text-sm">
+                  To
+                </label>
+                <Input
+                  value={
+                    viewPtoData.endDate
+                      ? new Date(viewPtoData.endDate).toDateString()
+                      : ""
+                  }
+                  className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-slate-500 font-medium text-base"
+                  disabled
+                />
+              </div>
+            </section>
+            <section className="space-y-5 pt-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-slate-500 font-semibold text-sm">
+                  Reason
+                </label>
+                <textarea
+                  className="resize-none bg-[#F6F6F9] p-2 text-slate-500 font-medium text-base rounded-md"
+                  value={viewPtoData.reason}
+                  disabled
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-slate-500 font-semibold text-sm">
+                  HR reason
+                </label>
+                <textarea
+                  className="resize-none bg-[#F6F6F9] p-2 text-slate-500 font-medium text-base rounded-md"
+                  value={viewPtoData.statusReason}
+                  disabled
+                />
+              </div>
+            </section>
+          </>
+        )}
+      </SideModal>
 
       {/* Success modal for timeoff creation */}
       {isSuccess && <SuccessCard handleClick={handleCheckNow} />}

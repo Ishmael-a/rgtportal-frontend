@@ -1,12 +1,10 @@
 import { usePoll } from "@/hooks/use-poll";
 import AvtrBlock from "./AvtrBlock";
 import { MoreVertical } from "lucide-react";
-import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import PostSkeleton from "./common/PostSkeleton";
 
 const PollUI = ({ pollId }: { pollId: number }) => {
   const { poll, isLoading, handleVote, isVoting } = usePoll(pollId);
-  const { currentUser: user } = useAuthContextProvider();
 
   if (isLoading) return <PostSkeleton />;
   if (!poll) return <div>Poll not found</div>;
@@ -23,7 +21,7 @@ const PollUI = ({ pollId }: { pollId: number }) => {
         <AvtrBlock
           firstName={poll.createdBy.firstName}
           lastName={poll.createdBy.lastName}
-          profileImage={user?.profileImage}
+          profileImage={poll.createdBy.user.profileImage}
         />
         <MoreVertical className="text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer" />
       </section>

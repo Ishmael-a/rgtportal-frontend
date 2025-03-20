@@ -303,12 +303,12 @@ export const timeOffTableColumns: Column[] = [
     key: "status",
     header: "Status",
     cellClassName: (row: Record<string, any>) => {
-      const status = row.status;
-      return `${
+      const status = row.status.toLowerCase();
+      return `py-3 text-center ${
         status === "pending"
-          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md w-fit text-left"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md"
           : status === "approved" || status === "manager_approved"
-          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md w-fit"
+          ? "font-semibold text-[#7ABB9E] bg-[#E5F6EF] rounded-md "
           : status === "declined" || status === "manager_declined"
           ? "font-semibold text-[#D92D20] bg-[#FEE4E2] rounded-md "
           : ""
@@ -319,12 +319,12 @@ export const timeOffTableColumns: Column[] = [
     key: "type",
     header: "Type",
     cellClassName: (row: Record<string, any>) => {
-      const type = row.type;
-      return `${
+      const type = row.type.toLowerCase();
+      return `py-3 text-center ${
         type === "vacation"
-          ? "font-semibold text-[#6418C3]  bg-[#C9ADFF] rounded-md w-fit"
+          ? "font-semibold text-[#6418C3] bg-[#C9ADFF] rounded-md"
           : type === "sick"
-          ? "font-semibold text-[#F9B500]   bg-[#FFF7D8] rounded-md w-fit"
+          ? "font-semibold text-[#F9B500] bg-[#FFF7D8] rounded-md"
           : ""
       }`;
     },

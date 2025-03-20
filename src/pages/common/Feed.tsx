@@ -20,12 +20,18 @@ import Avtr from "@/components/Avtr";
 import fume from "../../assets/images/fume.png";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import ToTop from "@/components/common/ToTop";
+import { useGetAllRecognitions } from "@/api/query-hooks/recognition.hooks";
 
 const Feed = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const { currentUser: user } = useAuthContextProvider();
 
   const { departments } = useSelector((state: RootState) => state.sharedState);
+
+  const { data: recognitions, isLoading: recsLoading } =
+    useGetAllRecognitions();
+
+  console.log("recognition:", recognitions);
 
   const { data: polls, isLoading: pollsLoading } = useQuery({
     queryKey: ["polls"],

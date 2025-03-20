@@ -1,11 +1,13 @@
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import ViewIcon from "@/assets/icons/ViewIcon";
+import WithRole from "@/common/WithRole";
 import Avtr from "@/components/Avtr";
 import { DataTable } from "@/components/common/DataTable";
 import Filters, { FilterConfig } from "@/components/common/Filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SideModal } from "@/components/ui/side-dialog";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { RootState } from "@/state/store";
 import { IDepartmentCard } from "@/types/employee";
 import { Column } from "@/types/tables";
@@ -18,6 +20,7 @@ const DepartmentDetails = () => {
   const { id } = useParams();
 
   const { departments } = useSelector((state: RootState) => state.sharedState);
+  const { currentUser } = useAuthContextProvider();
 
   const [details, setDetails] = useState<IDepartmentCard | null>(null);
   const [selectedWorkType, setSelectedWorkType] =
@@ -44,10 +47,13 @@ const DepartmentDetails = () => {
     id: employee.id,
     username: employee.user.username || "N/A",
     email: employee.user.email || "N/A",
-    type: employee.employeeType || "N/A",
+    type: employee.employeeType?.split("_").join(" ").toUpperCase() || "N/A",
     userType: employee.user.role.name.toUpperCase() || "N/A",
-    positionStatus: !employee.position ? "Permanent" : "Nsp",
-    ptoRequest: employee.leaveType ? "Inactive" : "Active",
+    positionStatus: (!employee.position
+      ? "Permanent"
+      : "Nsp"
+    ).toLocaleUpperCase(),
+    ptoRequest: employee.activePtoRequest ? "Active" : "Inactive",
     profileImage: employee.user.profileImage,
   }));
 
@@ -86,72 +92,79 @@ const DepartmentDetails = () => {
     {
       key: "positionStatus",
       header: "Position Status",
-      render: (row) => {
+      cellClassName: (row) => {
         const lowerCase = row.positionStatus.toLowerCase();
-        return (
-          <div>
-            {row && (
-              <div
-                className={`font-semibold w-[182px] custom1:w-[195px] h-[30px] flex justify-center items-center rounded-[4.91px] ${
-                  lowerCase === "nsp"
-                    ? "bg-[#FFF7D8] text-rgtyellow"
-                    : "bg-[#C9ADFF] text-[#6418C3]"
-                }`}
-              >
-                {row.positionStatus}
-              </div>
-            )}
-          </div>
-        );
+        return `py-2 text-center rounded-md ${
+          lowerCase === "nsp"
+            ? "bg-[#FFF7D8] text-rgtyellow"
+            : "bg-[#C9ADFF] text-[#6418C3]"
+        }`;
       },
-      cellClassName: () => "position-status-cell",
     },
     {
-      key: "pto request",
-      header: "PTO Request",
+      key: (
+        <WithRole
+          userRole={currentUser?.role.name as string}
+          roles={["hr", "manager"]}
+        >
+          pto request
+        </WithRole>
+      ),
+      header: (
+        <WithRole
+          userRole={currentUser?.role.name as string}
+          roles={["hr", "manager"]}
+        >
+          PTO Request
+        </WithRole>
+      ),
       render: (row) => (
         <>
-          {row && (
-            <div className="flex items-center gap-2 ">
-              <p
-                className={`font-semibold text-xs rounded-[6px] h-[30px] flex items-center justify-center ${
-                  row.ptoRequest.toLowerCase() === "active"
-                    ? "bg-[#DFFFC7] w-[182px] text-confirmgreen"
-                    : "bg-[#FEE4E2] w-[182px] text-[#FF4A55] "
-                }`}
-              >
-                {row.ptoRequest}
-              </p>
-              {row.ptoRequest.toLowerCase() === "active" && (
-                <div
-                  className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in"
-                  onClick={() => {
-                    setShowSideModal(true);
-                    setSelectedPtoId(row.id);
-                    console.log("row:", row.id);
-                  }}
+          <WithRole
+            userRole={currentUser?.role.name as string}
+            roles={["hr", "manager"]}
+          >
+            {row && (
+              <div className="flex items-center gap-1">
+                <p
+                  className={`font-semibold text-xs rounded-[6px] h-[30px] flex items-center justify-center ${
+                    row.ptoRequest.toLowerCase() === "active"
+                      ? "bg-[#DFFFC7] w-[182px] text-confirmgreen"
+                      : "bg-[#FEE4E2] w-[182px] text-[#FF4A55] "
+                  }`}
                 >
-                  <ViewIcon />
-                </div>
-              )}
-            </div>
-          )}
+                  {row.ptoRequest}
+                </p>
+                {row.ptoRequest.toLowerCase() === "active" && (
+                  <div
+                    className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in"
+                    onClick={() => {
+                      setShowSideModal(true);
+                      setSelectedPtoId(row.id);
+                      console.log("row:", row.id);
+                    }}
+                  >
+                    <ViewIcon />
+                  </div>
+                )}
+              </div>
+            )}
+          </WithRole>
         </>
       ),
-      cellClassName: () => "pto-request-cell",
     },
   ];
 
   const handleResetFilters = () => {
     setSelectedWorkType("Work Types");
     setSelectedUserType("All User Types");
-    setSelectStatus("Position Status");
+    setSelectStatus("Permanent");
   };
 
   const filters: FilterConfig[] = [
     {
       type: "select",
-      options: ["Work Types", "full_time", "part_time"],
+      options: ["Work Types", "Full Time", "Part Time"],
       value: selectedWorkType,
       onChange: setSelectedWorkType,
     },
@@ -186,7 +199,7 @@ const DepartmentDetails = () => {
   });
 
   return (
-    <main className="space-y-2 w-full f">
+    <main className="space-y-2 w-full ">
       <header className="">
         <h3 className="text-[#706D8A] font-semibold text-xl">
           {details?.name}

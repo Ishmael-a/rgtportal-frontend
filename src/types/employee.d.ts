@@ -69,7 +69,7 @@ export interface Employee {
   leaveType?: string | null;
   leaveExplanation?: string | null;
   contactDetails: Record<string, any> | null;
-
+  activePtoRequest?: boolean;
   givenRecognitions?: EmployeeRecognition[];
   receivedRecognitions?: EmployeeRecognition[];
   user?: User;

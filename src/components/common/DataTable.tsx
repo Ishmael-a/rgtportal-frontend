@@ -92,7 +92,7 @@ export function DataTable({
     : columns;
 
   return (
-    <div className=" sm:max-w-full flex flex-col ">
+    <div className=" sm:max-w-full">
       {loading ? (
         <DataTableSkeleton columns={columns} actionBool={actionBool} />
       ) : (
@@ -100,7 +100,7 @@ export function DataTable({
           className={
             dividers
               ? ""
-              : "border-none bg-white rounded-md min-h-60 space-y-6  "
+              : "border-none bg-white rounded-md "
           }
         >
           <TableHeader>
@@ -109,7 +109,7 @@ export function DataTable({
                 <TableHead
                   key={column.key}
                   className={
-                    "border-none text-nowrap text-[#A3A7AA] text-xs p-6 text-left"
+                    "border-none text-nowrap text-[#A3A7AA] text-xs p-4 text-left"
                   }
                 >
                   {column.header}
@@ -130,18 +130,18 @@ export function DataTable({
                       className={`${
                         dividers
                           ? ""
-                          : "border-none text-xs font-semibold text-[#898989] text-nowrap"
+                          : "border-none text-xs font-semibold text-[#898989] text-nowrap py-4"
                       }`}
                     >
                       <div
-                        className={`w-fit ${
+                        className={`${
                           typeof column.cellClassName === "function"
                             ? column.cellClassName(row)
                             : column.cellClassName ?? ""
                         } ${
                           column.render
-                            ? "flex gap-2 px-4 py-4 space-x-4"
-                            : "p-2 px-4 text-center"
+                            ? "flex gap-2"
+                            : ""
                         }`}
                       >
                         {column.render ? column.render(row) : row[column.key]}
