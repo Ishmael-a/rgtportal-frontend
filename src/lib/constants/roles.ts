@@ -1,5 +1,6 @@
 import {RolesWithPermissions} from "@/types/permissions"
-
+import {User} from "@/types/authUser";
+import {PTORequest} from "@/types/PTOS"
 
 export const ROLES: RolesWithPermissions = {
   HR: {
@@ -11,7 +12,7 @@ export const ROLES: RolesWithPermissions = {
   },
   MANAGER: {
     ptoRequests: {
-      approve: (user: User, request?: PTORequest) => request?.department_id === user.employee?.department_id
+      approve: (user: User, request?: PTORequest) => request?.department_id === user.employee?.departmentId?.toString()
     },
     employeeRecords: {
       view: true

@@ -7,6 +7,7 @@ import { PermissionResource } from "@/types/permissions";
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000,
       retry: 3,
     },

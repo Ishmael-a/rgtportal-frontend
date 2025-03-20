@@ -1,4 +1,3 @@
-import React from 'react';
 
 const NoDepartmentsPage = () => {
   return (
@@ -57,8 +56,8 @@ const NoDepartmentsPage = () => {
 
         </div>
         
-        <h2 className="mb-2 text-xl font-medium text-gray-800">No Employees at the moment</h2>
-        <p className="text-sm text-gray-500">Add a new employee in the manage employees tab</p>
+        <h2 className="mb-2 text-xl font-medium text-gray-800">No Departments at the moment</h2>
+        <p className="text-sm text-gray-500">Add a new department in the all depaertments tab</p>
       </div>
     </div>
   );

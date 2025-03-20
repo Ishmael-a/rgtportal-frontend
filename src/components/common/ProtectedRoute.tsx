@@ -1,7 +1,8 @@
 import React, { useEffect} from 'react'
 import {useAuthContextProvider} from '../../hooks/useAuthContextProvider'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-
+import {Button} from "@/components/ui/button"
+import { ROLE } from '@/types/authUser';
 
 type ProtectedRouteProps = {
     allowedRoles: ROLE[];
@@ -15,15 +16,14 @@ const ProtectedRoute = ({
   allowedRoles,
   redirectPath = '/login',
   loadingComponent = <div className="flex justify-center items-center h-screen">Loading...</div>,
-  unauthorizedComponent = <div className="flex justify-center items-center h-screen">Permission Denied! You don't have permission to access this page</div>
+  unauthorizedComponent 
 }: ProtectedRouteProps) => {
-  // Use the new useAuth hook instead of useAuthContextProvider
+
   const { currentUser, isLoading, isAuthenticated } = useAuthContextProvider();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Only redirect if authentication check is complete and user is not authenticated
     if (!isLoading && !isAuthenticated) {
       navigate(redirectPath, {
         state: { from: location.pathname },
@@ -32,7 +32,6 @@ const ProtectedRoute = ({
     }
   }, [isAuthenticated, isLoading, navigate, redirectPath, location]);
 
-  // Show loading state while checking authentication
   if (isLoading) {
     return <>{loadingComponent}</>;
   }
@@ -41,12 +40,22 @@ const ProtectedRoute = ({
   // Assuming currentUser.role is an object with a name property as defined in your types
   const hasRequiredRole = currentUser && allowedRoles.includes(currentUser.role.name);
 
+  const fallbackUnauthorizedComponent = 
+      <div className="flex flex-col justify-center items-center h-screen">
+        Permission Denied! You don't have permission to access this page
+        <Button
+          onClick={() => navigate(`/login`)}
+          className="bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          Go to Login
+        </Button>
+      </div>
+    
   // Return unauthorized component if user doesn't have required role
   if (!hasRequiredRole) {
-    return <>{unauthorizedComponent}</>;
+    return <>{unauthorizedComponent || fallbackUnauthorizedComponent }</>;
   }
 
-  // User has permission, render children
   return <Outlet />;
 };
 

@@ -18,6 +18,16 @@ export const departmentService = {
     return response.data;
   },
 
+  removeEmployeeFromDepartment: async (
+    id: string,
+    employeeId: string,
+  ): Promise<ApiResponse<Department>> => {
+    const response = await departmentApiClient.delete<ApiResponse<Department>>(
+      `/${id}/employees/${employeeId}`,
+    );
+    return response.data;
+  },
+
   addEmployeeToDepartment: async (
     id: string,
     data: AddEmployeeToDepartmentDTO

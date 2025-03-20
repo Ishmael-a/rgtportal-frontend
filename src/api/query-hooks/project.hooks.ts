@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { projectService } from "../services/project.service";
 import { useMemo } from 'react';
-import { UseQueryOptions, QueryKey } from '@tanstack/react-query';
-import { Project } from '@/types/project';
 
 export const useAllProjects = (
   params?: { 

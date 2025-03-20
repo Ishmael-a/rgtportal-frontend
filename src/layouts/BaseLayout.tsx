@@ -6,12 +6,15 @@ import { Outlet } from "react-router-dom";
 import { useAuthContextProvider } from "../hooks/useAuthContextProvider";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { useInitializeSharedData } from "@/hooks/useInitializeSharedData";
+import ErrorMessage from "@/components/common/ErrorMessage";
+
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
-  const { isLoading, isError } = useInitializeSharedData();
+  const { isDepartmentsLoading, isDepartmentsError, refetchDepartments, departmentsError } =
+    useInitializeSharedData();
 
-  if (isLoading) {
+  if (isDepartmentsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner label="Fetching Shared Data..." size={32} />;
@@ -19,10 +22,14 @@ export const BaseLayout = () => {
     );
   }
 
-  if (isError) {
+  if (isDepartmentsError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div>Error loading shared data</div>
+        <ErrorMessage
+          title="Error Loading Shared Data"
+          error={departmentsError}
+          refetchFn={refetchDepartments}
+        />
       </div>
     );
   }
@@ -31,7 +38,7 @@ export const BaseLayout = () => {
     <div>
       <header
         className="fixed top-0 flex items-center justify-between p-4 bg-white border-b w-full"
-        style={{ zIndex: 150 }}
+        style={{ zIndex: 10 }}
       >
         {/* Left section with logo */}
         <div className="flex items-center">
@@ -72,7 +79,7 @@ export const BaseLayout = () => {
         </div>
 
         <div
-          className="pt-[78px]  flex-1 md:w-3/5 h-screen overflow-y-auto"
+          className="pt-[78px] flex-1 md:w-3/5 h-screen overflow-y-auto"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,

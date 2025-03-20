@@ -22,7 +22,7 @@ const AllDepartments = () => {
 
       <section className="flex flex-wrap gap-6 pt-10">
         {projectCards.map((item, index) => (
-          <ProjectCard path={``} name={item.name} members={item.members} id={index} />
+          <ProjectCard path={''} name={item.name} members={item.members} id={index} />
         ))}
       </section>
     </main>

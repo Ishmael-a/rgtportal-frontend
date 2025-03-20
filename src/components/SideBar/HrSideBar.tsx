@@ -18,7 +18,6 @@ export const HrSideBar = () => {
       path: "/employees",
       items: [
         { label: "Manage Employees", path: "manageemployees" },
-        { label: "Employee Cards", path: "employeecards" },
         { label: "All Departments", path: "alldepartments" },
       ],
     },
@@ -53,7 +52,7 @@ export const HrSideBar = () => {
         end={true}
         className={({ isActive }) => `
             group flex items-center justify-center text-center font-medium text-sm 
-            rounded-t-4xl py-4 mb-4 w-full transition-colors ease-in-out duration-400
+            rounded-t-4xl py-4 mb-2 w-full transition-colors ease-in-out duration-400
             ${
               isActive
                 ? "bg-rgtviolet text-white" // Active state styles
@@ -78,7 +77,7 @@ export const HrSideBar = () => {
           </>
         )}
       </NavLink>
-      <div className=" pb-8 w-full text-center flex flex-col gap-6">
+      <div className=" pb-2.5 w-full text-center flex flex-col gap-3">
         {navItems.map((item) =>
           item.items ? (
             <NavDropdown
@@ -98,7 +97,7 @@ export const HrSideBar = () => {
             transition-colors duration-200 
             ${
               isActive
-                ? "bg-gray-100 text-purple-600 font-bold"
+                ? " text-purple-600 font-bold"
                 : " hover:bg-gray-50"
             }
             `}

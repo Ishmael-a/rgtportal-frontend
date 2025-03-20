@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -27,6 +27,10 @@ const sideModalVariants = cva(
     },
   }
 );
+
+
+
+
 
 export interface SideModalProps extends VariantProps<typeof sideModalVariants> {
   isOpen: boolean;
@@ -78,15 +82,27 @@ export const SideModal = ({
     }
   };
 
+
+
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         {showOverlay && (
           <Dialog.Overlay
-            className={`fixed inset-0 backdrop-blur-mdd bg-black/30 z-1999 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
+            className={`fixed inset-0 bg-black/30 z-40 transition-opacity duration-300 ease-in-out ${overlayClassName} ${
               isOpen ? "opacity-100" : "opacity-0"
             }`}
-            onClick={() => closeOnClickOutside && onOpenChange(false)}
+            style={{
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+            }}
+            // onClick={(e) =>{
+            //   console.log("Clicked On Dialog")
+            //   if (e.target === e.currentTarget && closeOnClickOutside) {
+            //     onOpenChange(false);
+            //   }
+            // }}
           />
         )}
 
@@ -94,7 +110,9 @@ export const SideModal = ({
           className={`${sideModalVariants({ position, size })} ${className}`}
           style={getTransformStyle()}
           onEscapeKeyDown={() => onOpenChange(false)}
-          onInteractOutside={(e) => closeOnClickOutside && onOpenChange(false)}
+          onInteractOutside={(e) => {
+            closeOnClickOutside && onOpenChange(false)
+          }}
         >
           {(title || showCloseButton) && (
             <div
