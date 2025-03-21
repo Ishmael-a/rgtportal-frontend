@@ -74,8 +74,7 @@ export function DataTable({
                             setCellToDelete(row.id);
                             if (setShowDelete) {
                               setShowDelete(true);
-                            }
-                            else{
+                            } else {
                               action.action(row.id, row);
                             }
                           }}
@@ -95,24 +94,18 @@ export function DataTable({
     : columns;
 
   return (
-    <div className=" sm:max-w-full">
+    <div className="w-full">
       {loading ? (
         <DataTableSkeleton columns={columns} actionBool={actionBool} />
       ) : (
-        <Table
-          className={
-            dividers
-              ? ""
-              : "border-none bg-white rounded-md "
-          }
-        >
+        <Table className={dividers ? "" : "border-none bg-white rounded-md "}>
           <TableHeader>
             <TableRow className={`border-none`}>
               {tableColumns.map((column) => (
                 <TableHead
                   key={column.key}
                   className={
-                    "border-none text-nowrap text-[#A3A7AA] text-xs p-4 text-left"
+                    "border-none text-nowrap text-[#A3A7AA] text-xs py-4 text-left"
                   }
                 >
                   {column.header}
@@ -141,11 +134,7 @@ export function DataTable({
                           typeof column.cellClassName === "function"
                             ? column.cellClassName(row)
                             : column.cellClassName ?? ""
-                        } ${
-                          column.render
-                            ? "flex gap-2"
-                            : ""
-                        }`}
+                        } ${column.render ? "flex gap-2" : ""}`}
                       >
                         {column.render ? column.render(row) : row[column.key]}
                       </div>

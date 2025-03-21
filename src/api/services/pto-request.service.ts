@@ -24,24 +24,6 @@ export class PtoRequestService {
     }
   }
 
-  static async fetchUserPtoRequest(): Promise<PtoLeave[] | undefined> {
-    try {
-      const response = await axios.get(`${API_URL}/my-requests`);
-      console.log("response PtoData:", response.data);
-      if (!response.data.success) {
-        throw new Error(
-          response.data.message || "PTO data fetching unsuccessful."
-        );
-      }
-      return response.data.data.reverse();
-    } catch (error) {
-      console.error("Error fetching pto data:", error);
-      throw error;
-    }
-  }
-
-
-
   static async deletePtoRequest(id: number) {
     try {
       const response = await axios.delete(`${API_URL}/${id}`);
@@ -63,6 +45,58 @@ export class PtoRequestService {
       } else {
         throw new Error("Failed to delete PTO request");
       }
+    }
+  }
+
+  static async fetchUserPtoRequest(): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(`${API_URL}/my-requests`);
+      console.log("response PtoData:", response.data);
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message || "PTO data fetching unsuccessful."
+        );
+      }
+      return response.data.data.reverse();
+    } catch (error) {
+      console.error("Error fetching pto data:", error);
+      throw error;
+    }
+  }
+
+  static async fetchAllPtoRequests(): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(`${API_URL}/all`);
+      console.log("response AllPto:", response.data);
+      if (!response.data.success) {
+        throw new Error(response.data.message || "All PTO fetch unsuccessful");
+      }
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching all ptos:", error);
+      throw error;
+    }
+  }
+
+  static async fetchDepartmentPtos(
+    departmentId: string
+  ): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(`${API_URL}/department/${departmentId}`, {
+        params: {
+          departmentId,
+        },
+      });
+      console.log("response departement:", response.data);
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message || "Department Pto failed to fetch"
+        );
+      }
+      return response.data.data;
+    } catch (error) {
+      console.log("Error fetching department ptos:", error);
+      throw error;
     }
   }
 }
