@@ -51,6 +51,17 @@ export const employeeService = {
     return response.data;
   },
 
+  updateEmployeeAgency: async (
+    id: number,
+    data: UpdateEmployeeInterface
+  ): Promise<{data: Employee, message:string}> => {
+    const response = await employeeApiClient.put<{
+      data: Employee;
+      message: string;
+    }>(`/${id}/agency`, data);
+    return response.data;
+  },
+
   removeEmployeeFromDepartment: async (
     id: number
   ): Promise<{message: string}> => {

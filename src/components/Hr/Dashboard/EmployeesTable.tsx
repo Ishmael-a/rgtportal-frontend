@@ -35,8 +35,15 @@ interface FilterState {
   type: string;
   status: string;
 }
+interface EmployeeTableProps {
+  employeeData: Employee[] | undefined;
+  isEmployeesLoading: boolean;
+  isEmployeesError: boolean;
+  employeeError: Error | null;
+  refetchEmployees: () => void;
+}
 
-const EmployeeTable: React.FC = () => {
+const EmployeeTable: React.FC<EmployeeTableProps> = ({employeeData, employeeError, isEmployeesError, isEmployeesLoading, refetchEmployees}) => {
   const [searchName, setSearchName] = useState("");
   const { departments } = useSelector((state: RootState) => state.sharedState);
   const { hasAccess } = usePermission();
@@ -46,13 +53,13 @@ const EmployeeTable: React.FC = () => {
     status: "All Status",
   });
 
-  const {
-    data: employeeData,
-    isLoading: isEmployeesLoading,
-    isError: isEmployeesError,
-    error: employeeError,
-    refetch: refetchEmployees,
-  } = useAllEmployees({}, {});
+  // const {
+  //   data: employeeData,
+  //   isLoading: isEmployeesLoading,
+  //   isError: isEmployeesError,
+  //   error: employeeError,
+  //   refetch: refetchEmployees,
+  // } = useAllEmployees({}, {});
 
   const [state, setState] = useState<EmployeeTableState>({
     currentPage: 1,

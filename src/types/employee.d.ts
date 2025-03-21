@@ -140,7 +140,7 @@ export interface CreateEmployeeInterface {
   position?: string;
   hireDate?: Date;
   contactDetails?: Record<string, any> | null;
-  agency?: Agency;
+  agency?: Agency | null;
 }
 
 export interface UpdateEmployeeInterface extends CreateEmployeeInterface {

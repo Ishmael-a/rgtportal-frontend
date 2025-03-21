@@ -12,6 +12,8 @@ interface EmployeeFormInitialValues {
   };
   personalEmail: string;
   phone: string;
+  agencyName: string;
+  skills: string[] | null;
   employeeType: EmployeeType;
   roleId: RoleType;
   leaveType: LeaveType | null;
@@ -71,6 +73,8 @@ export const useEmployeeForm = (employee: Employee) => {
       },
       personalEmail: employee?.contactDetails?.personalEmail || "",
       phone: employee?.phone || "",
+      agencyName: employee?.agency?.name || "",
+      skills: employee?.skills || [],
       employeeType: (employee?.employeeType ||
         EMPLOYEE_TYPES.FULL_TIME) as EmployeeType,
       roleId: (employee?.user?.role?.id?.toString() ||
@@ -84,7 +88,7 @@ export const useEmployeeForm = (employee: Employee) => {
       city: employee?.contactDetails?.city || "",
       stateId: employee?.contactDetails?.region || "",
       countryId: employee?.contactDetails?.country
-        ? Number(employee.contactDetails.country)
+        ? Number(employee.contactDetails.country) || null
         : null,
       birthDate: employee?.birthDate || null,
     };

@@ -2,7 +2,7 @@ import {
     useUpdateEmployee,
     useEmployeeDetails,
 } from "@/api/query-hooks/employee.hooks";
-import { UpdateEmployeeInterface, Employee, EmployeeType, WorkType } from "@/types/employee";
+import { UpdateEmployeeInterface, Employee, EmployeeType, WorkType, Agency } from "@/types/employee";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
@@ -24,16 +24,23 @@ enum LeaveType {
 export const useEmployeeSubmission = (employeeId: number, employee: Employee, countries: Country[], states:State[]) => {
   const updateEmployeeMutation = useUpdateEmployee();
 //   const { data: employeeData } = useEmployeeDetails(employeeId.toString());
-    const { departments } = useSelector(
-        (state: RootState) => state.sharedState
+    const {sharedState: { departments }} = useSelector(
+        (state: RootState) => state
     );
 
   const handleSubmit = useCallback(
     async (values: any, { setSubmitting }: any) => {
       try {
-        const selectedCountry = countries.find(c => c.id === values.countryId);
+        const selectedCountry = countries.find((c) => {
+          const countryId = Number(values.countryId);
+          return !isNaN(countryId) && c.id === countryId;
+        });
             
         const selectedState = states.find(s => s.id === values.stateId );
+
+        const processedSkills = values.skills
+          ? values.skills.filter((skill: string) => skill.trim() !== "")
+          : [];
         
         // Transform form values to UpdateEmployeeInterface
         const updateEmployeeDto: UpdateEmployeeInterface = {
@@ -47,6 +54,11 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
                 (department) => department.id === values.department?.id
               )
             : employee?.department,
+          agency: values.agencyName ? {
+              name: values.agencyName,
+              paid: false,
+              invoiceReceived: false
+          } as Agency : employee?.agency, 
           position: values.position || employee?.position,
           hireDate: values.hireDate || employee?.hireDate,
           endDate: values.endDate || employee?.endDate,
@@ -94,7 +106,8 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
           vacationDaysBalance:
             employee?.vacationDaysBalance || employee?.vacationDaysBalance,
           annualDaysOff: employee?.annualDaysOff || employee?.annualDaysOff,
-          skills: values?.skills || employee?.skills,
+          // skills: processedSkills || employee?.skills,
+          skills: processedSkills,
         };
     
         // Call the update mutation

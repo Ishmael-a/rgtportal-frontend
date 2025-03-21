@@ -1,6 +1,6 @@
 import { createApiClient } from '../axios';
 import { ApiResponse } from '../types';
-import {PTO} from '@/types/PTOS';
+import {PTO, PtoLeave} from '@/types/PTOS';
 
 
 const ptoApiClient = createApiClient(

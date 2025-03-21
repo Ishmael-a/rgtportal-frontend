@@ -31,7 +31,7 @@ export const useAllEmployees = (
     {
       ...options,
       placeholderData: (previousData) => {
-          return previousData;
+        return previousData;
       },
     }
   );
@@ -64,6 +64,30 @@ export const useUpdateEmployee = () => {
       toast({
         title: "Success",
         description: "Employee updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+export const useUpdateEmployeeAgency = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateEmployeeInterface }) =>
+      employeeService.updateEmployeeAgency(id, data),
+    onSuccess: (result, variables) => {
+      // queryClient.setQueryData(["employees",{ id: variables.id}], result.data);
+      queryClient.invalidateQueries({ queryKey: ["employees"] });
+
+      toast({
+        title: "Success",
+        description: "Employee Agency updated successfully",
       });
     },
     onError: (error) => {
