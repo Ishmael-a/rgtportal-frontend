@@ -23,12 +23,13 @@ import DepartmentPage from "@/pages/HR/Employees/DepartmentPage";
 import Messages from "./pages/common/Messages";
 import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
+import EmployeeTimeOffRequests from "./pages/Manager/EmployeeTimeOffRequests";
 
 function App() {
   const getCookie = (name: string) => {
     const cookies = document.cookie.split("; ");
     console.log("cookies", document.cookie);
-    
+
     const cookie = cookies.find((row) => row.startsWith(name + "="));
     return cookie ? cookie.split("=")[1] : null;
   };
@@ -45,6 +46,7 @@ function App() {
         <Route path="/set-password" element={<CreatePassword />} />
 
         {/* Employee routes - accessible by all roles */}
+
         <Route
           element={
             <ProtectedRoute
@@ -60,6 +62,7 @@ function App() {
           }
         >
           <Route path="/emp" element={<BaseLayout />}>
+            {/* Common employee routes */}
             <Route index path="feed" element={<Feed />} />
             <Route path="events-calendar" element={<EventsCalendar />} />
             <Route path="all-departments/" element={<Departments />} />
@@ -67,6 +70,18 @@ function App() {
             <Route path="time-off" element={<TimeOff />} />
             <Route path="messages" element={<Messages />} />
             <Route path=":id" element={<FindEmployee />} />
+
+            {/* Manager-specific sub-routes */}
+            <Route element={<ProtectedRoute allowedRoles={["MANAGER"]} />}>
+              {/* <Route
+                path="time-off/my-requests"
+                element={<MyTimeOffRequests />}
+              /> */}
+              <Route
+                path="time-off/employee-requests"
+                element={<EmployeeTimeOffRequests />}
+              />
+            </Route>
           </Route>
         </Route>
 

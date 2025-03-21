@@ -1,14 +1,31 @@
 import { PtoRequestService } from "@/api/services/pto-request.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "./use-toast";
-import {PtoLeave} from "@/types/PTOS"
+import { PtoLeave } from "@/types/PTOS";
 
-export const useRequestPto = () => {
+export const useRequestPto = (id?: number) => {
   const queryClient = useQueryClient();
 
   const { data: ptoData, isLoading } = useQuery({
     queryKey: ["ptoData"],
     queryFn: () => PtoRequestService.fetchUserPtoRequest(),
+  });
+
+  const { data: allPtoData, isLoading: isAllPtosLoading } = useQuery({
+    queryKey: ["allPtoData"],
+    queryFn: () => PtoRequestService.fetchAllPtoRequests(),
+  });
+
+  // fetching department ptos
+  const { data: departmentPtos, isLoading: isDepartmentPtoLoading } = useQuery({
+    queryKey: ["departmentPtoData", id],
+    queryFn: () => {
+      if (!id) {
+        return Promise.resolve([]);
+      }
+      return PtoRequestService.fetchDepartmentPtos(String(id));
+    },
+    
   });
 
   const createPtoRequestMutation = useMutation({
@@ -64,6 +81,10 @@ export const useRequestPto = () => {
     isPtoDeleting: deletePtoRequestMutation.isPending,
     isPtoLoading: createPtoRequestMutation.isPending,
     ptoData,
-    isLoading
+    isLoading,
+    allPtoData,
+    isAllPtosLoading,
+    departmentPtos,
+    isDepartmentPtoLoading,
   };
 };

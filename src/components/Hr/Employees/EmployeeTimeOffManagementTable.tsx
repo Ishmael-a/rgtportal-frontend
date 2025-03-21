@@ -1,11 +1,9 @@
-import React, { useState, useMemo } from "react";
-import StepProgress from "@/components/common/StepProgress";
-import { Column, ActionObject } from "@/types/tables";
+import React, { useState } from "react";
+import { Column } from "@/types/tables";
 import { DataTable } from "../../common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { timeOffData } from "@/constants";
 import {
   Select,
   SelectContent,
@@ -18,12 +16,16 @@ import { Calendar } from "../../ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
-import { format, parse, isWithinInterval } from "date-fns";
+import { format } from "date-fns";
 import { SideModal } from "@/components/ui/side-dialog";
 import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
+import { PtoLeave } from "@/types/PTOS";
+import ViewIcon from "@/assets/icons/ViewIcon";
+import Avtr from "@/components/Avtr";
 
 export interface timeOffManagementTableProps {
-  initialData: timeOffData[];
+  initialData: PtoLeave[] | undefined;
+  isDataLoading: boolean;
   pageSize?: number;
 }
 
@@ -35,11 +37,8 @@ export interface FilterState {
 
 const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   initialData,
-  pageSize = 5,
 }) => {
-  const [employees, setEmployees] = useState<timeOffData[]>(initialData);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedEmployee, setSelectedEmployee] = useState<timeOffData | null>(
+  const [selectedEmployee, setSelectedEmployee] = useState<PtoLeave | null>(
     null
   );
 
@@ -50,24 +49,18 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const [currentRowId, setCurrentRowId] = React.useState<number | null>(null);
-
-  const handleReject = (): void => {
-    if (currentRowId !== null) {
+  const handleReject = (id: number | undefined): void => {
+    if (id) {
       console.log("Rejected with reason:", reason);
-      handleStatusChange(currentRowId, "rejected");
-      setRejectModalOpen(false);
+      setRejectModalOpen(true);
       setReason("");
-      setCurrentRowId(null);
     }
   };
 
-  const handleApprove = (): void => {
-    if (currentRowId !== null) {
+  const handleApprove = (id: number | undefined): void => {
+    if (id) {
       console.log("Approved");
-      handleStatusChange(currentRowId, "approved");
-      setApproveModalOpen(false);
-      setCurrentRowId(null);
+      setApproveModalOpen(true);
     }
   };
 
@@ -77,31 +70,6 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     dateRange: undefined,
   });
 
-  const filteredEmployees = useMemo(() => {
-    return employees.filter((emp) => {
-      const typeMatch =
-        filter.type === "All Type" ||
-        (filter.type === "Engagement" && emp.reason === "Engagement") ||
-        (filter.type === "Unwell" && emp.reason === "Unwell") ||
-        (filter.type === "Emergency" && emp.reason === "Emergency");
-
-      const statusMatch =
-        filter.status === "All Status" ||
-        emp.status === filter.status.toLowerCase();
-
-      const dateMatch =
-        !filter.dateRange?.from ||
-        !filter.dateRange?.to ||
-        isWithinInterval(parse(emp.from, "dd MMM yyyy", new Date()), {
-          start: filter.dateRange.from!,
-          end: filter.dateRange.to!,
-        });
-
-      return typeMatch && statusMatch && dateMatch;
-    });
-  }, [employees, filter]);
-
-  // Reset filter
   const resetFilter = () => {
     setFilter({
       type: "All Type",
@@ -110,30 +78,43 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     });
   };
 
-  const handleStatusChange = (
-    employeeId: number,
-    newStatus: "approved" | "rejected"
-  ) => {
-    setEmployees((prevEmployees) =>
-      prevEmployees.map((emp) =>
-        emp.id === employeeId ? { ...emp, status: newStatus } : emp
-      )
-    );
-  };
-
-  // Pagination
-  const paginatedData = filteredEmployees.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const formattedData = initialData?.map((item) => ({
+    ...item,
+    from: format(new Date(item.startDate), "dd MMM yyyy"),
+    to: format(new Date(item.endDate), "dd MMM yyyy"),
+    status:
+      (item.status ?? "") === "approved"
+        ? "Approved by Manager"
+        : (item.status ?? "") === "rejected"
+        ? "Rejected by Manager"
+        : "Pending",
+    total: `${Math.ceil(
+      (new Date(item.endDate as Date).getTime() -
+        new Date(item.startDate as Date).getTime()) /
+        (1000 * 60 * 60 * 24)
+    )} days`,
+  }));
 
   const columns: Column[] = [
     {
       key: "employeeName",
       header: "Employee Name",
       render: (row) => (
-        <div className="flex items-center">
-          <span>{row.employeeName}</span>
+        <div className="flex items-center gap-1">
+          {row && (
+            <>
+              <Avtr
+                name={row.employee?.user?.username}
+                url={row.employee?.user?.profileImage}
+              />
+              <div>
+                <p className="text-[#8A8A8C] font-semibold ">
+                  {row.employee?.user?.username}
+                </p>
+                <p className="font-[400]">{row.employee?.user?.email}</p>
+              </div>
+            </>
+          )}
         </div>
       ),
     },
@@ -156,75 +137,41 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     {
       key: "status",
       header: "Status",
-      render: (row) => {
-        if (row.status === "pending") {
-          return (
-            <div className="flex justify-between space-x-2 w-full">
-              <Button
-                onClick={() => {
-                  setCurrentRowId(row.id!);
-                  setApproveModalOpen(true);
-                }}
-                // onClick={() => handleStatusChange(row.id!, 'approved')}
-                className="bg-greenaccent3 w-1/2 text-confirmgreen px-2 py-1 rounded hover:bg-green-200"
-              >
-                Approve
-              </Button>
-              <Button
-                onClick={() => {
-                  setCurrentRowId(row.id!);
-                  setRejectModalOpen(true);
-                }}
-                className="bg-redaccent3 w-1/2 text-cancelred px-2 py-1 rounded hover:bg-pink-200"
-              >
-                Reject
-              </Button>
-            </div>
-          );
-        } else if (row.status === "approved") {
-          return (
-            <Button
-              onClick={() => {
-                setCurrentRowId(row.id!);
-                setRejectModalOpen(true);
-              }}
-              className="bg-redaccent3 w-full text-cancelred px-2 py-1 rounded hover:bg-pink-200"
-            >
-              Reject
-            </Button>
-          );
-        } else {
-          return (
-            <Button
-              onClick={() => {
-                setCurrentRowId(row.id!);
-                setApproveModalOpen(true);
-              }}
-              className="bg-greenaccent3 w-full text-confirmgreen px-2 py-1 rounded hover:bg-green-200"
-            >
-              Approve
-            </Button>
-          );
-        }
+      cellClassName: (row) => {
+        const lowerCase = row.status.toLowerCase();
+        console.log("lower:", lowerCase);
+        return `py-2 px-4 text-center rounded-md ${
+          lowerCase === "approved"
+            ? "bg-[#DFFFC7] text-[#20E42A]"
+            : lowerCase === "rejected"
+            ? "bg-[#FEE4E2] text-[#D92D20]"
+            : "bg-yellow-100 text-yellow-800"
+        }`;
       },
     },
-  ];
-
-  const actionColumns: ActionObject[] = [
     {
-      name: "view",
-      action: (_id?: number, row?: timeOffData) => {
-        if (row) {
-          setIsModalOpen(true);
-          setSelectedEmployee(row);
-        }
-      },
+      key: "view",
+      header: "Action",
+      render: (row) => (
+        <div className="w-full flex pl-3">
+          <div
+            className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in"
+            onClick={() => {
+              setIsModalOpen(true);
+              setSelectedEmployee(row as PtoLeave);
+              console.log("row:", row.id);
+            }}
+          >
+            <ViewIcon />
+          </div>
+        </div>
+      ),
     },
   ];
 
   return (
     <>
-      <div className="space-y-4 bg-white py-4 ">
+      <div className="space-y-4 bg-white py-4 flex  flex-col items-center w-full">
         {/* Filter Section */}
         <div className="flex flex-wrap px-[22px]  gap-3 justify-between items-center">
           {/* Date Range Picker */}
@@ -316,28 +263,30 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
           </Button>
         </div>
 
-        <DataTable
-          columns={columns}
-          data={paginatedData}
-          actionObj={actionColumns}
-        />
-        <div className="mt-4 flex justify-center ">
+        <div className="flex w-full px-4">
+          <DataTable
+            columns={columns}
+            data={formattedData}
+            actionBool={false}
+          />
+        </div>
+
+        {/* <div className="mt-4 flex justify-center ">
           <StepProgress
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            totalPages={Math.ceil(filteredEmployees.length / pageSize)}
+            totalPages={Math.ceil(filteredEmployees?.length ?? 0 / pageSize)}
           />
-        </div>
+        </div> */}
       </div>
 
       <ConfirmCancelModal
         isOpen={rejectModalOpen}
         onOpenChange={setRejectModalOpen}
         title="Are you sure you want to reject?"
-        onSubmit={handleReject}
+        onSubmit={() => console.log("submitting...")}
         onCancel={() => {
           setRejectModalOpen(false);
-          setCurrentRowId(null);
         }}
       >
         <div className="space-y-2">
@@ -359,72 +308,100 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         isOpen={approveModalOpen}
         onOpenChange={setApproveModalOpen}
         title="Are you sure you want to approve?"
-        onSubmit={handleApprove}
+        onSubmit={() => console.log("submitting...")}
         onCancel={() => {
           setApproveModalOpen(false);
-          setCurrentRowId(null);
         }}
       />
 
-      {isModalOpen && (
-        <SideModal
-          isOpen={isModalOpen}
-          onOpenChange={() => setIsModalOpen(false)}
-          title="Approve Or Reject Request"
-          showCloseButton={true}
-          position="right"
-          size="md"
-          headerClassName="w-full px-12 "
-          className="flex flex-col w-full items-center"
-        >
-          <div className=" p-6 flex flex-col ">
-            {/* Employee Name */}
-            <div className="mb-4">
-              <label className="text-sm text-gray-300">Employee Name</label>
-              <Input
-                value={selectedEmployee?.employeeName}
-                readOnly
-                className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
-              />
+      <SideModal
+        isOpen={isModalOpen}
+        onOpenChange={() => setIsModalOpen(false)}
+        title="Approve Or Reject Request"
+        showCloseButton={false}
+        headerClassName="w-full flex justify-center text-[#706D8A]"
+        className="flex flex-col items-center sm:w-1/2"
+        footerClassName="w-full p-0 h-full flex"
+        footerContent={
+          <div className="w-full flex justify-center items-end gap-4">
+            <Button
+              variant={"ghost"}
+              className="w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in"
+              onClick={() => handleReject(selectedEmployee?.id)}
+            >
+              Reject
+            </Button>
+            <Button
+              variant={"secondary"}
+              className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7]"
+              onClick={() => handleApprove(selectedEmployee?.id)}
+            >
+              Approve
+            </Button>
+          </div>
+        }
+      >
+        <div className=" p-6 flex flex-col ">
+          {/* Employee Name */}
+          <div className="mb-4">
+            <label className="text-sm text-gray-300">Employee Name</label>
+            <Input
+              value={selectedEmployee?.employee?.user?.username}
+              readOnly
+              className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
+            />
+          </div>
+
+          {/* Date Fields */}
+          <div className="flex gap-4 mb-4">
+            <div className="w-1/2">
+              <label className="text-sm text-gray-300">From</label>
+              <div className="relative">
+                <Input
+                  value={format(
+                    new Date(selectedEmployee?.startDate ?? new Date()),
+                    "dd MMM yyyy"
+                  )}
+                  readOnly
+                  className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 pr-10 border-none shadow-none"
+                />
+              </div>
             </div>
 
-            {/* Date Fields */}
-            <div className="flex gap-4 mb-4">
-              <div className="w-1/2">
-                <label className="text-sm text-gray-300">From</label>
-                <div className="relative">
-                  <Input
-                    value={selectedEmployee?.from}
-                    readOnly
-                    className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 pr-10 border-none shadow-none"
-                  />
-                </div>
+            <div className="w-1/2">
+              <label className="text-sm text-gray-300">To</label>
+              <div className="relative">
+                <Input
+                  value={format(
+                    new Date(selectedEmployee?.endDate ?? new Date()),
+                    "dd MMM yyyy"
+                  )}
+                  readOnly
+                  className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100  pr-10 border-none shadow-none"
+                />
               </div>
-
-              <div className="w-1/2">
-                <label className="text-sm text-gray-300">To</label>
-                <div className="relative">
-                  <Input
-                    value={selectedEmployee?.to}
-                    readOnly
-                    className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100  pr-10 border-none shadow-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Reason */}
-            <div>
-              <label className="text-sm text-gray-300">Reason</label>
-              <Textarea
-                value={selectedEmployee?.reason}
-                readOnly
-                className="h-28 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
-              />
             </div>
           </div>
-        </SideModal>
-      )}
+
+          {/* Reason */}
+          <div>
+            <label className="text-sm text-gray-300">Reason</label>
+            <Textarea
+              value={selectedEmployee?.reason}
+              readOnly
+              className="h-28 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
+            />
+          </div>
+          <div className="pt-4">
+            <label className="text-sm text-gray-300">Manager Name</label>
+            <Input
+              value={selectedEmployee?.approver?.user?.username}
+              readOnly
+              className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
+            />
+          </div>
+        </div>
+      </SideModal>
     </>
   );
 };

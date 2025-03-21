@@ -49,8 +49,8 @@ export default function TimeOff() {
   const initialFormValues = {
     type: "vacation",
     reason: "",
-    startDate: undefined,
-    endDate: undefined,
+    startDate: new Date(),
+    endDate: new Date(),
   };
 
   const ptoFormSchema = Yup.object({
