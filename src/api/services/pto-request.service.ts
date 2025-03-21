@@ -24,6 +24,22 @@ export class PtoRequestService {
     }
   }
 
+  static async updatePtoRequest(ptoUpdate:PtoLeave):Promise<PtoLeave | undefined> {
+    try{
+      const response = await axios.put(`${API_URL}/${ptoUpdate.id}`, ptoUpdate);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to update PTO request");
+      }
+  
+      return response.data.data; 
+
+    } catch(error){
+      console.error("Error updating PTO request", error)
+      throw error
+    }
+  }
+
   static async deletePtoRequest(id: number) {
     try {
       const response = await axios.delete(`${API_URL}/${id}`);

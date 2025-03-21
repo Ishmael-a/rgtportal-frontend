@@ -1,30 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Column } from "@/types/tables";
 import { DataTable } from "../../common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
-import { Calendar as CalendarIcon, X } from "lucide-react";
-import { Calendar } from "../../ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { DateRange } from "react-day-picker";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { SideModal } from "@/components/ui/side-dialog";
 import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
 import { PtoLeave } from "@/types/PTOS";
 import ViewIcon from "@/assets/icons/ViewIcon";
 import Avtr from "@/components/Avtr";
+import { useRequestPto } from "@/hooks/usePtoRequests";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
+import Filters, { FilterConfig } from "@/components/common/Filters";
+
+
 
 export interface timeOffManagementTableProps {
   initialData: PtoLeave[] | undefined;
+  filters?: FilterConfig[];
+  onReset?:()=>void;
   isDataLoading: boolean;
   pageSize?: number;
 }
@@ -37,7 +33,10 @@ export interface FilterState {
 
 const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   initialData,
+  filters,
+  onReset
 }) => {
+
   const [selectedEmployee, setSelectedEmployee] = useState<PtoLeave | null>(
     null
   );
@@ -47,36 +46,75 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     React.useState<boolean>(false);
   const [reason, setReason] = React.useState<string>("");
 
+  const {updatePto, isPtoUpdating} = useRequestPto()
+  const {currentUser} = useAuthContextProvider()
+
+  const handleApprove = async (id: number | undefined): Promise<void> => {
+    if (id) {
+      try {
+        if(selectedEmployee){
+
+          const updatedPto: PtoLeave = {
+            id: selectedEmployee.id,
+              startDate: selectedEmployee.startDate,
+              endDate: selectedEmployee.endDate,
+              type: selectedEmployee.type,
+              reason: selectedEmployee.reason,
+              createdAt: selectedEmployee.createdAt,
+              statusReason: selectedEmployee.statusReason,
+              department_id: selectedEmployee.department_id,
+              employee: selectedEmployee.employee,
+              status: "approved",
+              approverId: currentUser?.employee.id, 
+              approver: currentUser?.employee, 
+        }
+        await updatePto(updatedPto);
+        setApproveModalOpen(false);
+        }
+       
+      } catch (error) {
+       console.error("Error approving request", error)
+       setApproveModalOpen(false);
+      }
+    }
+  };
+
+  const handleReject = async (id: number | undefined): Promise<void> => {
+    if (id) {
+      try {
+        if(selectedEmployee){
+
+          const updatedPto: PtoLeave = {
+            id: selectedEmployee.id,
+              startDate: selectedEmployee.startDate,
+              endDate: selectedEmployee.endDate,
+              type: selectedEmployee.type,
+              reason: selectedEmployee.reason,
+              createdAt: selectedEmployee.createdAt,
+              statusReason: selectedEmployee.statusReason,
+              department_id: selectedEmployee.department_id,
+              employee: selectedEmployee.employee,
+              // approver: selectedEmployee.approver,
+              status: "rejected",
+              approver: currentUser?.employee, 
+        }
+        await updatePto(updatedPto);
+        setRejectModalOpen(false);
+        setReason("");
+        }
+         
+      
+      } catch (error) {
+        console.error("Error rejecting request", error)
+        setRejectModalOpen(false);
+       
+      }
+    }
+  };
+  
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleReject = (id: number | undefined): void => {
-    if (id) {
-      console.log("Rejected with reason:", reason);
-      setRejectModalOpen(true);
-      setReason("");
-    }
-  };
-
-  const handleApprove = (id: number | undefined): void => {
-    if (id) {
-      console.log("Approved");
-      setApproveModalOpen(true);
-    }
-  };
-
-  const [filter, setFilter] = useState<FilterState>({
-    type: "All Type",
-    status: "All Status",
-    dateRange: undefined,
-  });
-
-  const resetFilter = () => {
-    setFilter({
-      type: "All Type",
-      status: "All Status",
-      dateRange: undefined,
-    });
-  };
 
   const formattedData = initialData?.map((item) => ({
     ...item,
@@ -169,6 +207,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     },
   ];
 
+
   return (
     <>
       <div className="space-y-4 bg-white py-4 flex  flex-col items-center w-full">
@@ -176,91 +215,14 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         <div className="flex flex-wrap px-[22px]  gap-3 justify-between items-center">
           {/* Date Range Picker */}
           {/* <div className="flex-grow min-w-auto "> */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-[320px] py-[25px] rounded-lg justify-start text-left font-normal bg-gray-100 border-none",
-                  !filter.dateRange && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {filter.dateRange?.from ? (
-                  filter.dateRange.to ? (
-                    <>
-                      {format(filter.dateRange.from, "LLL dd, y")} -{" "}
-                      {format(filter.dateRange.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(filter.dateRange.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={filter.dateRange?.from}
-                selected={filter.dateRange}
-                onSelect={(range) =>
-                  setFilter((prev) => ({ ...prev, dateRange: range }))
-                }
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
-          {/* </div> */}
+          {
+            filters && onReset && (
 
-          {/* Type Filter */}
-          <Select
-            value={filter.type}
-            onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, type: value }))
-            }
-          >
-            <SelectTrigger className="w-[320px] py-[25px] rounded-lg text-gray-500  hover:text-black font-normal bg-gray-100 border-none">
-              <SelectValue placeholder="All Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All Type">All Type</SelectItem>
-              <SelectItem value="Engagement">Engagement</SelectItem>
-              <SelectItem value="Unwell">Unwell</SelectItem>
-              <SelectItem value="Emergency">Emergency</SelectItem>
-            </SelectContent>
-          </Select>
+              <Filters filters={filters} onReset={onReset} />
+            )
+          }
 
-          {/* Status Filter */}
-          <Select
-            value={filter.status}
-            onValueChange={(value) =>
-              setFilter((prev) => ({ ...prev, status: value }))
-            }
-          >
-            <SelectTrigger className="w-[320px] py-[25px] rounded-lg text-gray-500  hover:text-black font-normal bg-gray-100 border-none">
-              <SelectValue placeholder="All Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All Status">All Status</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Approved">Approved</SelectItem>
-              <SelectItem value="Rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Reset Filter Button */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={resetFilter}
-            className="border-none rounded-lg bg-gray-100 text-gray-500  hover:text-black font-normal w-[100px] py-[25px]"
-          >
-            <X className="h-4 w-4" />
-            Reset
-          </Button>
+       
         </div>
 
         <div className="flex w-full px-4">
@@ -284,10 +246,11 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         isOpen={rejectModalOpen}
         onOpenChange={setRejectModalOpen}
         title="Are you sure you want to reject?"
-        onSubmit={() => console.log("submitting...")}
+        onSubmit={() => handleReject(selectedEmployee?.id)}
         onCancel={() => {
           setRejectModalOpen(false);
         }}
+        isSubmitting={isPtoUpdating}
       >
         <div className="space-y-2">
           <p className="text-sm text-gray-500">Provide a Reason</p>
@@ -308,10 +271,11 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         isOpen={approveModalOpen}
         onOpenChange={setApproveModalOpen}
         title="Are you sure you want to approve?"
-        onSubmit={() => console.log("submitting...")}
-        onCancel={() => {
-          setApproveModalOpen(false);
-        }}
+        onSubmit={() => handleApprove(selectedEmployee?.id)}
+  onCancel={() => {
+    setRejectModalOpen(false);
+  }}
+  isSubmitting={isPtoUpdating}
       />
 
       <SideModal
@@ -327,14 +291,14 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             <Button
               variant={"ghost"}
               className="w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in"
-              onClick={() => handleReject(selectedEmployee?.id)}
+              onClick={() => setRejectModalOpen(true) }
             >
               Reject
             </Button>
             <Button
               variant={"secondary"}
               className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7]"
-              onClick={() => handleApprove(selectedEmployee?.id)}
+              onClick={() => setApproveModalOpen(true) }
             >
               Approve
             </Button>
@@ -392,14 +356,14 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
               className="h-28 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
             />
           </div>
-          <div className="pt-4">
+          {/* <div className="pt-4">
             <label className="text-sm text-gray-300">Manager Name</label>
             <Input
               value={selectedEmployee?.approver?.user?.username}
               readOnly
               className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
             />
-          </div>
+          </div> */} 
         </div>
       </SideModal>
     </>

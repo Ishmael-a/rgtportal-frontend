@@ -33,7 +33,6 @@ export const useRequestPto = (id?: number) => {
       PtoRequestService.createPtoRequest(newPto),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ptoData"] });
-      queryClient.invalidateQueries({ queryKey: ["ptos"] });
       toast({
         title: "Success",
         description: "PTO created successfully",
@@ -67,6 +66,24 @@ export const useRequestPto = (id?: number) => {
     },
   });
 
+  const updatePtoRequestMutation = useMutation({
+    mutationFn:(ptoUpdate:PtoLeave) => PtoRequestService.updatePtoRequest(ptoUpdate),
+    onSuccess:()=>{
+      queryClient.invalidateQueries({queryKey:["ptoData"]});
+      toast({
+        title:"Success",
+        description:"PTO updated successfully"
+      })
+    }, 
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  })
+
   const createPto = async (newPto: PtoLeave) => {
     return createPtoRequestMutation.mutateAsync(newPto);
   };
@@ -74,6 +91,10 @@ export const useRequestPto = (id?: number) => {
   const deletePto = async (ptoId: number) => {
     return deletePtoRequestMutation.mutateAsync(ptoId);
   };
+
+  const updatePto = async (ptoUpdate:PtoLeave)=>{
+    return updatePtoRequestMutation.mutateAsync(ptoUpdate)
+  }
 
   return {
     createPto,
@@ -86,5 +107,7 @@ export const useRequestPto = (id?: number) => {
     isAllPtosLoading,
     departmentPtos,
     isDepartmentPtoLoading,
+    updatePto,
+    isPtoUpdating:updatePtoRequestMutation.isPending
   };
 };
