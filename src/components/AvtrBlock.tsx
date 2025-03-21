@@ -1,18 +1,21 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
-const AvtrBlock = () => {
+const AvtrBlock: React.FC<{
+  profileImage?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+}> = ({ profileImage, firstName, lastName, role }) => {
   return (
     <div className="flex gap-2 items-center">
       <Avatar>
-        <AvatarImage
-          src="https://randomuser.me/api/portraits/med/women/75.jpg"
-          alt="Annette Black"
-        />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage src={profileImage} alt={firstName || "AvtrImg"} />
       </Avatar>
       <div className="">
-        <p className="font-bold">Annette Black</p>
-        <p className="text-rgtgray text-xs">President Of Americas</p>
+        <p className="font-bold">
+          {firstName || "No"} {lastName || "Name"}
+        </p>
+        <p className="text-rgtgray text-xs">{role?.toUpperCase()}</p>
       </div>
     </div>
   );

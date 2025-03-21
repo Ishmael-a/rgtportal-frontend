@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @import "tailwindcss";
 
@@ -8,8 +8,9 @@
 
 body {
   font-family: "Inter", serif;
-  background-color: #F0F4F8;
-  color: #1E293B;
+  background-color: #f0f4f8;
+  color: #1e293b;
+
 }
 
 :root {
@@ -46,6 +47,8 @@ body {
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
+  --success: oklch(0.21 0.006 285.885);
+  --success-foreground: oklch(0.985 0 0);
 }
 
 .dark {
@@ -94,15 +97,24 @@ body {
   --color-avocado-600: oklch(0.53 0.12 118.34);
   --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
-  --color-rgtpink: #EA5E9C;
+  --color-rgtpink: #ea5e9c;
   --color-rgtyellow: #f9b500;
   --color-rgtpurple: #452667;
+  --color-rgtpurpleaccent2: #c9adff;
+  --color-rgtpurpleaccent3: #c0afff;
+  --color-rgtviolet: #6418c3;
   --color-rgtblue: #5259a3;
-  --color-pinkaccent2: #FFA6CD;
-  --color-purpleaccent2: #EFE7FF;
-  --color-rgtred : #EB2E31;
+  --color-pinkaccent2: #ffa6cd;
+  --color-pinkaccent2: #ffa6cd;
+  --color-pinkaccentsharp: #e328af;
+  --color-purpleaccent2: #efe7ff;
+  --color-rgtred: #eb2e31;
   --color-rgtgray: #475569;
-  /* ... */
+  --color-greenaccent3: #dfffc7;
+  --color-confirmgreen: #20e42a;
+  --color-redaccent3: #fee4e2;
+  --color-cancelred: #ff4a55;
+  --breakpoint-custom1: 1140px;
 }
 
 @theme inline {
@@ -152,3 +164,10 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .slick-dots li.slick-active div {
+    @apply bg-[#6418C3]; /* Highlight color for the active dot */
+  }
+}
+
