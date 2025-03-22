@@ -11,7 +11,7 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Departments from "./pages/Employee/Departments";
 import DepartmentDetails from "./pages/Employee/DepartmentDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
+import EmployeeTimeOff from "./pages/HR/Employees/HrEmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/Recruitment/CandidateDetailed";
@@ -23,7 +23,7 @@ import DepartmentPage from "@/pages/HR/Employees/DepartmentPage";
 import Messages from "./pages/common/Messages";
 import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
-import EmployeeTimeOffRequests from "./pages/Manager/EmployeeTimeOffRequests";
+import EmployeeTimeOffRequests from "./pages/Manager/ManagerEmployeeTimeOff";
 
 function App() {
   const getCookie = (name: string) => {

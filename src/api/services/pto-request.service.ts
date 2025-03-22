@@ -96,7 +96,7 @@ export class PtoRequestService {
       if (!response.data.success) {
         throw new Error(response.data.message || "All PTO fetch unsuccessful");
       }
-      return response.data.data;
+      return response.data.data.reverse();
     } catch (error) {
       console.log("Error fetching all ptos:", error);
       throw error;

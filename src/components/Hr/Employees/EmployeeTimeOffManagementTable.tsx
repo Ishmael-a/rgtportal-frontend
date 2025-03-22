@@ -51,6 +51,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   initialData,
   filters,
   onReset,
+  isDataLoading,
 }) => {
   const { currentUser } = useAuthContextProvider();
   const departmentId = currentUser?.employee?.departmentId as number;
@@ -72,12 +73,54 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
 
   const isHr = currentUser?.role.name === "HR";
 
-  const shouldDisableButtons = (selectedEmployee: PtoLeave | null): boolean => {
-    if (!selectedEmployee || !currentUser) return false;
+  const isCurrentUserEmployee =
+    selectedEmployee?.employee?.id === currentUser?.employee?.id;
 
-    const isCurrentUserEmployee =
-      selectedEmployee.employee?.id === currentUser.employee?.id;
-    return (isManager || isHr) && isCurrentUserEmployee;
+  const shouldDisableButtons = (
+    status: PtoStatusType,
+    isManager: boolean,
+    isHr: boolean,
+    isCurrentUserEmployee: boolean
+  ): { disabled: boolean; message: string } => {
+    if (isCurrentUserEmployee) {
+      return {
+        disabled: true,
+        message: "You cannot approve or reject your own request",
+      };
+    }
+    if (isHr) {
+      // HR's buttons are disabled if the manager has not approved or rejected
+      console.log("status:", status);
+      if (
+        status === statusTextMap[PtoStatusType.MANAGER_APPROVED] ||
+        status === statusTextMap[PtoStatusType.MANAGER_DECLINED] ||
+        status === statusTextMap[PtoStatusType.HR_APPROVED] ||
+        status === statusTextMap[PtoStatusType.HR_DECLINED]
+      ) {
+        return { disabled: false, message: "" };
+      }
+      return {
+        disabled: true,
+        message: "Manager has not approved or rejected yet",
+      };
+    }
+
+    if (isManager) {
+      // Manager's buttons are disabled if HR has already approved or rejected
+      if (
+        status === statusTextMap[PtoStatusType.HR_APPROVED] ||
+        status === statusTextMap[PtoStatusType.HR_DECLINED]
+      ) {
+        return { disabled: true, message: "" };
+      } else if (
+        status === statusTextMap[PtoStatusType.MANAGER_APPROVED] ||
+        status === statusTextMap[PtoStatusType.MANAGER_DECLINED]
+      ) {
+        return { disabled: false, message: "" };
+      }
+    }
+
+    return { disabled: false, message: "" };
   };
 
   const handleOpenApproveModal = () => {
@@ -95,7 +138,10 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
       if (selectedEmployee && selectedEmployee.id) {
         const updatedPto = {
           statusReason: selectedEmployee.statusReason,
-          status: PtoStatusType.MANAGER_APPROVED,
+          status:
+            currentUser?.role.name === "MANAGER"
+              ? PtoStatusType.MANAGER_APPROVED
+              : PtoStatusType.HR_APPROVED,
           departmentId: Number(selectedEmployee.departmentId),
         };
         await updatePto({ ptoUpdate: updatedPto, ptoId: selectedEmployee.id });
@@ -111,8 +157,11 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     try {
       if (selectedEmployee && selectedEmployee.id) {
         const updatedPto = {
-          statusReason: reason,
-          status: PtoStatusType.MANAGER_DECLINED,
+          statusReason: currentUser?.role.name === "MANAGER" ? "" : reason,
+          status:
+            currentUser?.role.name === "MANAGER"
+              ? PtoStatusType.MANAGER_DECLINED
+              : PtoStatusType.HR_DECLINED,
           departmentId: Number(selectedEmployee.departmentId),
         };
         await updatePto({ ptoUpdate: updatedPto, ptoId: selectedEmployee.id });
@@ -213,7 +262,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
 
   return (
     <>
-      <div className=" flex bg-white flex-col items-center h[340px] overflow-auto">
+      <div className=" flex bg-white flex-col items-center max-h[340px] overflow-auto">
         {/* Filter Section */}
         <div className="px-[22px] w-full">
           {filters && onReset && (
@@ -221,7 +270,15 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
           )}
         </div>
 
-        <DataTable columns={columns} data={formattedData} actionBool={false} />
+        <div className="px-[22px] w-full max-h-[440px] overflow-y-scroll">
+          <DataTable
+            columns={columns}
+            data={formattedData}
+            actionBool={false}
+            skeleton="employee"
+            loading={isDataLoading}
+          />
+        </div>
 
         {/* <div className="mt-4 flex justify-center ">
           <StepProgress
@@ -281,7 +338,15 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             <Button
               variant={"ghost"}
               className={`w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in disabled:opacity-40`}
-              disabled={shouldDisableButtons(selectedEmployee)}
+              disabled={
+                shouldDisableButtons(
+                  (selectedEmployee?.status as PtoStatusType) ??
+                    PtoStatusType.PENDING,
+                  isManager,
+                  isHr,
+                  isCurrentUserEmployee
+                ).disabled
+              }
               onClick={handleOpentRejectModal}
             >
               Reject
@@ -290,15 +355,34 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
               variant={"secondary"}
               className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7] disabled:opacity-40"
               onClick={handleOpenApproveModal}
-              disabled={shouldDisableButtons(selectedEmployee)}
+              disabled={
+                shouldDisableButtons(
+                  (selectedEmployee?.status as PtoStatusType) ??
+                    PtoStatusType.PENDING,
+                  isManager,
+                  isHr,
+                  isCurrentUserEmployee
+                ).disabled
+              }
             >
               Approve
             </Button>
           </div>
         }
       >
+        <p className="text-sm text-red-500 font-semibold text-center">
+          {
+            shouldDisableButtons(
+              (selectedEmployee?.status as PtoStatusType) ??
+                PtoStatusType.PENDING, // default to pending
+              isManager,
+              isHr,
+              isCurrentUserEmployee
+            ).message
+          }
+        </p>
         <div className=" p-6 flex flex-col ">
-          {/* Employee Name */}
+          
           <div className="mb-4">
             <label className="text-sm text-gray-300">Employee Name</label>
             <Input
@@ -308,7 +392,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             />
           </div>
 
-          {/* Date Fields */}
+       
           <div className="flex gap-4 mb-4">
             <div className="w-1/2">
               <label className="text-sm text-gray-300">From</label>
@@ -349,7 +433,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             />
           </div>
           <div className="pt-4">
-            <label className="text-sm text-gray-300">Manager Reason</label>
+            <label className="text-sm text-gray-300">HR Reason</label>
             <Input
               value={selectedEmployee?.statusReason}
               readOnly

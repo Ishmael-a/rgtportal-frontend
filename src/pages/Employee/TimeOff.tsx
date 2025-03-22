@@ -108,7 +108,7 @@ export default function TimeOff() {
 
     // Filter by date
     const dateMatch =
-      !selectedDate || 
+      !selectedDate ||
       (item.startDate &&
         new Date(item.startDate).setHours(0, 0, 0, 0) <=
           new Date(selectedDate).setHours(0, 0, 0, 0) &&
@@ -160,7 +160,7 @@ export default function TimeOff() {
 
   return (
     <main className="px-4">
-      <div className="bg-white p-4 rounded-md h-[340px]">
+      <div className="bg-white p-4 rounded-md">
         <header className="flex sm:flex-row flex-col justify-between sm:items-center">
           <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
             Request Time List
@@ -175,30 +175,31 @@ export default function TimeOff() {
         </header>
 
         <Filters filters={filters} onReset={handleResetFilters} />
-
-        <DataTable
-          columns={timeOffTableColumns}
-          data={filteredPtoData || []}
-          actionBool={true}
-          actionObj={[
-            {
-              name: "view",
-              action: (rowData) => {
-                setAppRej(!appRej);
-                setSelectedPtoId(rowData);
+        <div className="max-h-[430px] overflow-auto">
+          <DataTable
+            columns={timeOffTableColumns}
+            data={filteredPtoData || []}
+            actionBool={true}
+            actionObj={[
+              {
+                name: "view",
+                action: (rowData) => {
+                  setAppRej(!appRej);
+                  setSelectedPtoId(rowData);
+                },
               },
-            },
-            {
-              name: "delete",
-              action: () => setIsDeletePTO(true),
-            },
-          ]}
-          showDelete={isDeletePTO}
-          setShowDelete={setIsDeletePTO}
-          isDeleteLoading={isPtoDeleting}
-          onDelete={deletePto}
-          loading={isLoading}
-        />
+              {
+                name: "delete",
+                action: () => setIsDeletePTO(true),
+              },
+            ]}
+            showDelete={isDeletePTO}
+            setShowDelete={setIsDeletePTO}
+            isDeleteLoading={isPtoDeleting}
+            onDelete={deletePto}
+            loading={isLoading}
+          />
+        </div>
       </div>
 
       {/* modal for a new Time off request */}

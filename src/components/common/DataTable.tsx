@@ -11,6 +11,7 @@ import { Column, DataTableProps } from "@/types/tables";
 import DeleteCard from "./DeleteCard";
 import { useState } from "react";
 import DataTableSkeleton from "@/pages/Employee/components/DataTableSkeleton";
+import EmployeeManagementTableSkeleton from "../Hr/Employees/EmployeeManagementTableSkeleton";
 
 export function DataTable({
   columns,
@@ -23,6 +24,7 @@ export function DataTable({
   onDelete,
   isDeleteLoading,
   loading,
+  skeleton = "default",
 }: DataTableProps) {
   const [cellToDelete, setCellToDelete] = useState<number | null>(null);
 
@@ -96,7 +98,11 @@ export function DataTable({
   return (
     <div className="w-full h-full overflow-auto">
       {loading ? (
-        <DataTableSkeleton columns={columns} actionBool={actionBool} />
+        skeleton == "default" ? (
+          <DataTableSkeleton columns={columns} actionBool={actionBool} />
+        ) : (
+          <EmployeeManagementTableSkeleton columns={columns} />
+        )
       ) : (
         <Table className={dividers ? "" : "border-none bg-white rounded-md "}>
           <TableHeader>

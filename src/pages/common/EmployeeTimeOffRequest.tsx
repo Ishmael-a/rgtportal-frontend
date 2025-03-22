@@ -1,20 +1,19 @@
-import { Button } from "@/components/ui/button";
+import { FilterConfig } from "@/components/common/Filters";
 import EmployeeTimeOffManagementTable, {
   FilterState,
   PtoStatusType,
 } from "@/components/Hr/Employees/EmployeeTimeOffManagementTable";
-import { useRequestPto } from "@/hooks/usePtoRequests";
-import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-import { useState } from "react";
-import { FilterConfig } from "@/components/common/Filters";
+import { Button } from "@/components/ui/button";
 import { PtoLeave } from "@/types/PTOS";
+import { useState } from "react";
 
-const EmployeeTimeOffRequests = () => {
-  const { currentUser } = useAuthContextProvider();
-  const departmentId = currentUser?.employee?.departmentId as number;
-
-  const { departmentPtos, isDepartmentPtoLoading } =
-    useRequestPto(departmentId);
+const EmployeeTimeOffRequest = ({
+  data,
+  isDataLoading,
+}: {
+  data: PtoLeave[] | undefined;
+  isDataLoading: boolean;
+}) => {
   const [filter, setFilter] = useState<FilterState>({
     type: "All Type",
     status: "All Status",
@@ -45,8 +44,14 @@ const EmployeeTimeOffRequests = () => {
       options: [
         { label: "All Status", value: "All Status" },
         { label: "Pending", value: PtoStatusType.PENDING },
-        { label: "Approved by Manager", value: PtoStatusType.MANAGER_APPROVED },
-        { label: "Declined by Manager", value: PtoStatusType.MANAGER_DECLINED },
+        {
+          label: "Approved by Manager",
+          value: PtoStatusType.MANAGER_APPROVED,
+        },
+        {
+          label: "Declined by Manager",
+          value: PtoStatusType.MANAGER_DECLINED,
+        },
         { label: "Approved by HR", value: PtoStatusType.HR_APPROVED },
         { label: "Declined by HR", value: PtoStatusType.HR_DECLINED },
       ],
@@ -111,7 +116,7 @@ const EmployeeTimeOffRequests = () => {
     });
   };
 
-  const filteredData = filterData(departmentPtos);
+  const filteredData = filterData(data);
 
   return (
     <>
@@ -133,7 +138,7 @@ const EmployeeTimeOffRequests = () => {
 
         <EmployeeTimeOffManagementTable
           initialData={filteredData || []}
-          isDataLoading={isDepartmentPtoLoading}
+          isDataLoading={isDataLoading}
           filters={filterConfigs}
           onReset={resetFilter}
         />
@@ -142,4 +147,4 @@ const EmployeeTimeOffRequests = () => {
   );
 };
 
-export default EmployeeTimeOffRequests;
+export default EmployeeTimeOffRequest;
