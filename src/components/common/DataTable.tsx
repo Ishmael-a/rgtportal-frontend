@@ -94,7 +94,7 @@ export function DataTable({
     : columns;
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full overflow-auto">
       {loading ? (
         <DataTableSkeleton columns={columns} actionBool={actionBool} />
       ) : (

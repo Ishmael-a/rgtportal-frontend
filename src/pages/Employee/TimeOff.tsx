@@ -13,6 +13,10 @@ import { PtoLeave } from "@/types/PTOS";
 import { Field, FieldInputProps, FormikHelpers } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
+import {
+  PtoStatusType,
+  statusTextMap,
+} from "@/components/Hr/Employees/EmployeeTimeOffManagementTable";
 
 export default function TimeOff() {
   const [appRej, setAppRej] = useState(false);
@@ -37,7 +41,8 @@ export default function TimeOff() {
 
   const formattedPtoData = ptoData?.map((item) => ({
     ...item,
-    status: (item.status ?? "").toUpperCase(),
+    status:
+      statusTextMap[(item.status as PtoStatusType) ?? PtoStatusType.PENDING],
     type: item.type.toUpperCase(),
     total: `${Math.ceil(
       (new Date(item.endDate as Date).getTime() -
@@ -103,11 +108,13 @@ export default function TimeOff() {
 
     // Filter by date
     const dateMatch =
-      !selectedDate ||
+      !selectedDate || 
       (item.startDate &&
-        new Date(item.startDate) <= selectedDate &&
+        new Date(item.startDate).setHours(0, 0, 0, 0) <=
+          new Date(selectedDate).setHours(0, 0, 0, 0) &&
         item.endDate &&
-        new Date(item.endDate) >= selectedDate);
+        new Date(item.endDate).setHours(0, 0, 0, 0) >=
+          new Date(selectedDate).setHours(0, 0, 0, 0));
 
     return typeMatch && statusMatch && dateMatch;
   });
@@ -121,13 +128,25 @@ export default function TimeOff() {
   const filters: FilterConfig[] = [
     {
       type: "select",
-      options: ["All Types", "Vacation", "Sick"],
+      options: [
+        { label: "All Types", value: "All Types" },
+        { label: "Vacation", value: "Vacation" },
+        { label: "Sick", value: "Sick" },
+      ],
       value: selectedType,
       onChange: setSelectedType,
     },
     {
       type: "select",
-      options: ["All Statuses", "Pending", "Approved", "Declined"],
+      options: [
+        { label: "All Statuses", value: "All Statuses" },
+        { label: "Pending", value: PtoStatusType.PENDING },
+        { label: "Approved by Manager", value: PtoStatusType.MANAGER_APPROVED },
+        { label: "Declined by Manager", value: PtoStatusType.MANAGER_DECLINED },
+        { label: "Approved by HR", value: PtoStatusType.HR_APPROVED },
+        { label: "Declined by HR", value: PtoStatusType.HR_DECLINED },
+      ],
+
       value: selectedStatus,
       onChange: setSelectedStatus,
     },
@@ -141,7 +160,7 @@ export default function TimeOff() {
 
   return (
     <main className="px-4">
-      <div className="bg-white p-4 rounded-md">
+      <div className="bg-white p-4 rounded-md h-[340px]">
         <header className="flex sm:flex-row flex-col justify-between sm:items-center">
           <h1 className="text-xl font-semibold mb-4 text-[#706D8A] ">
             Request Time List

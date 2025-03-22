@@ -1,92 +1,110 @@
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import EmployeeTimeOffManagementTable, { FilterState } from "@/components/Hr/Employees/EmployeeTimeOffManagementTable";
+import EmployeeTimeOffManagementTable, {
+  FilterState,
+  PtoStatusType,
+} from "@/components/Hr/Employees/EmployeeTimeOffManagementTable";
 import { useRequestPto } from "@/hooks/usePtoRequests";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FilterConfig } from "@/components/common/Filters";
 import { PtoLeave } from "@/types/PTOS";
 
 const EmployeeTimeOffRequests = () => {
   const { currentUser } = useAuthContextProvider();
   const departmentId = currentUser?.employee?.departmentId as number;
-  // Only fetch department PTOs if departmentId is valid
+
   const { departmentPtos, isDepartmentPtoLoading } =
     useRequestPto(departmentId);
   const [filter, setFilter] = useState<FilterState>({
     type: "All Type",
     status: "All Status",
-    dateRange: undefined,
+    selectedDate: null,
+    searchQuery: "",
   });
 
   const resetFilter = () => {
     setFilter({
       type: "All Type",
       status: "All Status",
-      dateRange: undefined,
+      selectedDate: null,
+      searchQuery: "",
     });
   };
 
-
   const filterConfigs: FilterConfig[] = [
     {
-      type: "select",
-      options: ["All Type", "Engagement", "Unwell", "Emergency"],
-      value: filter.type,
-      onChange: (value) => setFilter((prev) => ({ ...prev, type: value })),
+      type: "input", // New input type
+      placeholder: "Search by name",
+      value: filter.searchQuery,
+      onChange: (value) =>
+        setFilter((prev) => ({ ...prev, searchQuery: value })),
+      inputType: "text",
     },
     {
       type: "select",
-      options: ["All Status", "Pending", "Approved", "Rejected"],
+      options: [
+        { label: "All Status", value: "All Status" },
+        { label: "Pending", value: PtoStatusType.PENDING },
+        { label: "Approved by Manager", value: PtoStatusType.MANAGER_APPROVED },
+        { label: "Declined by Manager", value: PtoStatusType.MANAGER_DECLINED },
+        { label: "Approved by HR", value: PtoStatusType.HR_APPROVED },
+        { label: "Declined by HR", value: PtoStatusType.HR_DECLINED },
+      ],
       value: filter.status,
       onChange: (value) => setFilter((prev) => ({ ...prev, status: value })),
     },
     {
       type: "date",
       placeholder: "Pick a date range",
-      value: filter.dateRange,
-      onChange: (value) => setFilter((prev) => ({ ...prev, dateRange: value })),
+      value: filter.selectedDate,
+      onChange: (value) =>
+        setFilter((prev) => ({ ...prev, selectedDate: value })),
     },
   ];
-
 
   const filterData = (data: PtoLeave[] | undefined): PtoLeave[] => {
     if (!data) return [];
 
     return data.filter((item) => {
       // Filter by type
-      if (filter.type !== "All Type" && item.type.toLocaleLowerCase() !== filter.type.toLocaleLowerCase()) {
+      if (
+        filter.type !== "All Type" &&
+        item.type.toLocaleLowerCase() !== filter.type.toLocaleLowerCase()
+      ) {
         return false;
       }
 
       // Filter by status
-      if (filter.status !== "All Status" && item.status?.toLocaleLowerCase() !== filter.status.toLocaleLowerCase()) {
+      if (
+        filter.status !== "All Status" &&
+        item.status?.toLocaleLowerCase() !== filter.status.toLocaleLowerCase()
+      ) {
         return false;
       }
-
-      console.log("filter.dateRange", filter.dateRange)
-
-      // Filter by date range
-      if (filter.dateRange?.from && filter.dateRange?.to) {
+      // Filter by selected date
+      if (filter.selectedDate) {
         const startDate = new Date(item.startDate);
         const endDate = new Date(item.endDate);
-        const filterStartDate = new Date(filter.dateRange.from);
-        const filterEndDate = new Date(filter.dateRange.to);
-        
-        console.log("startDate:", startDate)
-        console.log("endDate:", endDate)
-        console.log("filterStartDate:", filterStartDate)
+        const selectedDate = new Date(filter.selectedDate);
 
-        if (
-          (startDate >= filterStartDate && startDate <= filterEndDate) || // PTO starts within the range
-          (endDate >= filterStartDate && endDate <= filterEndDate) || // PTO ends within the range
-          (startDate <= filterStartDate && endDate >= filterEndDate) // PTO spans the entire range
-        ) {
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+        selectedDate.setHours(0, 0, 0, 0);
+
+        if (startDate <= selectedDate && endDate >= selectedDate) {
           return true;
         } else {
           return false;
         }
+      }
+
+      if (
+        filter.searchQuery &&
+        !item.employee?.user?.username
+          .toLowerCase()
+          .includes(filter.searchQuery.toLowerCase())
+      ) {
+        return false;
       }
 
       return true;
@@ -95,43 +113,20 @@ const EmployeeTimeOffRequests = () => {
 
   const filteredData = filterData(departmentPtos);
 
-
-  
-
-  useEffect(() => {
-    console.log("Department ID:", departmentId);
-  }, [departmentId]);
-
-
-  
-
   return (
     <>
       <div className="flex flex-col gap-[15px] pt-[10px] h-full ">
-        <section className="h-[62px] flex justify-between w-full items-center py-1">
-          {/* Title */}
-          <h1 className="text-2xl font-medium text-gray-600">
-            Employee TimeOff Requestsdadfas
+        <section className="space-y-2 flex flex-col sm:flex-row sm:justify-between w-full sm:items-center py-1">
+          <h1 className="text-lg sm:text-xl font-medium text-gray-600 text-nowrap">
+            Employee TimeOff Requests
           </h1>
-
-          <div className="md:flex md:flex-row gap-4 items-center h-full flex-col">
-            <div className="relative justify-between items-center sm:w-[100px] md:w-[301px] md:max-w-[301px] flex-grow">
-              <Input
-                type="text"
-                placeholder="Search Employee"
-                className="pl-5 py-5 rounded-xl bg-gray-50 border-none outline-none shadow-none h-full"
-              />
-              <Search className="absolute right-4 top-4 h-6 w-6 text-gray-400" />
-            </div>
-
-            <Button
-              onClick={() => {}}
-              className="bg-white text-gray-400 hover:bg-gray-100 rounded-xl h-full"
-            >
-              <img src={"/Filter 3.svg"} />
-              Filter
-            </Button>
-          </div>
+          <Button
+            onClick={() => {}}
+            className="bg-white text-gray-400 hover:bg-gray-100 rounded-xl w-fit h-full"
+          >
+            <img src={"/Filter 3.svg"} />
+            Filter
+          </Button>
         </section>
 
         {/* Manage Employees Table Section */}

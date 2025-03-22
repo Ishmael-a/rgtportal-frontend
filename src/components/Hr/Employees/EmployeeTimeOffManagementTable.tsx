@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Column } from "@/types/tables";
 import { DataTable } from "../../common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 import { SideModal } from "@/components/ui/side-dialog";
 import ConfirmCancelModal from "@/components/common/ConfirmCancelModal";
@@ -12,15 +11,31 @@ import { PtoLeave } from "@/types/PTOS";
 import ViewIcon from "@/assets/icons/ViewIcon";
 import Avtr from "@/components/Avtr";
 import { useRequestPto } from "@/hooks/usePtoRequests";
-import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import Filters, { FilterConfig } from "@/components/common/Filters";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
+export enum PtoStatusType {
+  PENDING = "pending",
+  HR_APPROVED = "approved",
+  HR_DECLINED = "declined",
+  MANAGER_APPROVED = "manager_approved",
+  MANAGER_DECLINED = "manager_declined",
+}
 
+export const statusTextMap = {
+  [PtoStatusType.MANAGER_APPROVED]: "Approved by Manager",
+  [PtoStatusType.MANAGER_DECLINED]: "Declined by Manager",
+  [PtoStatusType.HR_APPROVED]: "Approved by HR",
+  [PtoStatusType.HR_DECLINED]: "Declined by HR",
+  [PtoStatusType.PENDING]: "Pending",
+};
 
 export interface timeOffManagementTableProps {
   initialData: PtoLeave[] | undefined;
   filters?: FilterConfig[];
-  onReset?:()=>void;
+  onReset?: () => void;
   isDataLoading: boolean;
   pageSize?: number;
 }
@@ -28,104 +43,94 @@ export interface timeOffManagementTableProps {
 export interface FilterState {
   type: string;
   status: string;
-  dateRange?: DateRange;
+  selectedDate?: Date | null;
+  searchQuery: string;
 }
 
 const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   initialData,
   filters,
-  onReset
+  onReset,
 }) => {
+  const { currentUser } = useAuthContextProvider();
+  const departmentId = currentUser?.employee?.departmentId as number;
 
   const [selectedEmployee, setSelectedEmployee] = useState<PtoLeave | null>(
     null
   );
-
   const [rejectModalOpen, setRejectModalOpen] = React.useState<boolean>(false);
   const [approveModalOpen, setApproveModalOpen] =
     React.useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [reason, setReason] = React.useState<string>("");
+  const { updatePto, isPtoUpdating } = useRequestPto();
+  const { departments } = useSelector((state: RootState) => state.sharedState);
 
-  const {updatePto, isPtoUpdating} = useRequestPto()
-  const {currentUser} = useAuthContextProvider()
+  const isManager =
+    departments.find((department) => department.id === String(departmentId))
+      ?.managerId === currentUser?.employee?.id;
 
-  const handleApprove = async (id: number | undefined): Promise<void> => {
-    if (id) {
-      try {
-        if(selectedEmployee){
+  const isHr = currentUser?.role.name === "HR";
 
-          const updatedPto: PtoLeave = {
-            id: selectedEmployee.id,
-              startDate: selectedEmployee.startDate,
-              endDate: selectedEmployee.endDate,
-              type: selectedEmployee.type,
-              reason: selectedEmployee.reason,
-              createdAt: selectedEmployee.createdAt,
-              statusReason: selectedEmployee.statusReason,
-              department_id: selectedEmployee.department_id,
-              employee: selectedEmployee.employee,
-              status: "approved",
-              approverId: currentUser?.employee.id, 
-              approver: currentUser?.employee, 
-        }
-        await updatePto(updatedPto);
+  const shouldDisableButtons = (selectedEmployee: PtoLeave | null): boolean => {
+    if (!selectedEmployee || !currentUser) return false;
+
+    const isCurrentUserEmployee =
+      selectedEmployee.employee?.id === currentUser.employee?.id;
+    return (isManager || isHr) && isCurrentUserEmployee;
+  };
+
+  const handleOpenApproveModal = () => {
+    setApproveModalOpen(true);
+    return;
+  };
+
+  const handleOpentRejectModal = () => {
+    setRejectModalOpen(true);
+    return;
+  };
+
+  const handleApprove = async (): Promise<void> => {
+    try {
+      if (selectedEmployee && selectedEmployee.id) {
+        const updatedPto = {
+          statusReason: selectedEmployee.statusReason,
+          status: PtoStatusType.MANAGER_APPROVED,
+          departmentId: Number(selectedEmployee.departmentId),
+        };
+        await updatePto({ ptoUpdate: updatedPto, ptoId: selectedEmployee.id });
         setApproveModalOpen(false);
-        }
-       
-      } catch (error) {
-       console.error("Error approving request", error)
-       setApproveModalOpen(false);
       }
+    } catch (error) {
+      console.error("Error approving request", error);
+      setApproveModalOpen(false);
     }
   };
 
-  const handleReject = async (id: number | undefined): Promise<void> => {
-    if (id) {
-      try {
-        if(selectedEmployee){
-
-          const updatedPto: PtoLeave = {
-            id: selectedEmployee.id,
-              startDate: selectedEmployee.startDate,
-              endDate: selectedEmployee.endDate,
-              type: selectedEmployee.type,
-              reason: selectedEmployee.reason,
-              createdAt: selectedEmployee.createdAt,
-              statusReason: selectedEmployee.statusReason,
-              department_id: selectedEmployee.department_id,
-              employee: selectedEmployee.employee,
-              // approver: selectedEmployee.approver,
-              status: "rejected",
-              approver: currentUser?.employee, 
-        }
-        await updatePto(updatedPto);
+  const handleReject = async (): Promise<void> => {
+    try {
+      if (selectedEmployee && selectedEmployee.id) {
+        const updatedPto = {
+          statusReason: reason,
+          status: PtoStatusType.MANAGER_DECLINED,
+          departmentId: Number(selectedEmployee.departmentId),
+        };
+        await updatePto({ ptoUpdate: updatedPto, ptoId: selectedEmployee.id });
         setRejectModalOpen(false);
         setReason("");
-        }
-         
-      
-      } catch (error) {
-        console.error("Error rejecting request", error)
-        setRejectModalOpen(false);
-       
       }
+    } catch (error) {
+      console.error("Error rejecting request", error);
+      setRejectModalOpen(false);
     }
   };
-  
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
 
   const formattedData = initialData?.map((item) => ({
     ...item,
     from: format(new Date(item.startDate), "dd MMM yyyy"),
     to: format(new Date(item.endDate), "dd MMM yyyy"),
     status:
-      (item.status ?? "") === "approved"
-        ? "Approved by Manager"
-        : (item.status ?? "") === "rejected"
-        ? "Rejected by Manager"
-        : "Pending",
+      statusTextMap[(item.status as PtoStatusType) ?? PtoStatusType.PENDING],
     total: `${Math.ceil(
       (new Date(item.endDate as Date).getTime() -
         new Date(item.startDate as Date).getTime()) /
@@ -179,9 +184,9 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         const lowerCase = row.status.toLowerCase();
         console.log("lower:", lowerCase);
         return `py-2 px-4 text-center rounded-md ${
-          lowerCase === "approved"
+          lowerCase.includes("approved")
             ? "bg-[#DFFFC7] text-[#20E42A]"
-            : lowerCase === "rejected"
+            : lowerCase.includes("declined")
             ? "bg-[#FEE4E2] text-[#D92D20]"
             : "bg-yellow-100 text-yellow-800"
         }`;
@@ -197,7 +202,6 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             onClick={() => {
               setIsModalOpen(true);
               setSelectedEmployee(row as PtoLeave);
-              console.log("row:", row.id);
             }}
           >
             <ViewIcon />
@@ -207,31 +211,17 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
     },
   ];
 
-
   return (
     <>
-      <div className="space-y-4 bg-white py-4 flex  flex-col items-center w-full">
+      <div className=" flex bg-white flex-col items-center h[340px] overflow-auto">
         {/* Filter Section */}
-        <div className="flex flex-wrap px-[22px]  gap-3 justify-between items-center">
-          {/* Date Range Picker */}
-          {/* <div className="flex-grow min-w-auto "> */}
-          {
-            filters && onReset && (
-
-              <Filters filters={filters} onReset={onReset} />
-            )
-          }
-
-       
+        <div className="px-[22px] w-full">
+          {filters && onReset && (
+            <Filters filters={filters} onReset={onReset} />
+          )}
         </div>
 
-        <div className="flex w-full px-4">
-          <DataTable
-            columns={columns}
-            data={formattedData}
-            actionBool={false}
-          />
-        </div>
+        <DataTable columns={columns} data={formattedData} actionBool={false} />
 
         {/* <div className="mt-4 flex justify-center ">
           <StepProgress
@@ -246,7 +236,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         isOpen={rejectModalOpen}
         onOpenChange={setRejectModalOpen}
         title="Are you sure you want to reject?"
-        onSubmit={() => handleReject(selectedEmployee?.id)}
+        onSubmit={handleReject}
         onCancel={() => {
           setRejectModalOpen(false);
         }}
@@ -271,11 +261,11 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
         isOpen={approveModalOpen}
         onOpenChange={setApproveModalOpen}
         title="Are you sure you want to approve?"
-        onSubmit={() => handleApprove(selectedEmployee?.id)}
-  onCancel={() => {
-    setRejectModalOpen(false);
-  }}
-  isSubmitting={isPtoUpdating}
+        onSubmit={handleApprove}
+        onCancel={() => {
+          setRejectModalOpen(false);
+        }}
+        isSubmitting={isPtoUpdating}
       />
 
       <SideModal
@@ -290,15 +280,17 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
           <div className="w-full flex justify-center items-end gap-4">
             <Button
               variant={"ghost"}
-              className="w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in"
-              onClick={() => setRejectModalOpen(true) }
+              className={`w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in disabled:opacity-40`}
+              disabled={shouldDisableButtons(selectedEmployee)}
+              onClick={handleOpentRejectModal}
             >
               Reject
             </Button>
             <Button
               variant={"secondary"}
-              className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7]"
-              onClick={() => setApproveModalOpen(true) }
+              className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7] disabled:opacity-40"
+              onClick={handleOpenApproveModal}
+              disabled={shouldDisableButtons(selectedEmployee)}
             >
               Approve
             </Button>
@@ -356,14 +348,14 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
               className="h-28 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
             />
           </div>
-          {/* <div className="pt-4">
-            <label className="text-sm text-gray-300">Manager Name</label>
+          <div className="pt-4">
+            <label className="text-sm text-gray-300">Manager Reason</label>
             <Input
-              value={selectedEmployee?.approver?.user?.username}
+              value={selectedEmployee?.statusReason}
               readOnly
               className="h-12 rounded-lg text-gray-400 mt-1 bg-gray-100 border-none shadow-none"
             />
-          </div> */} 
+          </div>
         </div>
       </SideModal>
     </>
