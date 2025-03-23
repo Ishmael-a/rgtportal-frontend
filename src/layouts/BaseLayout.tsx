@@ -15,6 +15,7 @@ import { employeeService } from "@/api/services/employee.service";
 import { debounce } from "lodash";
 import { useMemo } from "react";
 import ErrorMessage from "@/components/common/ErrorMessage";
+import ToTop from "@/components/common/ToTop";
 
 export const BaseLayout = () => {
   const { currentUser: user } = useAuthContextProvider();
@@ -185,13 +186,14 @@ export const BaseLayout = () => {
         </div>
 
         <div
-          className="pt-[78px] flex-1 h-screen overflow-y-auto"
+          className="pt-[78px] flex-1 h-screen overflow-y-auto relative"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,
           }}
         >
           <Outlet />
+          <ToTop />
         </div>
       </div>
       <NotificationContainer
