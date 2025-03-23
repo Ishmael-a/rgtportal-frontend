@@ -93,11 +93,15 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
       console.log("status:", status);
       if (
         status === statusTextMap[PtoStatusType.MANAGER_APPROVED] ||
-        status === statusTextMap[PtoStatusType.MANAGER_DECLINED] ||
         status === statusTextMap[PtoStatusType.HR_APPROVED] ||
         status === statusTextMap[PtoStatusType.HR_DECLINED]
       ) {
         return { disabled: false, message: "" };
+      } else if (status === statusTextMap[PtoStatusType.MANAGER_DECLINED]) {
+        return {
+          disabled: true,
+          message: "Manager has already declined the request",
+        };
       }
       return {
         disabled: true,
@@ -382,7 +386,6 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
           }
         </p>
         <div className=" p-6 flex flex-col ">
-          
           <div className="mb-4">
             <label className="text-sm text-gray-300">Employee Name</label>
             <Input
@@ -392,7 +395,6 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
             />
           </div>
 
-       
           <div className="flex gap-4 mb-4">
             <div className="w-1/2">
               <label className="text-sm text-gray-300">From</label>

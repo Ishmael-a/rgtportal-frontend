@@ -52,8 +52,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         className="hidden sm:block h-full  rounded-[30px] w-full "
       >
         {images.map((item, index) => (
-          <div key={index}>
-            <Media url={item} className="h-[440px] hidden sm:block" />
+          <div key={index} className="h-full">
+            <Media url={item} className="h-full hidden sm:block" />
           </div>
         ))}
       </Slider>
@@ -66,8 +66,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center py-15"
       style={{ zIndex: "100" }}
     >
-      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[80%] w-[90%] md:w-[80%] lg:w-[1027px]">
-        <div className="max-w-[300px] md:max-w-[500px] hidden sm:flex ">
+      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[80%] w-[90%] md:w-[80%] lg:w-[1027px] border-2 border-gray-200">
+        <div className="max-w-[300px] md:max-w-[500px] hidden sm:flex h-[100%] bg-confirmgreen">
           {renderMedia()}
         </div>
         <div className="h-full  flex-1 space-y-1">
