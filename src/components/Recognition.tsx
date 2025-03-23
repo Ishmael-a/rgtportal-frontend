@@ -103,9 +103,10 @@ const Recognition = ({
               const randomEmoji = getRandomEmoji();
               return (
                 <div
-                  className="flex flex-col items-center justify-end"
+                  className="flex flex-col items-center justify-center"
                   key={index}
                 >
+                  {/* <p className="font-bold text-sm text-gold-600">{item.project}</p> */}
                   <div
                     className={`border-3 rounded-full p-1 flex w-fit items-center justify-center relative ${
                       randomColor.name === "pink"
