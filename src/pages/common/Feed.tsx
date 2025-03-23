@@ -16,6 +16,7 @@ import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import ArrowIcon from "@/assets/icons/ArrowIcon";
 import { useGetAllRecognitions } from "@/api/query-hooks/recognition.hooks";
 import Recognition from "@/components/Recognition";
+import ToTop from "@/components/common/ToTop";
 
 const Feed = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -57,7 +58,7 @@ const Feed = () => {
 
   return (
     <main
-      className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end`}
+      className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end relative`}
     >
       <div
         className="space-y-[18px] flex-1 overflow-y-auto"
@@ -180,6 +181,8 @@ const Feed = () => {
           </div>
         </div>
       </section>
+
+      <ToTop />
     </main>
   );
 };
