@@ -61,15 +61,17 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     );
   };
 
+  console.log("comments:", comments);
+
   if (!isOpen) return null;
   return (
     <div
       className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center py-15"
       style={{ zIndex: "100" }}
     >
-      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[444px] w-[90%] md:w-[80%] lg:w-[1027px] border-2 border-gray-200">
+      <div className="bg-white rounded-[30px] p-4 relative flex justify-center gap-3 h-[444px] w-[90%] md:w-[80%] lg:w-[1027px] border-2 border-gray-200 ">
         <div className="w-1/2 hidden sm:flex h-full ">{renderMedia()}</div>
-        <div className="h-full sm:w-1/2 space-y-1">
+        <div className="h-full flex flex-col justify-between sm:w-1/2 space-y-1 ">
           <div className="flex w-full justify-end">
             <button
               onClick={onClose}
@@ -89,7 +91,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             >
               {comments.length > 0 ? (
                 comments.map((comment, index) => (
-                  <Comments key={index} {...comment} />
+                  <Comments key={index} comment={comment} postId={postId} />
                 ))
               ) : (
                 <div className="flex items-center justify-center h-full">
@@ -105,8 +107,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                 onComments={onComments}
                 showText={false}
               />
-              <div className="">
-                <p className="text-sm font-medium">Liked by</p>
+              <div className="flex items-end">
                 <CommentBlck postId={postId} user={currentUser} />
               </div>
             </section>

@@ -90,6 +90,8 @@ const Post: React.FC<IFeed> = ({ post }) => {
     return <PostSkeleton />;
   }
 
+  console.log("StatsComments:", stats.comments)
+
   return (
     <div className="flex flex-col p-4 rounded-lg shadow-md w-full bg-white">
       {post && currentUser && (
@@ -121,7 +123,7 @@ const Post: React.FC<IFeed> = ({ post }) => {
           <CommentsModal
             isOpen={isComments}
             onClose={() => setIsComments(false)}
-            comments={stats.comments}
+            comments={stats.comments.reverse()}
             postId={post?.id}
             userPrevLiked={
               post?.likes.find(

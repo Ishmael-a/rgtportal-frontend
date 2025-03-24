@@ -18,6 +18,38 @@ export class PostInteractionService {
     }
   }
 
+  static async fetchCommentReplies(commentId: number): Promise<any[]> {
+    try {
+      const response = await axios.get(
+        `${API_URL}/comments/${commentId}/replies`
+      );
+      console.log("response:", response.data);
+      if (!response.data.success) {
+        throw new Error("Failed to fetch replies for comments");
+      }
+      return response.data.data.reverse();
+    } catch (error) {
+      console.error("Error fetching comment rplies", error);
+      throw error;
+    }
+  }
+
+  static async fetchReplyReplies(replyId: number): Promise<any[]> {
+    try {
+      const response = await axios.get(`${API_URL}/${replyId}/replies`);
+      console.log("reply Replies:", response.data);
+
+      if (!response.data.success) {
+        throw new Error("Failed to fetch replies for comments");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching the replies of replies of comment", error);
+      throw error;
+    }
+  }
+
   static async likePost(postId: number, liked: boolean): Promise<void> {
     try {
       const response = await axios.post(`${API_URL}/${postId}/likes`, {
@@ -64,6 +96,49 @@ export class PostInteractionService {
       await axios.delete(`${API_URL}/${postId}/comment/${commentId}`);
     } catch (error) {
       console.error("Error deleting comment:", error);
+      throw error;
+    }
+  }
+
+  static async likeComment(commentId: number): Promise<any> {
+    try {
+      console.log("hittin....")
+      const response = await axios.post(
+        `${API_URL}/comments/${commentId}/likes`
+      );
+      console.log("likeComment:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error liking comment:", error);
+      throw error;
+    }
+  }
+
+  static async replyToComment(
+    commentId: number,
+    content: string,
+    parentReplyId?: number
+  ): Promise<{
+    commentId: number;
+    parentReplyId?: number;
+    authorId: number;
+    content: string;
+    comment: { id: number };
+    parentReply?: { id: number };
+    author: { id: number };
+  }> {
+    try {
+      const response = await axios.post(
+        `${API_URL}/comments/${commentId}/replies`,
+        {
+          content,
+          parentReplyId,
+        }
+      );
+      console.log("response Reply Comment:", response.data);
+      return response.data.data;
+    } catch (error) {
+      console.error("Error replying to comment:", error);
       throw error;
     }
   }
