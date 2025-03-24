@@ -119,7 +119,7 @@ const likeCommentMutation = useMutation({
           Number(comment.id) === Number(commentId)
             ? {
                 ...comment,
-                isLiked: !comment.isLiked, // Toggle the like status
+                isLiked: !comment.isLiked, 
                 likes: comment.isLiked
                   ? (comment.likes ?? []).filter(
                       (like) => Number(like.employeeId) !== Number(currentUser?.employee.id)
@@ -137,29 +137,23 @@ const likeCommentMutation = useMutation({
         ),
       })
     );
-
-    // Return the snapshot for rollback on error
     return { previousStats };
   },
   onSuccess: (data, commentId) => {
-     console.log("Server response:", data);
-    // Use the server response to update the likes count accurately
-    const updatedCommentLike = data.data; // Response from the server
-
+    console.log("Server response:", data);
+    const updatedCommentLike = data.data;
+  
+    console.log("Updated comment like:", updatedCommentLike);
+  
     queryClient.setQueryData(
       ["postStats", postId],
-      (old: IStats | undefined) => ({
-        ...(old || {
-          commentsCount: 0,
-          likesCount: 0,
-          disLikesCount: 0,
-          comments: [],
-        }),
-        comments: old?.comments.map((comment) =>
+      (old: IStats | undefined) => {
+        console.log("Old state:", old);
+        const updatedComments = old?.comments.map((comment) =>
           Number(comment.id) === Number(commentId)
             ? {
                 ...comment,
-                isLiked: updatedCommentLike !== null, // Check if the like was added or removed
+                isLiked: updatedCommentLike !== null,
                 likes: updatedCommentLike
                   ? [
                       ...(comment.likes || []),
@@ -168,16 +162,27 @@ const likeCommentMutation = useMutation({
                         employeeId: updatedCommentLike.employeeId,
                         createdAt: new Date(),
                       },
-                    ] // Add the like
+                    ]
                   : (comment.likes ?? []).filter(
-                      (like) => like.employeeId !== currentUser?.employee.id
-                    ), // Remove the like
+                      (like) => Number(like.employeeId) !== Number(currentUser?.employee.id)
+                    ),
               }
             : comment
-        ),
-      })
+        );
+        console.log("Updated comments:", updatedComments);
+        return {
+          ...(old || {
+            commentsCount: 0,
+            likesCount: 0,
+            disLikesCount: 0,
+            comments: [],
+          }),
+          comments: updatedComments,
+        };
+      }
     );
   },
+ 
   onError: (_err, _unused, context) => {
     // Rollback to the previous state on error
     queryClient.setQueryData(["postStats", postId], context?.previousStats);

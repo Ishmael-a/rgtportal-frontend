@@ -104,7 +104,8 @@ export default function TimeOff() {
     // Filter by status
     const statusMatch =
       selectedStatus === "All Statuses" ||
-      item.status.toLowerCase() === selectedStatus.toLowerCase();
+      item.status === statusTextMap[selectedStatus as PtoStatusType];
+
 
     // Filter by date
     const dateMatch =
@@ -118,6 +119,8 @@ export default function TimeOff() {
 
     return typeMatch && statusMatch && dateMatch;
   });
+
+  console.log("filtered DAta:", filteredPtoData)
 
   const handleResetFilters = () => {
     setSelectedType("All Types");

@@ -37,6 +37,8 @@ const Comments = ({
     setReply(!reply);
   };
 
+  console.log("isliked?:", comment.isLiked)
+
   return (
     <div className="flex items-start gap-2">
       <Avatar>
@@ -61,7 +63,7 @@ const Comments = ({
             <div className="flex w-full items-center font-semibold text-[12px] space-x-2 text-[#8A8A8C]">
               <p>{formatDateToDaysAgo(String(comment.createdAt))}</p>
               <p>
-                {comment.likes?.length ?? 0}{" "}
+                {comment.likes?.length}{" "}
                 {comment.likes?.length === 1 ? "like" : "likes"}
               </p>
               <p
