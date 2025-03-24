@@ -47,9 +47,9 @@ interface IComment {
     lastName: string;
     profileImage: string;
   };
-  isLiked?: boolean;
+  // isLiked?: boolean;
   likes?: CommentLike[];
-  onLike?: (val: number) => void;
+  // onLike?: (val: number) => void;
   isCommentLoading?: boolean;
   commentReplies?: IComment[];
 }

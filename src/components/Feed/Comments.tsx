@@ -27,6 +27,10 @@ const Comments = ({
   const [content, setContent] = useState("");
   const [viewReplies, setViewReplies] = useState(false);
 
+  const isLiked = comment.likes?.find(
+    (item) => item.employeeId === currentUser?.employee.id
+  );
+
   console.log("commentReplies:", commentsReplies);
 
   const handleCommentReply = async () => {
@@ -71,19 +75,16 @@ const Comments = ({
               </p>
               <p
                 className="text-rgtpurple cursor-pointer"
-                onClick={handleToggleReply}>
+                onClick={handleToggleReply}
+              >
                 Reply
               </p>
               <div className="" onClick={() => toggleCommentLike(comment.id)}>
                 <LikeIcon
                   size={15}
-                  stroke="#6418C3"
+                  stroke={`${isLiked ? "" : "#6418C3"}`}
                   className={`cursor-pointer ${
-                    comment.likes?.find(
-                      (item) => item.employeeId === currentUser?.employee.id
-                    )
-                      ? "fill-[#6418C3] stroke-0"
-                      : "stroke-[#6418C3]"
+                    isLiked ? "fill-[#6418C3]" : ""
                   }`}
                 />
               </div>
@@ -99,7 +100,8 @@ const Comments = ({
                 <div className="flex justify-end">
                   <button
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
-                    onClick={handleCommentReply}>
+                    onClick={handleCommentReply}
+                  >
                     {isCommentReplyLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
                     ) : (
@@ -121,7 +123,8 @@ const Comments = ({
               commentsReplies.length > 0 && (
                 <div
                   className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px] cursor-pointer hover:text-black transition-all duration-300 ease-in"
-                  onClick={() => setViewReplies(!viewReplies)}>
+                  onClick={() => setViewReplies(!viewReplies)}
+                >
                   <div className="w-[31px] border-t-[#8A8A8C] border-1" />
                   <p>View replies ({commentsReplies?.length})</p>
                 </div>
@@ -133,7 +136,6 @@ const Comments = ({
                   {commentsReplies?.map((item, index) => (
                     <div className="pt-3">
                       <RecursiveComments
-                        replyComment={replyComment}
                         commentsReply={item}
                         parentReplyId={comment.id}
                         key={index}

@@ -18,7 +18,7 @@ export class PostInteractionService {
     }
   }
 
-  static async fetchCommentReplies(commentId: number): Promise<any[]> {
+  static async fetchCommentReplies(commentId: number): Promise<IComment[]> {
     try {
       const response = await axios.get(
         `${API_URL}/comments/${commentId}/replies`

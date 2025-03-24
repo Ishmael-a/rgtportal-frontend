@@ -5,29 +5,29 @@ import { useState } from "react";
 import Avtr from "../Avtr";
 import { useInteraction } from "@/hooks/use-interaction";
 import { Loader } from "lucide-react";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const RecursiveComments = ({
-  comment,
   commentsReply,
   parentReplyId,
 }: {
   comment: IComment;
   // replyComment: (commentId: number, content: string) => Promise<void>;
-  commentsReply: any[] | undefined;
-  parentReplyId: number;
+  commentsReply: IComment | undefined;
+  parentReplyId: number | undefined;
 }) => {
-  const { replyComment } = useInteraction(comment.id);
+  const { currentUser } = useAuthContextProvider();
+  const { replyComment, toggleCommentLike } = useInteraction(commentsReply?.id);
 
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
-  const [viewReplies, setViewReplies] = useState(false);
-  const [isLiked] = useState(commentsReply?.isLiked);
+  // const [viewReplies, setViewReplies] = useState(false);
 
   const handleCommentReply = async () => {
-    console.log("comment.id, content:", comment.id, content);
+    console.log("comment.id, content:", commentsReply?.id, content);
     if (!content) return;
-    if (comment.id) {
-      await replyComment(comment.id, content, parentReplyId);
+    if (commentsReply?.id) {
+      await replyComment(commentsReply.id, content, parentReplyId);
       setContent("");
     }
   };
@@ -36,11 +36,15 @@ const RecursiveComments = ({
     setReply(!reply);
   };
 
+  const isLiked = commentsReply?.likes?.find(
+    (item) => item.employeeId === currentUser?.employee.id
+  );
+
   return (
     <div className="flex items-start gap-2">
       <Avtr
-        url={commentsReply?.author.profileImage}
-        name={commentsReply?.author.firstName}
+        url={commentsReply?.author.profileImage ?? ""}
+        name={commentsReply?.author.firstName ?? ""}
         avtBg="#94A3B8"
         className="text-sm font-semibold text-slate-500"
       />
@@ -60,28 +64,26 @@ const RecursiveComments = ({
             <div className="flex w-full items-center font-semibold text-[12px] space-x-2 text-[#8A8A8C]">
               <p>{formatDateToDaysAgo(String(commentsReply?.createdAt))}</p>
               <p>
-                {commentsReply?.likes ?? 0}{" "}
-                {commentsReply?.likes && commentsReply?.likes == 1
+                {commentsReply?.likes?.length ?? 0}{" "}
+                {commentsReply?.likes && commentsReply?.likes.length == 1
                   ? "like"
                   : "likes"}
               </p>
               <p
                 className="text-rgtpurple cursor-pointer"
-                onClick={handleToggleReply}>
+                onClick={handleToggleReply}
+              >
                 Reply
               </p>
               <div
                 className=""
-                onClick={() =>
-                  commentsReply?.id && commentsReply?.onLike
-                    ? commentsReply?.onLike(commentsReply?.id)
-                    : 0
-                }>
+                onClick={() => toggleCommentLike(commentsReply?.id)}
+              >
                 <LikeIcon
                   size={15}
-                  stroke="#6418C3"
+                  stroke={`${isLiked ? "" : "#6418C3"}`}
                   className={`cursor-pointer ${
-                    isLiked ? "fill-[#6418C3] stroke-0" : ""
+                    isLiked ? "fill-[#6418C3]" : ""
                   }`}
                 />
               </div>
@@ -97,8 +99,9 @@ const RecursiveComments = ({
                 <div className="flex justify-end">
                   <button
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
-                    onClick={handleCommentReply}>
-                    {comment.isCommentLoading ? (
+                    onClick={handleCommentReply}
+                  >
+                    {commentsReply?.isCommentLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
                     ) : (
                       "Post"
@@ -108,11 +111,12 @@ const RecursiveComments = ({
               </div>
             )}
           </div>
-          <div className="flex flex-col w-full">
+          {/* <div className="flex flex-col w-full">
             {commentsReply && commentsReply.length > 0 && (
               <div
                 className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px]"
-                onClick={() => setViewReplies(!viewReplies)}>
+                onClick={() => setViewReplies(!viewReplies)}
+              >
                 <div className="w-[31px] border-t-[#8A8A8C] border-1" />
                 <p>View replies ({commentsReply?.length})</p>
               </div>
@@ -126,7 +130,7 @@ const RecursiveComments = ({
                 </section>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
