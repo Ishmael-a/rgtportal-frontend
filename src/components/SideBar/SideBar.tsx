@@ -9,10 +9,12 @@ import TimeIcon from "@/assets/icons/TimeIcon";
 import DepartmentsIcon from "@/assets/icons/DepartmentsIcon";
 import UserIcon from "@/assets/icons/UserIcon";
 import LogoutIcon from "@/assets/icons/LogoutIcon";
+import WithRole from "@/common/WithRole";
 
 export const SideBar = () => {
   const { currentUser: user } = useAuthContextProvider();
   const [showProfile, setShowProfile] = useState(false);
+  const [showTimeOffDropdown, setShowTimeOffDropdown] = useState(false);
   const location = useLocation();
 
   const navItems = [
@@ -27,8 +29,19 @@ export const SideBar = () => {
       icon: TimeIcon,
       label: "Time Off",
       path: "time-off",
+      subRoutes: [{ label: "Employee Time Off", path: "employee-requests" }],
     },
   ];
+
+  // Handle dropdown toggle for Time Off
+  const handleTimeOffClick = () => {
+    setShowTimeOffDropdown((prev) => !prev);
+  };
+
+  // Close dropdown when another tab is selected
+  const handleNavItemClick = () => {
+    setShowTimeOffDropdown(false);
+  };
 
   return (
     <section className="space-y-3 flex flex-col items-center h-full">
@@ -96,7 +109,14 @@ export const SideBar = () => {
         <nav className="rounded-xl justify-start items-center md:items-start sm:min-w-[100px] md:min-w-[280px] flex flex-col pt-[10px] space-y-1">
           {navItems.map((item) => (
             <div className="w-full" key={item.path}>
-              <NavLink to={item.path}>
+              <NavLink
+                to={item.path}
+                onClick={
+                  item.label === "Time Off"
+                    ? handleTimeOffClick
+                    : handleNavItemClick
+                }
+              >
                 {({ isActive }) => (
                   <div
                     className={`
@@ -129,6 +149,35 @@ export const SideBar = () => {
                   </div>
                 )}
               </NavLink>
+
+              {/* Add sub-routes for Time Off */}
+              {item.label === "Time Off" && showTimeOffDropdown && (
+                <WithRole
+                  roles={["manager"]}
+                  userRole={user?.role.name as string}
+                >
+                  <div className="pl-8 space-y-1">
+                    {item.subRoutes?.map((subItem) => (
+                      <NavLink
+                        to={`${item.path}/${subItem.path}`}
+                        key={subItem.path}
+                        onClick={handleNavItemClick}
+                      >
+                        {({ isActive }) => (
+                          <div
+                            className={`flex items-center py-2 transition-colors duration-200 font-medium text-[#706D8A]
+                      ${isActive ? "text-[#E328AF]" : "hover:bg-gray-100"}`}
+                          >
+                            <span className="font-semibold text-base hidden md:block pl-8">
+                              {subItem.label}
+                            </span>
+                          </div>
+                        )}
+                      </NavLink>
+                    ))}
+                  </div>
+                </WithRole>
+              )}
             </div>
           ))}
         </nav>

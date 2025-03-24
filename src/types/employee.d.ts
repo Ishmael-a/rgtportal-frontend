@@ -4,6 +4,7 @@ import { Poll } from "./polls";
 import { User } from "./authUser";
 import { Department } from "./department";
 import { LEAVE_TYPES, WORK_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
+import { PTORequest } from "./PTOS";
 
 interface IDepartmentCard {
   id: string | number;
@@ -101,9 +102,9 @@ export interface Employee {
   user?: User;
   department: Department;
   departmentId: number | null;
-  notes: string|null;
+  notes?: string| null;
 
-  ptoRequests?: PtoRequest[];
+  ptoRequests?: PTORequest[];
   projectAssignments?: ProjectAssignment[];
   posts?: Post[];
   organizedEvents?: Event[];

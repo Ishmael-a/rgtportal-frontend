@@ -86,7 +86,7 @@ export const SideModal = ({
               isOpen ? "opacity-100" : "opacity-0"
             }`}
             style={{
-              zIndex: 170,
+              zIndex: 1010,
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
             }}

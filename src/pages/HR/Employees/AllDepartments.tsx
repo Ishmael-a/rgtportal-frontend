@@ -129,12 +129,11 @@ export const AllDepartments = () => {
           </section>
 
           {filteredDepartments.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-wrap gap-4">
               {filteredDepartments.map((department) => (
                 <DepartmentCard
                   key={department.id}
                   id={`department/${department.id}`}
-                  // path={`department/${department.id}`}
                   name={department.name}
                   employees={department.employees ?? []}
                   includeBgImg={true}

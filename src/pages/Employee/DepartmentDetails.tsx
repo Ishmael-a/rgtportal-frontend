@@ -1,12 +1,8 @@
 import ArrowIcon from "@/assets/icons/ArrowIcon";
-import ViewIcon from "@/assets/icons/ViewIcon";
 import WithRole from "@/common/WithRole";
 import Avtr from "@/components/Avtr";
 import { DataTable } from "@/components/common/DataTable";
 import Filters, { FilterConfig } from "@/components/common/Filters";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { SideModal } from "@/components/ui/side-dialog";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 import { RootState } from "@/state/store";
 import { IDepartmentCard } from "@/types/employee";
@@ -28,10 +24,6 @@ const DepartmentDetails = () => {
   const [selectedUserType, setSelectedUserType] =
     useState<string>("All User Types");
   const [selectStatus, setSelectStatus] = useState<string>("Permanent");
-  const [showSideModal, setShowSideModal] = useState(false);
-  const [selectedPtoId, setSelectedPtoId] = useState<number | undefined>(
-    undefined
-  );
 
   useEffect(() => {
     const department = departments.find((item) => item.id === id);
@@ -43,6 +35,7 @@ const DepartmentDetails = () => {
     setDetails(department);
   }, [id, departments]);
   console.log("details:", details);
+
   const transformedData = details?.employees.map((employee) => ({
     id: employee.id,
     username: employee.user?.username || "N/A",
@@ -56,12 +49,6 @@ const DepartmentDetails = () => {
     ptoRequest: employee.activePtoRequest ? "Active" : "Inactive",
     profileImage: employee.user?.profileImage,
   }));
-
-  const viewRequest = transformedData?.find(
-    (item) => item.id === selectedPtoId
-  );
-
-  console.log("viewRequest:", viewRequest);
 
   const columns: Column[] = [
     {
@@ -135,18 +122,6 @@ const DepartmentDetails = () => {
                 >
                   {row.ptoRequest}
                 </p>
-                {row.ptoRequest.toLowerCase() === "active" && (
-                  <div
-                    className="bg-rgtpink rounded-[7.37px] cursor-pointer hover:bg-pink-500 transition-all duration-300 ease-in"
-                    onClick={() => {
-                      setShowSideModal(true);
-                      setSelectedPtoId(row.id);
-                      console.log("row:", row.id);
-                    }}
-                  >
-                    <ViewIcon />
-                  </div>
-                )}
               </div>
             )}
           </WithRole>
@@ -164,19 +139,32 @@ const DepartmentDetails = () => {
   const filters: FilterConfig[] = [
     {
       type: "select",
-      options: ["Work Types", "Full Time", "Part Time"],
+      options: [
+        { label: "Work Types", value: "Work Types" },
+        { label: "Full Time", value: "full time" },
+        { label: "Part Time", value: "part time" },
+      ],
       value: selectedWorkType,
       onChange: setSelectedWorkType,
     },
     {
       type: "select",
-      options: ["All User Types", "Manager", "Employee", "Marketer"],
+      options: [
+        { label: "All User Types", value: "All User Types" },
+        { label: "Manager", value: "manager" },
+        { label: "Employee", value: "employee" },
+        { label: "Marketer", value: "marketer" },
+      ],
       value: selectedUserType,
       onChange: setSelectedUserType,
     },
     {
       type: "select",
-      options: ["Position Status", "Permanent", "Nsp"],
+      options: [
+        { label: "Position Status", value: "Position Status" },
+        { label: "Permanent", value: "permanent" },
+        { label: "Nsp", value: "nsp" },
+      ],
       value: selectStatus,
       onChange: setSelectStatus,
     },
@@ -194,6 +182,8 @@ const DepartmentDetails = () => {
     const status =
       selectedWorkType === "Position Status" ||
       employee.positionStatus.toLowerCase() === selectStatus.toLowerCase();
+
+      console.log("position status:", )
 
     return workTypes && userTypeMatch && status;
   });
@@ -249,15 +239,34 @@ const DepartmentDetails = () => {
         </div>
       )}
 
-      <SideModal
+      {/* <SideModal
         title="Review Time Off"
         isOpen={showSideModal}
+        showCloseButton={false}
         onOpenChange={() => setShowSideModal(false)}
         headerClassName="font-semibold text-slate-500"
-        contentClassName="h-[91%]"
-        className="sm:w-1/2 md:w-[25%]"
+        className="flex flex-col items-center sm:w-1/2"
+        footerClassName="w-full p-0 h-full flex"
+        footerContent={
+          <div className="w-full flex justify-center bg-green-500 items-end gap-4">
+            <Button
+              variant={"ghost"}
+              className="w-1/2 py-7 border-1 border-[#FF0000] text-[#FF0000] hover:text-[#FF0000] cursor-pointer transition-all duration-300 ease-in"
+              // onClick={() => handleReject(selectedEmployee?.id)}
+            >
+              Reject
+            </Button>
+            <Button
+              variant={"secondary"}
+              className="w-1/2 py-7 bg-[#DFFFC7] text-[#15FF00] cursor-pointer transition-all duration-300 ease-in hover:text-[#15FF00] hover:bg-[#DFFFC7]"
+              // onClick={() => handleApprove(selectedEmployee?.id)}
+            >
+              Approve
+            </Button>
+          </div>
+        }
       >
-        <div className="flex flex-col relative h-full">
+        <div className="flex flex-col p-3">
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-[#73727675] font-semibold text-sm flex flex-col">
@@ -288,11 +297,10 @@ const DepartmentDetails = () => {
                   From
                 </label>
                 <Input
-                  // value={
-                  //   viewPtoData.startDate
-                  //     ? new Date(viewPtoData.startDate).toDateString()
-                  //     : ""
-                  // }
+                  value={format(
+                    new Date(viewRequest?.startDate ?? new Date()),
+                    "dd MMM yyyy"
+                  )}
                   className="shadow-none border-0 py-[22px] rounded-md bg-[#F6F6F9] text-[#73727675] font-medium text-base"
                   disabled
                 />
@@ -325,21 +333,8 @@ const DepartmentDetails = () => {
               </div>
             </section>
           </div>
-          <div className="w-full bottom-0 h-full flex justify-center items-end gap-2">
-            <Button
-              className={`w-1/2 h-14 rounded-[12px] bg-white  border-red-500 border-2 text-red-500 cursor-pointer hover:text-red-500`}
-              variant={"ghost"}
-            >
-              Reject
-            </Button>
-            <Button
-              className={`w-1/2 h-14 rounded-[12px] bg-[#DFFFC7]  text-[#15FF00] transition-all duration-300 ease-in hover:bg-lime-100 hover:text-[#15FF00] cursor-pointer`}
-            >
-              Approve
-            </Button>
-          </div>
         </div>
-      </SideModal>
+      </SideModal> */}
     </main>
   );
 };

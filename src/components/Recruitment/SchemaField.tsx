@@ -32,12 +32,12 @@ export const renderField = (
               value={formikField.value}
               onValueChange={(value) => setFieldValue(field.name, value)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full border-none bg-gray-100">
                 <SelectValue
                   placeholder={field.placeholder || `Select ${field.label}`}
                 />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[2000]">
                 <SelectGroup>
                   {field.options?.map((option, index) => (
                     <SelectItem key={index} value={option}>
@@ -84,6 +84,7 @@ export const renderField = (
                 field.placeholder || `Enter ${field.label.toLowerCase()}`
               }
               aria-invalid={touched[field.name] && Boolean(errors[field.name])}
+              className="bg-gray-100"
             />
           )}
         </Field>

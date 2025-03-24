@@ -11,10 +11,10 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Departments from "./pages/Employee/Departments";
 import DepartmentDetails from "./pages/Employee/DepartmentDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
+import EmployeeTimeOff from "./pages/HR/Employees/HrEmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
-import CandidateDetailView from "@/pages/HR/CandidateDetailed";
+import CandidateDetailView from "./pages/HR/Recruitment/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
 import CreatePassword from "./pages/auth/CreatePassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
@@ -23,8 +23,23 @@ import DepartmentPage from "@/pages/HR/Employees/DepartmentPage";
 import Messages from "./pages/common/Messages";
 import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
+import EmployeeTimeOffRequests from "./pages/Manager/ManagerEmployeeTimeOff";
+import { useAuthContextProvider } from "./hooks/useAuthContextProvider";
 
 function App() {
+  const { currentUser } = useAuthContextProvider();
+  const role = currentUser?.role.name;
+  const getCookie = (name: string) => {
+    const cookies = document.cookie.split("; ");
+    console.log("cookies", document.cookie);
+
+    const cookie = cookies.find((row) => row.startsWith(name + "="));
+    return cookie ? cookie.split("=")[1] : null;
+  };
+
+  const sessionID = getCookie("sessionID");
+
+  console.log("sessionID", sessionID);
   return (
     <BrowserRouter>
       <Routes>
@@ -48,7 +63,7 @@ function App() {
             />
           }
         >
-          <Route path="/emp" element={<BaseLayout />}>
+          <Route path={role === "HR" ? "/hr" : "/emp"} element={<BaseLayout />}>
             <Route index path="feed" element={<Feed />} />
             <Route path="events-calendar" element={<EventsCalendar />} />
             <Route path="all-departments/" element={<Departments />} />
@@ -56,6 +71,14 @@ function App() {
             <Route path="time-off" element={<TimeOff />} />
             <Route path="messages" element={<Messages />} />
             <Route path=":id" element={<FindEmployee />} />
+
+            {/* Manager-specific sub-routes */}
+            <Route element={<ProtectedRoute allowedRoles={["MANAGER"]} />}>
+              <Route
+                path="time-off/employee-requests"
+                element={<EmployeeTimeOffRequests />}
+              />
+            </Route>
           </Route>
         </Route>
 

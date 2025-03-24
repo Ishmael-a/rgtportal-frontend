@@ -7,19 +7,37 @@ import { cn } from "../../lib/utils";
 
 const ToastProvider = ToastPrimitives.Provider;
 
+type ToastPosition = "top-right" | "top-left" | "bottom-right" | "bottom-left" | "top-center" | "bottom-center";
+
+interface ToastViewportProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport> {
+  position?: ToastPosition;
+}
+
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
->(({ className, ...props }, ref) => (
-  <ToastPrimitives.Viewport
-    ref={ref}
-    className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-      className
-    )}
-    {...props}
-  />
-));
+  ToastViewportProps
+>(({ className, position = "bottom-right", ...props }, ref) => {
+  const positionClasses = {
+    "top-right": "top-0 right-0",
+    "top-left": "top-0 left-0",
+    "bottom-right": "bottom-0 right-0",
+    "bottom-left": "bottom-0 left-0",
+    "top-center": "top-0 left-1/2 -translate-x-1/2",
+    "bottom-center": "bottom-0 left-1/2 -translate-x-1/2",
+  };
+
+  return (
+    <ToastPrimitives.Viewport
+      ref={ref}
+      className={cn(
+        "fixed z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:flex-col md:max-w-[420px]",
+        positionClasses[position],
+        className
+      )}
+      {...props}
+    />
+  );
+});
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const toastVariants = cva(
@@ -29,7 +47,8 @@ const toastVariants = cva(
       variant: {
         default: "border bg-background text-foreground",
         destructive:
-          "destructive group border-destructive bg-destructive text-destructive-foreground",
+          "destructive group border-destructive bg-destructive text-primary",
+        success: "border bg-success text-success-foreground",
       },
     },
     defaultVariants: {
@@ -92,7 +111,7 @@ const ToastTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Title
     ref={ref}
-    className={cn("text-sm font-semibold [&+div]:text-xs", className)}
+    className={cn("text-sm font-semibold [&+div]:text-xs ", className)}
     {...props}
   />
 ));
