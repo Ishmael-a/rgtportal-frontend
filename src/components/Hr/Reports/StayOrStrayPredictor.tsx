@@ -51,7 +51,7 @@ export const StayOrStrayPredictor = () => {
     { name: "Jun", value: 65 },
   ];
 
-  const pieColors = ["#9c27b0", "#e91e63", "#673ab7"];
+  const pieColors = ["#8571F4", "#C686F8", "#E8CFFC" ];
 
   return (
     <div className="bg-white rounded-[32px] shadow-sm p-6">
@@ -120,7 +120,7 @@ export const StayOrStrayPredictor = () => {
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={musicalChairsData}>
-                  <Bar dataKey="value" fill="#9c27b0" />
+                  <Bar dataKey="value" fill="#6418C3" />
                   <Tooltip />
                 </BarChart>
               </ResponsiveContainer>
@@ -140,7 +140,7 @@ export const StayOrStrayPredictor = () => {
                 <BarChart layout="vertical" data={turnoverData}>
                   <XAxis type="number" hide />
                   <YAxis dataKey="name" type="category" hide />
-                  <Bar dataKey="value" fill="#00bcd4" />
+                  <Bar dataKey="value" fill="#5ECFFF" />
                   <Tooltip />
                 </BarChart>
               </ResponsiveContainer>
