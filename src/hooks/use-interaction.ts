@@ -92,113 +92,81 @@ export const useInteraction = (postId?: number, commentId?: number) => {
     },
   });
 
-const likeCommentMutation = useMutation({
-  mutationFn: (commentId: number) =>
-    PostInteractionService.likeComment(commentId),
-  onMutate: async (commentId: number) => {
-    // Cancel any ongoing queries for the post stats
-    await queryClient.cancelQueries({ queryKey: ["postStats", postId] });
+  const likeCommentMutation = useMutation({
+    mutationFn: (commentId: number) =>
+      PostInteractionService.likeComment(commentId),
+    onMutate: async (commentId: number) => {
+      // Cancel any ongoing refetches to prevent race conditions
+      await queryClient.cancelQueries({ queryKey: ["postStats", postId] });
 
-    // Snapshot the previous value
-    const previousStats = queryClient.getQueryData<IStats>([
-      "postStats",
-      postId,
-    ]);
+      // Snapshot the current stats
+      const previousStats = queryClient.getQueryData<IStats>([
+        "postStats",
+        postId,
+      ]);
 
-    // Optimistically update the likes count for the specific comment
-    queryClient.setQueryData(
-      ["postStats", postId],
-      (old: IStats | undefined) => ({
-        ...(old || {
-          commentsCount: 0,
-          likesCount: 0,
-          disLikesCount: 0,
-          comments: [],
-        }),
-        comments: old?.comments.map((comment) =>
-          Number(comment.id) === Number(commentId)
-            ? {
-                ...comment,
-                isLiked: !comment.isLiked, 
-                likes: comment.isLiked
-                  ? (comment.likes ?? []).filter(
-                      (like) => Number(like.employeeId) !== Number(currentUser?.employee.id)
-                    ) // Remove the like
-                  : [
-                      ...(comment.likes || []),
-                      {
-                        commentId: comment.id,
-                        employeeId: currentUser?.employee.id,
-                        createdAt: new Date(),
-                      },
-                    ], // Add the like
-              }
-            : comment
-        ),
-      })
-    );
-    return { previousStats };
-  },
-  onSuccess: (data, commentId) => {
-    console.log("Server response:", data);
-    const updatedCommentLike = data.data;
-  
-    console.log("Updated comment like:", updatedCommentLike);
-  
-    queryClient.setQueryData(
-      ["postStats", postId],
-      (old: IStats | undefined) => {
-        console.log("Old state:", old);
-        const updatedComments = old?.comments.map((comment) =>
-          Number(comment.id) === Number(commentId)
-            ? {
-                ...comment,
-                isLiked: updatedCommentLike !== null,
-                likes: updatedCommentLike
-                  ? [
-                      ...(comment.likes || []),
-                      {
-                        commentId: comment.id,
-                        employeeId: updatedCommentLike.employeeId,
-                        createdAt: new Date(),
-                      },
-                    ]
-                  : (comment.likes ?? []).filter(
-                      (like) => Number(like.employeeId) !== Number(currentUser?.employee.id)
-                    ),
-              }
-            : comment
-        );
-        console.log("Updated comments:", updatedComments);
-        return {
-          ...(old || {
+      // Optimistically update the comment likes
+      queryClient.setQueryData(
+        ["postStats", postId],
+        (old: IStats | undefined) => {
+          // Ensure we have a valid stats object
+          const currentStats = old || {
             commentsCount: 0,
             likesCount: 0,
             disLikesCount: 0,
             comments: [],
-          }),
-          comments: updatedComments,
-        };
-      }
-    );
-  },
- 
-  onError: (_err, _unused, context) => {
-    // Rollback to the previous state on error
-    queryClient.setQueryData(["postStats", postId], context?.previousStats);
+          };
 
-    // Show an error toast
-    toast({
-      title: "Error",
-      description: "Failed to toggle comment like",
-      variant: "destructive",
-    });
-  },
-  onSettled: () => {
-    // Refetch the post stats to ensure the UI is in sync with the server
-    queryClient.invalidateQueries({ queryKey: ["postStats", postId] });
-  },
-});
+          // Create a new comments array with the updated likes
+          const updatedComments = currentStats.comments.map((comment) =>
+            comment.id === commentId
+              ? {
+                  ...comment,
+                  likes: (comment.likes ?? []).some(
+                    (like) => like.employeeId === currentUser?.id
+                  )
+                    ? // If already liked, remove the like
+                      (comment.likes ?? []).filter(
+                        (like) => like.employeeId !== currentUser?.id
+                      )
+                    : // If not liked, add a new like
+                      [
+                        ...(comment.likes ?? []),
+                        {
+                          employeeId: currentUser?.id,
+                          isLike: true,
+                        },
+                      ],
+                }
+              : comment
+          );
+
+          return {
+            ...currentStats,
+            comments: updatedComments,
+          };
+        }
+      );
+
+      // Return the previous stats for potential rollback
+      return { previousStats };
+    },
+    onError: (_err, _commentId, context) => {
+      // If the mutation fails, restore the previous stats
+      queryClient.setQueryData(["postStats", postId], context?.previousStats);
+
+      // Show an error toast
+      toast({
+        title: "Error",
+        description: "Failed to like comment",
+        variant: "destructive",
+      });
+    },
+    onSettled: () => {
+      // Refetch the latest stats to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ["postStats", postId] });
+    },
+  });
 
   const replyToCommentMutation = useMutation({
     mutationFn: ({

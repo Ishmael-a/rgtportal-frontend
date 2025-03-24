@@ -3,36 +3,38 @@ import LikeIcon from "@/assets/icons/LikeIcon";
 import { formatDateToDaysAgo } from "@/lib/helpers";
 import { useState } from "react";
 import Avtr from "../Avtr";
+import { useInteraction } from "@/hooks/use-interaction";
+import { Loader } from "lucide-react";
 
 const RecursiveComments = ({
-  // comment,
-  replyComment,
+  comment,
   commentsReply,
+  parentReplyId,
 }: {
-  // comment: IComment;
-  replyComment: (commentId: number, content: string) => Promise<void>;
+  comment: IComment;
+  // replyComment: (commentId: number, content: string) => Promise<void>;
   commentsReply: any[] | undefined;
+  parentReplyId: number;
 }) => {
+  const { replyComment } = useInteraction(comment.id);
+
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
   const [viewReplies, setViewReplies] = useState(false);
   const [isLiked] = useState(commentsReply?.isLiked);
-  // const [reply, setReply] = useState(false);
-  // const [content, setContent] = useState("");
-  // const [viewReplies, setViewReplies] = useState(false);
 
-  // const handleCommentReply = async () => {
-  //   console.log("comment.id, content:", comment.id, content);
-  //   if (!content) return;
-  //   if (comment.id) {
-  //     await replyComment(comment.id, content);
-  //     setContent("");
-  //   }
-  // };
+  const handleCommentReply = async () => {
+    console.log("comment.id, content:", comment.id, content);
+    if (!content) return;
+    if (comment.id) {
+      await replyComment(comment.id, content, parentReplyId);
+      setContent("");
+    }
+  };
 
-  // const handleToggleReply = () => {
-  //   setReply(!reply);
-  // };
+  const handleToggleReply = () => {
+    setReply(!reply);
+  };
 
   return (
     <div className="flex items-start gap-2">
@@ -65,8 +67,7 @@ const RecursiveComments = ({
               </p>
               <p
                 className="text-rgtpurple cursor-pointer"
-                // onClick={handleToggleReply}
-              >
+                onClick={handleToggleReply}>
                 Reply
               </p>
               <div
@@ -75,8 +76,7 @@ const RecursiveComments = ({
                   commentsReply?.id && commentsReply?.onLike
                     ? commentsReply?.onLike(commentsReply?.id)
                     : 0
-                }
-              >
+                }>
                 <LikeIcon
                   size={15}
                   stroke="#6418C3"
@@ -97,13 +97,12 @@ const RecursiveComments = ({
                 <div className="flex justify-end">
                   <button
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
-                    // onClick={handleCommentReply}
-                  >
-                    {/* {comment.isCommentLoading ? (
+                    onClick={handleCommentReply}>
+                    {comment.isCommentLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
-                    ) : ( */}
-                    "Post"
-                    {/* )} */}
+                    ) : (
+                      "Post"
+                    )}
                   </button>
                 </div>
               </div>
@@ -113,8 +112,7 @@ const RecursiveComments = ({
             {commentsReply && commentsReply.length > 0 && (
               <div
                 className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px]"
-                onClick={() => setViewReplies(!viewReplies)}
-              >
+                onClick={() => setViewReplies(!viewReplies)}>
                 <div className="w-[31px] border-t-[#8A8A8C] border-1" />
                 <p>View replies ({commentsReply?.length})</p>
               </div>

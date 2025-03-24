@@ -5,6 +5,7 @@ import { formatDateToDaysAgo } from "@/lib/helpers";
 import { Loader } from "lucide-react";
 import { useInteraction } from "@/hooks/use-interaction";
 import RecursiveComments from "../common/RecursiveComments";
+import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const Comments = ({
   comment,
@@ -20,9 +21,13 @@ const Comments = ({
     commentsReplies,
   } = useInteraction(postId, comment.id);
 
+  const { currentUser } = useAuthContextProvider();
+
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
   const [viewReplies, setViewReplies] = useState(false);
+
+  console.log("commentReplies:", commentsReplies);
 
   const handleCommentReply = async () => {
     console.log("comment.id, content:", comment.id, content);
@@ -36,8 +41,6 @@ const Comments = ({
   const handleToggleReply = () => {
     setReply(!reply);
   };
-
-  console.log("isliked?:", comment.isLiked);
 
   return (
     <div className="flex items-start gap-2">
@@ -76,7 +79,11 @@ const Comments = ({
                   size={15}
                   stroke="#6418C3"
                   className={`cursor-pointer ${
-                    comment.isLiked ? "fill-[#6418C3] stroke-0" : ""
+                    comment.likes?.find(
+                      (item) => item.employeeId === currentUser?.employee.id
+                    )
+                      ? "fill-[#6418C3] stroke-0"
+                      : "stroke-[#6418C3]"
                   }`}
                 />
               </div>
@@ -128,6 +135,7 @@ const Comments = ({
                       <RecursiveComments
                         replyComment={replyComment}
                         commentsReply={item}
+                        parentReplyId={comment.id}
                         key={index}
                       />
                     </div>
