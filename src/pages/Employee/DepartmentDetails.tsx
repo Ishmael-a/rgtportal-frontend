@@ -139,19 +139,32 @@ const DepartmentDetails = () => {
   const filters: FilterConfig[] = [
     {
       type: "select",
-      options: ["Work Types", "Full Time", "Part Time"],
+      options: [
+        { label: "Work Types", value: "Work Types" },
+        { label: "Full Time", value: "full time" },
+        { label: "Part Time", value: "part time" },
+      ],
       value: selectedWorkType,
       onChange: setSelectedWorkType,
     },
     {
       type: "select",
-      options: ["All User Types", "Manager", "Employee", "Marketer"],
+      options: [
+        { label: "All User Types", value: "All User Types" },
+        { label: "Manager", value: "manager" },
+        { label: "Employee", value: "employee" },
+        { label: "Marketer", value: "marketer" },
+      ],
       value: selectedUserType,
       onChange: setSelectedUserType,
     },
     {
       type: "select",
-      options: ["Position Status", "Permanent", "Nsp"],
+      options: [
+        { label: "Position Status", value: "Position Status" },
+        { label: "Permanent", value: "permanent" },
+        { label: "Nsp", value: "nsp" },
+      ],
       value: selectStatus,
       onChange: setSelectStatus,
     },
@@ -169,6 +182,8 @@ const DepartmentDetails = () => {
     const status =
       selectedWorkType === "Position Status" ||
       employee.positionStatus.toLowerCase() === selectStatus.toLowerCase();
+
+      console.log("position status:", )
 
     return workTypes && userTypeMatch && status;
   });
