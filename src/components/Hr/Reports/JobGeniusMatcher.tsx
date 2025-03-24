@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Search, History } from "lucide-react";
 import StepProgress from "@/components/common/StepProgress"; 
 
