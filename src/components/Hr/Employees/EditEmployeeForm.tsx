@@ -42,8 +42,6 @@ import { cn } from "@/lib/utils";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import {
-  GetCountries,
-  GetState,
   CountrySelect,
   StateSelect,
 } from "react-country-state-city";
@@ -74,14 +72,17 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
     const { departments } = useSelector(
         (state: RootState) => state.sharedState
     );
-    const { data: employeeData, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
+    const { data: employeeData, isLoading:isEmployeeLoading, isError:isEmployeeError, error:getEmployeeError } = useEmployeeDetails(employeeId.toString());
     const employee = employeeData || {} as Employee;
+    console.log("EMPLOYEE", employee);
     const { validationSchema } = useEmployeeValidation();
 
     const { 
         countries, 
         states, 
-        initialValues, 
+        initialValues,
+        selectedState,
+        selectedCountry, 
         setSelectedCountry 
     } = useEmployeeForm(employee);
 
@@ -99,6 +100,23 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
             variant: "destructive",
         });
         return;
+    }
+
+    if (isEmployeeLoading ) {
+      return (
+        <SideModal
+          isOpen={isOpen}
+          onOpenChange={onClose}
+          title="Loading Employee Details"
+          position="right"
+          size="full"
+          contentClassName=" min-w-2xl px-6 "
+        >
+          <div className="flex justify-center items-center h-full min-w-2xl  my-auto">
+            <Loader className="animate-spin h-8 w-8" />
+          </div>
+        </SideModal>
+      );
     }
 
   return (
@@ -278,7 +296,6 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                     <div className="space-y-2">
                       <Field name="skills">
                         {({ field, form }: FieldProps) => {
-                          console.log("Skills For Field",field.value );
                           return (
                             <div className="space-y-2">
                               <Label className="text-sm font-medium">
@@ -802,37 +819,34 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                         Country
                       </Label>
                       <Field name="countryId">
-                        {({ field, form, meta }: FieldProps) => (
-                          <div className="space-y-2">
-                            <div className="relative">
-                              <CountrySelect
-                                onChange={(country: Country) => {
-                                  setSelectedCountry(country?.id || null); 
-                                  form.setFieldValue(
-                                    "countryId",
-                                    country?.id || null
-                                  );
-                                  form.setFieldValue("stateId", null);
-                                  form.setFieldValue("city", "");
-                                }}
-                                value={field.value}
-                                // value={
-                                //   countries.find(
-                                //     (c:Country) => c.id === field.value
-                                //   )?.id || undefined
-                                // }
-                                placeHolder="Select Country"
-                                containerClassName="w-full "
-                                inputClassName="w-full py-6 border rounded-md px-3"
-                              />
-                              {meta.touched && meta.error && (
-                                <div className="text-red-500 text-sm mt-1">
-                                  {meta.error}
-                                </div>
-                              )}
+                        {({ field, form, meta }: FieldProps) => {
+                          
+                          return (
+                            <div className="space-y-2">
+                              <div className="relative">
+                                <CountrySelect
+                                  onChange={(country: Country) => {
+                                    setSelectedCountry(country?.id || null);
+                                    form.setFieldValue(
+                                      "countryId",
+                                      country?.id || null
+                                    );
+                                    form.setFieldValue("stateId", null);
+                                    form.setFieldValue("city", "");
+                                  }}
+                                  defaultValue={selectedCountry||undefined}
+                                  placeHolder="Select Country"
+                                  containerClassName="w-full "
+                                  inputClassName="w-full py-6 border rounded-md px-3"
+                                />
+                                {meta.touched && meta.error && (
+                                  <div className="text-red-500 text-sm mt-1">
+                                    {meta.error}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          );}}
                       </Field>
                     </div>
 
@@ -842,10 +856,11 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                         Region/State
                       </Label>
                       <Field name="stateId">
-                        {({ form, meta }: FieldProps) => (
+                        {({ form, meta }: FieldProps) => {
+                          return (
                           <div className="relative">
                             <StateSelect
-                              countryid={formikProps.values.countryId as number}
+                              countryid={selectedCountry || formikProps.values.countryId}
                               onChange={(state: State) => {
                                 form.setFieldValue(
                                   "stateId",
@@ -853,7 +868,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                                 );
                                 form.setFieldValue("city", "");
                               }}
-                              value={formikProps.values.stateId}
+                              defaultValue={selectedState || undefined}
                               placeHolder="Select State/Region"
                               containerClassName="w-full shadow-xs rounded-md "
                               inputClassName="w-full border-none rounded-md px-3"
@@ -865,7 +880,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                               </div>
                             )}
                           </div>
-                        )}
+                        )}}
                       </Field>
                     </div>
 

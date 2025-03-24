@@ -2,31 +2,33 @@ import React, { useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Edit, User } from "lucide-react";
 import {
-ReactFlow,
-MiniMap,
-Controls,
-Background,
-useNodesState,
-useEdgesState,
-addEdge,
-BackgroundVariant,
-Position,
-MarkerType,
-Node,
-Edge,
-NodeProps,
-EdgeProps,
-Connection,
-NodeChange,
-EdgeChange,
+  ReactFlow,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  BackgroundVariant,
+  Position,
+  MarkerType,
+  Node,
+  Edge,
+  NodeProps,
+  EdgeProps,
+  Connection,
+  Handle,
+  getBezierPath,
+  BaseEdge,
+  getSmoothStepPath,
 } from "@xyflow/react";
-
 import "@xyflow/react/dist/style.css";
 
 // Node data interface
 interface NodeData extends Record<string, unknown> {
-label: string;
-value?: string;
+  label: string;
+  value?: string;
+  isHeader?: boolean;
 }
 
 // Edge data interface
@@ -36,283 +38,882 @@ interface EdgeData extends Record<string, unknown> {
 
 // Custom node styles
 const nodeStyles = {
-common: {
-  padding: "10px",
-  borderRadius: "16px",
-  width: 180,
-  fontSize: "14px",
-  color: "white",
-  fontWeight: "medium",
-},
-header: {
-  backgroundColor: "#C4A9F8",
-  padding: "12px 16px",
-  color: "#6E3CBC",
-  fontWeight: "bold",
-  fontSize: "16px",
-},
-detail: {
-  backgroundColor: "#DCC6FF",
-  padding: "8px 12px",
-},
+  common: {
+    padding: "10px",
+    borderRadius: "16px",
+    width: 180,
+    fontSize: "14px",
+    color: "white",
+    fontWeight: "medium",
+  },
+  header: {
+    backgroundColor: "#C4A9F8",
+    padding: "12px 16px",
+    color: "#6E3CBC",
+    fontWeight: "bold",
+    fontSize: "16px",
+  },
+  detail: {
+    backgroundColor: "#DCC6FF",
+    padding: "8px 12px",
+  },
+};
+
+// Custom handle style
+const handleStyle = {
+  width: 8,
+  height: 8,
+  backgroundColor: "#FFC233",
+  border: "2px solid #DCC6FF",
 };
 
 // Custom edge style
 const customEdgeStyle: React.CSSProperties = {
-stroke: "#FFC233",
-strokeWidth: 2,
+  stroke: "#FFC233",
+  strokeWidth: 2,
 };
 
 // Define the main section nodes (fixed position)
-const personalDetailsNode: Node<NodeData> = {
-id: "personal-details",
-position: { x: 150, y: 30 },
-data: { label: "Personal Details" },
-type: "header",
-draggable: false,
-style: { ...nodeStyles.common, ...nodeStyles.header },
-sourcePosition: Position.Right,
+const   personalDetailsNode: Node<NodeData> = {
+  id: "personal-details",
+  position: { x: 600, y: 30 },
+  data: { label: "Personal Details", isHeader: true },
+  type: "custom",
+  draggable: false,
+  style: { ...nodeStyles.common, ...nodeStyles.header },
+  sourcePosition: Position.Right,
 };
 
 const workDetailsNode: Node<NodeData> = {
-id: "work-details",
-position: { x: 150, y: 350 },
-data: { label: "Work Details" },
-type: "header",
-draggable: false,
-style: { ...nodeStyles.common, ...nodeStyles.header },
-sourcePosition: Position.Right,
+  id: "work-details",
+  position: { x: 600, y: 370 },
+  data: { label: "Work Details", isHeader: true },
+  type: "custom",
+  draggable: false,
+  style: { ...nodeStyles.common, ...nodeStyles.header },
+  sourcePosition: Position.Right,
 };
 
 // Define personal detail nodes (movable)
 const personalDetailNodes: Node<NodeData>[] = [
-{
-  id: "phone",
-  position: { x: 50, y: 100 },
-  data: { label: "Phone", value: "+123 456 7890" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  parentId: "personal-details",
-  targetPosition: Position.Left,
-},
-{
-  id: "personal-email",
-  position: { x: 350, y: 100 },
-  data: { label: "Personal Email", value: "giveittoparry@gmail.com" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
-{
-  id: "work-email",
-  position: { x: 550, y: 200 },
-  data: { label: "Work Email", value: "bparry@reallygreatech.com" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
-{
-  id: "location",
-  position: { x: 750, y: 100 },
-  data: { label: "Location", value: "Accra, Great Accra, Ghana" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
-{
-  id: "phone2",
-  position: { x: 350, y: 300 },
-  data: { label: "Phone", value: "+123 456 7890" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
-{
-  id: "skills",
-  position: { x: 650, y: 350 },
-  data: { label: "Skills", value: "UI/UX, Front-End" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
+  {
+    id: "phone",
+    position: { x: -500, y: 100 },
+    data: { label: "Phone", value: "+123 456 7890" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+    parentId: "personal-details",
+  },
+  {
+    id: "personalDetailsJunctionNode1",
+    data: { label: "Junction 1" },
+    position: { x: 500, y: 50 },
+    draggable: false,
+    type: "junctionNodeLeft",
+  },
+  {
+    id: "personalDetailsJunctionNode3",
+    data: { label: "Junction 3" },
+    position: { x: 900, y: 50 },
+    draggable: false,
+    type: "junctionNodeRight",
+  },
+  {
+    id: "personal-email",
+    position: { x: 300, y: 150 },
+    data: { label: "Personal Email", value: "giveittoparry@gmail.com" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
+  {
+    id: "work-email",
+    position: { x: 920, y: 150 },
+    data: { label: "Work Email", value: "bparry@reallygreatech.com" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
+  {
+    id: "location",
+    position: { x: 1150, y: 130 },
+    data: { label: "Location", value: "Accra, Great Accra, Ghana" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
+  {
+    id: "skills",
+    position: { x: 1150, y: 460 },
+    data: { label: "Skills", value: "UI/UX, Front-End" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
 ];
 
 // Define work detail nodes (movable)
 const workDetailNodes: Node<NodeData>[] = [
-{
-  id: "start-date",
-  position: { x: 50, y: 450 },
-  data: { label: "Start Date", value: "07-12-2013" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  parentId: "work-details",
-  targetPosition: Position.Left,
-},
-{
-  id: "department",
-  position: { x: 350, y: 450 },
-  data: { label: "Department", value: "Design" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
-{
-  id: "seniority",
-  position: { x: 650, y: 450 },
-  data: { label: "Seniority", value: "27 years in service" },
-  style: { ...nodeStyles.common, ...nodeStyles.detail },
-  targetPosition: Position.Left,
-},
+  {
+    id: "workDetailsJunctionNode1",
+    data: { label: "Junction 1" },
+    position: { x: 500, y: 390 },
+    draggable: false,
+    type: "junctionNodeLeft",
+  },
+  {
+    id: "workDetailsJunctionNode3",
+    data: { label: "Junction 3" },
+    position: { x: 900, y: 390 },
+    draggable: false,
+    type: "junctionNodeRight",
+  },
+  {
+    id: "start-date",
+    position: { x: -500, y: 100 },
+    data: { label: "Start Date", value: "07-12-2013" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+    parentId: "work-details",
+  },
+  {
+    id: "department",
+    position: { x: 300, y: 500 },
+    data: { label: "Department", value: "Design" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
+  {
+    id: "seniority",
+    position: { x: 920, y: 500 },
+    data: { label: "Seniority", value: "27 years in service" },
+    type: "custom",
+    style: { ...nodeStyles.common, ...nodeStyles.detail },
+  },
 ];
 
 // Combine all nodes
 const initialNodes: Node<NodeData>[] = [
-personalDetailsNode,
-workDetailsNode,
-...personalDetailNodes,
-...workDetailNodes,
+  personalDetailsNode,
+  workDetailsNode,
+  ...personalDetailNodes,
+  ...workDetailNodes,
 ];
 
 // Define the edges with markers to create the dot connections
 const initialEdges: Edge<EdgeData>[] = [
-// Personal details connections
-{
-  id: "e-personal-phone",
-  source: "personal-details",
-  target: "phone",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-personal-pEmail",
-  source: "personal-details",
-  target: "personal-email",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-pEmail-wEmail",
-  source: "personal-email",
-  target: "work-email",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-personal-location",
-  source: "personal-details",
-  target: "location",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-personal-phone2",
-  source: "personal-details",
-  target: "phone2",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-personal-skills",
-  source: "personal-email",
-  target: "skills",
-  style: customEdgeStyle,
-  type: "custom",
-},
+  // Personal details connections
+  {
+    id: "e-junction-personal-details",
+    target: "personalDetailsJunctionNode1",
+    source: "personal-details",
+    sourceHandle: "left",
+    targetHandle: "right",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction3-personal-details",
+    target: "personalDetailsJunctionNode3",
+    source: "personal-details",
+    sourceHandle: "right",
+    targetHandle: "left",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction-phone",
+    source: "personalDetailsJunctionNode1",
+    target: "phone",
+    sourceHandle: "left", // bottom handle
+    targetHandle: "top",
+    // style: customEdgeStyle,
+    type: "corner",
+    data: {
+      cornerRadius: 90,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-junction1-junction2",
+    source: "personalDetailsJunctionNode1",
+    target: "personalDetailsJunctionNode2",
+    sourceHandle: "right",
+    targetHandle: "left",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction2-junction3",
+    source: "personalDetailsJunctionNode2",
+    target: "personalDetailsJunctionNode3",
+    sourceHandle: "right",
+    targetHandle: "left",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction1-pEmail",
+    source: "personalDetailsJunctionNode1",
+    target: "personal-email",
+    sourceHandle: "left",
+    targetHandle: "top",
+    style: customEdgeStyle,
+    type: "customCurve",
+    data: {
+      curveOffset: 80,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-junction3-wEmail",
+    source: "personalDetailsJunctionNode3",
+    target: "work-email",
+    sourceHandle: "right",
+    targetHandle: "top",
+    style: customEdgeStyle,
+    type: "customCurveRight",
+    data: {
+      curveOffset: 80,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-pEmail-wEmail",
+    source: "personal-email",
+    target: "work-email",
+    sourceHandle: "right",
+    targetHandle: "left",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction3-location",
+    source: "personalDetailsJunctionNode3",
+    target: "location",
+    sourceHandle: "right",
+    targetHandle: "top",
+    style: customEdgeStyle,
+    type: "corner",
+    data: {
+      cornerRadius: 90,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
 
-// Work details connections
-{
-  id: "e-work-startDate",
-  source: "work-details",
-  target: "start-date",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-work-department",
-  source: "work-details",
-  target: "department",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-work-seniority",
-  source: "work-details",
-  target: "seniority",
-  style: customEdgeStyle,
-  type: "custom",
-},
-{
-  id: "e-department-seniority",
-  source: "department",
-  target: "seniority",
-  style: customEdgeStyle,
-  type: "custom",
-},
+  // Work details connections
+  {
+    id: "e-junction-work-details",
+    target: "workDetailsJunctionNode1",
+    source: "work-details",
+    sourceHandle: "left",
+    targetHandle: "right",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction-startDate",
+    source: "workDetailsJunctionNode1",
+    target: "start-date",
+    sourceHandle: "left",
+    targetHandle: "top",
+    // style: customEdgeStyle,
+    type: "corner",
+    data: {
+      cornerRadius: 90,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-junction3-work-details",
+    source: "work-details",
+    target: "workDetailsJunctionNode3",
+    sourceHandle: "right",
+    targetHandle: "left",
+    style: customEdgeStyle,
+    type: "custom",
+  },
+  {
+    id: "e-junction2-department",
+    source: "workDetailsJunctionNode1",
+    target: "department",
+    sourceHandle: "left",
+    targetHandle: "top",
+    // style: customEdgeStyle,
+    type: "customCurve",
+    data: {
+      curveOffset: 80, // Adjust the curve offset here
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-department-skills",
+    source: "department",
+    target: "skills",
+    sourceHandle: "right",
+    targetHandle: "left",
+    // style: customEdgeStyle,
+    type: "customSine",
+  },
+  {
+    id: "e-junction3-seniority",
+    source: "workDetailsJunctionNode3",
+    target: "seniority",
+    sourceHandle: "right",
+    targetHandle: "top",
+    type: "customCurveRight",
+    data: {
+      curveOffset: 80,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
+  {
+    id: "e-junction3-skills",
+    source: "workDetailsJunctionNode3",
+    target: "skills",
+    sourceHandle: "right",
+    targetHandle: "top",
+    style: customEdgeStyle,
+    type: "corner",
+    data: {
+      cornerRadius: 90,
+      strokeColor: "#FFC107",
+      strokeWidth: 2,
+    },
+  },
 ];
 
-// Custom Node Component for better display of employee data
-const DetailNode: React.FC<
-  NodeProps<Node<NodeData, string>>
-> = ({ data }) => {
+// Custom Node Component for better display of employee data with styled handles
+const CustomNode: React.FC<NodeProps<Node<NodeData, string>>> = ({
+  data,
+  isConnectable,
+}) => {
+  const isHeader = data.isHeader || false;
+
   return (
     <div>
-      <div className="font-medium">{data.label}</div>
-      {data.value && <div className="text-sm opacity-80">{data.value}</div>}
+      {!isHeader && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          id="top"
+          style={handleStyle}
+          isConnectable={isConnectable}
+        />
+      )}
+
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="right"
+        style={handleStyle}
+        isConnectable={isConnectable}
+      />
+
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left"
+        style={handleStyle}
+        isConnectable={isConnectable}
+      />
+
+      {!isHeader && (
+        <Handle
+          type="target"
+          position={Position.Bottom}
+          id="bottom"
+          style={handleStyle}
+          isConnectable={isConnectable}
+        />
+      )}
+
+      <div>
+        <div className="font-medium">{data.label}</div>
+        {data.value && !isHeader && (
+          <div className="text-sm opacity-80">{data.value}</div>
+        )}
+      </div>
     </div>
   );
 };
 
+const JunctionNodeRight = ({ data }: { data: string }) => (
+  <div
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: "50%",
+      background: "#FFA500",
+    }}
+  >
+    <Handle type="target" position={Position.Left} id="left" />
+    <Handle type="source" position={Position.Bottom} id="bottom" />
+    <Handle type="source" position={Position.Right} id="right" />
+  </div>
+);
+const JunctionNodeLeft = ({ data }: { data: string }) => (
+  <div
+    style={{
+      width: 10,
+      height: 10,
+      borderRadius: "50%",
+      background: "#FFA500",
+    }}
+  >
+    <Handle type="source" position={Position.Left} id="left" />
+    <Handle type="source" position={Position.Bottom} id="bottom" />
+    <Handle type="target" position={Position.Right} id="right" />
+  </div>
+);
+
+
 // Map of node types to custom components
 const nodeTypes = {
-header: DetailNode,
-detail: DetailNode,
+  custom: CustomNode,
+  junctionNodeRight: JunctionNodeRight,
+  junctionNodeLeft: JunctionNodeLeft,
 };
 
 // Custom edge component with correct typing
-const CustomEdge: React.FC<EdgeProps & { 
-sourceX: number; 
-sourceY: number; 
-targetX: number; 
-targetY: number; 
-}> = ({
-id,
-sourceX,
-sourceY,
-targetX,
-targetY,
-style = {},
-}) => {
-const edgePathString = `M${sourceX},${sourceY} C${sourceX + 50},${sourceY} ${
-  targetX - 50
-},${targetY} ${targetX},${targetY}`;
+const CustomEdge: React.FC<
+  EdgeProps & {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+  }
+> = ({ id, sourceX, sourceY, targetX, targetY, style = {} }) => {
+  const edgePathString = `M${sourceX},${sourceY} C${sourceX + 50},${sourceY} ${
+    targetX - 50
+  },${targetY} ${targetX},${targetY}`;
 
-return (
-  <>
+  return (
+    <>
+      <path
+        id={id}
+        className="react-flow__edge-path"
+        d={edgePathString}
+        style={style}
+      />
+      <circle cx={targetX} cy={targetY} r={4} fill="#FFC233" />
+    </>
+  );
+};
+
+const CustomBezierEdge: React.FC<
+  EdgeProps & {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+  }
+> = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
+  const [edgePath] = getBezierPath({ sourceX, sourceY, targetX, targetY });
+
+  return (
+    <g>
+      <path
+        id={id}
+        d={edgePath}
+        stroke="#FFC107"
+        strokeWidth={2}
+        fill="none"
+        style={style}
+        markerEnd="url(#arrow)"
+      />
+      <circle cx={targetX} cy={targetY} r={5} fill="#FFC107" />
+    </g>
+  );
+};
+
+interface PillEdgeProps extends EdgeProps {
+  data?: {
+    bias?: number;
+    radius?: number | null;
+    strokeColor?: string;
+    strokeWidth?: number;
+  };
+}
+
+const PillEdge: React.FC<PillEdgeProps> = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  id,
+  data,
+}) => {
+  const {
+    bias = 0.5,
+    radius: customRadius = null,
+    strokeColor = "#FFC107", 
+    strokeWidth = 2,
+  } = data || {};
+
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+
+  // Calculate distance between points
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Adjust radius based on distance and bias
+  const radius = customRadius || distance * bias;
+
+  // Determine arc direction
+  const sweepFlag = sourceX > targetX ? 0 : 1;
+  const largeArcFlag = Math.abs(dx) > Math.abs(dy) ? 1 : 0;
+
+  // Calculate control points for a more pill-like curve
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
+
+  const edgePath = `
+    M ${sourceX} ${sourceY}
+    A ${radius} ${radius} 
+    0 ${largeArcFlag} ${sweepFlag} 
+    ${midX} ${midY}
+    A ${radius} ${radius}
+    0 ${largeArcFlag} ${sweepFlag}
+    ${targetX} ${targetY}
+  `;
+
+  return (
     <path
       id={id}
-      className="react-flow__edge-path"
-      d={edgePathString}
-      style={style}
+      d={edgePath}
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth={strokeWidth}
+      className="transition-all duration-300 ease-in-out"
     />
-    <circle cx={targetX} cy={targetY} r={4} fill="#FFC233" />
-  </>
-);
+  );
 };
+
+
+interface CurvedEdgeProps extends EdgeProps {
+  data?: {
+    strokeColor?: string;
+    strokeWidth?: number;
+    curveOffset?: number; // Added curveOffset prop
+  };
+}
+
+const CurvedEdge: React.FC<CurvedEdgeProps> = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  id,
+  data,
+}) => {
+  const {
+    strokeColor = "#FFC107",
+    strokeWidth = 2,
+    curveOffset = 50, // Default curve offset if not provided
+  } = data || {};
+
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    curvature: 0, // Start with a straight line
+  });
+
+  // Calculate the midpoint of the line
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
+
+  // Calculate the angle of the line
+  const angle = Math.atan2(targetY - sourceY, targetX - sourceX);
+
+  // Calculate the control point for the curve
+  const controlX = midX + curveOffset * Math.cos(angle + Math.PI / 2); // Perpendicular offset
+  const controlY = midY + curveOffset * Math.sin(angle + Math.PI / 2);
+
+  // Construct the curved path
+  const curvedPath = `
+    M ${sourceX} ${sourceY}
+    Q ${controlX} ${controlY} ${targetX} ${targetY}
+  `;
+
+  return (
+    <path
+      id={id}
+      d={curvedPath}
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth={strokeWidth}
+      className="transition-all duration-300 ease-in-out"
+    />
+  );
+};
+
+const CurvedEdgeRight: React.FC<CurvedEdgeProps> = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  id,
+  data,
+}) => {
+  const {
+    strokeColor = "#FFC107",
+    strokeWidth = 2,
+    curveOffset = 50, // Default curve offset if not provided
+  } = data || {};
+
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    curvature: 0, // Start with a straight line
+  });
+
+  // Calculate the midpoint of the line
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
+
+  // Calculate the angle of the line
+  const angle = Math.atan2(targetY - sourceY, targetX - sourceX);
+
+  // Calculate the control point for the curve
+  const controlX = midX - curveOffset * Math.cos(angle + Math.PI / 2); // Perpendicular offset
+  const controlY = midY - curveOffset * Math.sin(angle + Math.PI / 2);
+
+  // Construct the curved path
+  const curvedPath = `
+    M ${sourceX} ${sourceY}
+    Q ${controlX} ${controlY} ${targetX} ${targetY}
+  `;
+
+  return (
+    <path
+      id={id}
+      d={curvedPath}
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth={strokeWidth}
+      className="transition-all duration-300 ease-in-out"
+    />
+  );
+};
+
+interface CornerEdgeProps extends EdgeProps {
+  data?: {
+    strokeColor?: string;
+    strokeWidth?: number;
+    cornerRadius?: number; // Added cornerRadius prop
+  };
+}
+
+const CornerEdge: React.FC<CornerEdgeProps> = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  id,
+  data,
+}) => {
+  const {
+    strokeColor = "#FFC107",
+    strokeWidth = 2,
+    cornerRadius = 30, // Default corner radius if not provided
+  } = data || {};
+
+  // Calculate the difference between source and target coordinates
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+
+  // Determine the direction of the corner
+  const cornerDirectionX = dx > 0 ? 1 : -1;
+  const cornerDirectionY = dy > 0 ? 1 : -1;
+
+  // Calculate the corner point
+  const cornerX = sourceX + cornerDirectionX * cornerRadius;
+  const cornerY = sourceY + cornerDirectionY * cornerRadius;
+
+  // Calculate the second corner point
+  const secondCornerX = targetX - cornerDirectionX * cornerRadius;
+  const secondCornerY = targetY - cornerDirectionY * cornerRadius;
+
+  // Construct the path with rounded corners
+  const cornerPath = `
+    M ${sourceX} ${sourceY}
+    L ${cornerX} ${sourceY}
+    Q ${cornerX} ${sourceY} ${cornerX} ${cornerY}
+    L ${cornerX} ${secondCornerY}
+    Q ${cornerX} ${targetY} ${secondCornerX} ${targetY}
+    L ${targetX} ${targetY}
+  `;
+
+  return (
+    <path
+      id={id}
+      d={cornerPath}
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth={strokeWidth}
+      className="transition-all duration-300 ease-in-out"
+    />
+  );
+};
+
+
+const CustomStepEdge: React.FC<
+  EdgeProps & {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+  }
+> = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
+  const [edgePath] = getSmoothStepPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    borderRadius: 90, 
+  });
+
+  return (
+    <g>
+      <path
+        id={id}
+        d={edgePath}
+        stroke="#FFC107"
+        strokeWidth={2}
+        fill="none"
+        style={style}
+      />
+      <circle cx={targetX} cy={targetY} r={5} fill="#FFC107" />
+    </g>
+  );
+};
+
+const CustomSineEdge: React.FC<
+  EdgeProps & {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+  }
+> = ({ id, sourceX, sourceY, targetX, targetY }) => {
+  const centerX = (targetX - sourceX) / 2 + sourceX;
+  const centerY = (targetY - sourceY) / 2 + sourceY;
+
+  const edgePath = `
+  M ${sourceX} ${sourceY} 
+  Q ${(targetX - sourceX) * 0.2 + sourceX} ${
+    targetY * 1.1
+  } ${centerX} ${centerY}
+  Q ${(targetX - sourceX) * 0.8 + sourceX} ${
+    sourceY * 0.9
+  } ${targetX} ${targetY}
+  `;
+
+  return <BaseEdge id={id} path={edgePath} />;
+}
+
+
+interface ArcEdgeProps extends EdgeProps {
+  data?: {
+    strokeColor?: string;
+    strokeWidth?: number;
+    radius?: number; // Added radius prop
+  };
+}
+
+const ArcEdge: React.FC<ArcEdgeProps> = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  id,
+  data,
+}) => {
+  const {
+    strokeColor = "#FFC107",
+    strokeWidth = 2,
+    radius = 20, // Default radius if not provided
+  } = data || {};
+
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    curvature: 0, // Set curvature to 0 for a straight line as a base
+  });
+
+  // Calculate the midpoint of the line
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
+
+  // Calculate the angle of the line
+  const angle = Math.atan2(targetY - sourceY, targetX - sourceX);
+
+  // Calculate the control point for the arc
+  const controlX = midX + radius * Math.sin(angle);
+  const controlY = midY - radius * Math.cos(angle);
+
+  // Construct the arc path
+  const arcPath = `
+    M ${sourceX} ${sourceY}
+    Q ${controlX} ${controlY} ${targetX} ${targetY}
+  `;
+
+  return (
+    <path
+      id={id}
+      d={arcPath}
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth={strokeWidth}
+      className="transition-all duration-300 ease-in-out"
+    />
+  );
+};
+
+
+
+
 
 // Map of edge types
 const edgeTypes = {
-custom: CustomEdge,
+  custom: CustomEdge,
+  customBezier: CustomBezierEdge,
+  customStep: CustomStepEdge,
+  customSine: CustomSineEdge,
+  pillEdge: PillEdge,
+  customArc: ArcEdge,
+  customCurve: CurvedEdge,
+  customCurveRight: CurvedEdgeRight,
+  cornerEdge: CornerEdge,
 };
 
 // Interface for employee data
 interface EmployeeData {
-name: string;
-title: string;
-status: string;
-personalDetails: {
-  phone: string;
-  personalEmail: string;
-  workEmail: string;
-  location: string;
-  skills: string;
-};
-workDetails: {
-  startDate: string;
-  department: string;
-  seniority: string;
-};
+  name: string;
+  title: string;
+  status: string;
+  personalDetails: {
+    phone: string;
+    personalEmail: string;
+    workEmail: string;
+    location: string;
+    skills: string;
+  };
+  workDetails: {
+    startDate: string;
+    department: string;
+    seniority: string;
+  };
 }
 
 const EmployeeProfile: React.FC = () => {
@@ -485,8 +1086,12 @@ const EmployeeProfile: React.FC = () => {
                   type: "custom",
                   style: customEdgeStyle,
                 }}
-                fitView
-                attributionPosition="bottom-left"
+                fitView={true}
+                panOnDrag={false} 
+                zoomOnDoubleClick={false} 
+                minZoom={1}
+                maxZoom={3} 
+                preventScrolling={false} 
               >
                 <Background
                   variant={BackgroundVariant.Dots}
@@ -495,7 +1100,7 @@ const EmployeeProfile: React.FC = () => {
                   color="#F3F4F6"
                 />
                 <Controls />
-                <MiniMap />
+                {/* <MiniMap /> */}
               </ReactFlow>
             </div>
           )}

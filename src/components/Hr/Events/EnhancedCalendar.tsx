@@ -108,7 +108,7 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
           transform: translateX(-50%);
           width: 6px;
           height: 6px;
-          background-color: green;
+          background-color: #48BF84;
           border-radius: 50%;
         }
         .event-birthday::after {
@@ -119,7 +119,7 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
           transform: translateX(-50%);
           width: 6px;
           height: 6px;
-          background-color: pink;
+          background-color: #BF7B48;
           border-radius: 50%;
         }
         .event-announcement::after {
@@ -130,7 +130,7 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
           transform: translateX(-50%);
           width: 6px;
           height: 6px;
-          background-color: blue;
+          background-color: #A0A0A0;
           border-radius: 50%;
         }
         .event-default::after {
@@ -158,7 +158,8 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
           day: cn(
             "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full flex items-center justify-center"
           ),
-          day_selected: "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF]",
+          day_selected:
+            "bg-[#C0AFFF] text-white hover:bg-[#C0AFFF] focus:bg-[#C0AFFF]",
           month: "flex flex-col space-y-3 flex-grow",
           head_cell: "w-8 sm:w-10 flex-grow",
           cell: "flex items-center justify-center flex-grow relative",
@@ -166,7 +167,7 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
         className="shadow-md shadow-gray-300 p-2 rounded-md flex flex-col w-full h-full"
         components={{
           Day: ({ date }) => {
-            const dateKey = format(date, 'yyyy-MM-dd');
+            const dateKey = format(date, "yyyy-MM-dd");
             const hasEvents = eventDatesMap.has(dateKey);
 
             return (
@@ -174,23 +175,25 @@ const EnhancedCalendar: React.FC<EnhancedCalendarProps> = ({
                 <TooltipTrigger asChild>
                   <div
                     ref={(el) => {
-                      dayRefs.current[dateKey] = el; 
+                      dayRefs.current[dateKey] = el;
                     }}
-                    onMouseEnter={(e) => hasEvents && handleDayMouseEnter(date, e)}
+                    onMouseEnter={(e) =>
+                      hasEvents && handleDayMouseEnter(date, e)
+                    }
                     onMouseLeave={handleDayMouseLeave}
                     className={cn(
                       "w-8 h-8 sm:w-10 sm:h-10 font-medium rounded-full flex items-center justify-center",
-                      modifiersClassNames[dateKey] || '',
-                      hasEvents ? 'cursor-pointer' : ''
+                      modifiersClassNames[dateKey] || "",
+                      hasEvents ? "cursor-pointer" : ""
                     )}
                   >
-                    {format(date, 'd')}
+                    {format(date, "d")}
                   </div>
                 </TooltipTrigger>
                 {hasEvents && (
                   <TooltipContent
                     style={{
-                      zIndex: 1000, 
+                      zIndex: 1000,
                     }}
                   >
                     <div className="flex flex-col gap-1">

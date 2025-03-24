@@ -34,11 +34,11 @@ const validationSchema = Yup.object().shape({
   //   then: (schema) =>
   //     schema.required("Explanation is required when leave reason is provided"),
   //   otherwise: (schema) => schema.nullable(),
-  // }).nullable(),
+  // }),
   notes: Yup.string().nullable(),
   homeAddress: Yup.string().nullable(),
   countryId: Yup.number().nullable(),
-  stateId: Yup.string().nullable(),
+  stateId: Yup.number().nullable(),
   city: Yup.string().nullable(),
   birthDate: Yup.date().nullable(),
 });

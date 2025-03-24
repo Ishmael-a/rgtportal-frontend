@@ -1,11 +1,11 @@
 import { Employee } from "@/types/employee";
-import { PTO } from "@/types/PTOS";
+import { PtoLeave } from "@/types/PTOS";
 import { EMPLOYEE_TYPES } from "@/constants";
 import { IMetricCard, ColorType } from "@/components/Hr/Dashboard/MetricCard";
 
 export interface MetricCalculationOptions {
   employees?: Employee[] | null;
-  ptoRequests?: PTO[] | null;
+  ptoRequests?: PtoLeave[] | null;
   isLoading?: boolean;
 }
 

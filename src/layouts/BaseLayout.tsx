@@ -189,6 +189,7 @@ export const BaseLayout = () => {
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,
+            // scale: "85%"
           }}
         >
           <Outlet />

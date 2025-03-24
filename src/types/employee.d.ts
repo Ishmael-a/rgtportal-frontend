@@ -86,7 +86,7 @@ export interface Employee {
   isJuniorTeamLead?: boolean;
   isSeniorTeamLead?: boolean;
   position: string | null;
-  agency?: Agency | null;
+  agency: Agency | null;
   hireDate: Date | null;
   endDate?: Date | null;
   sickDaysBalance: number;
@@ -132,13 +132,13 @@ export interface UserReference {
 
 export interface CreateEmployeeInterface {
   user: UserReference;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  birthDate?: Date;
-  departmentId?: number;
-  position?: string;
-  hireDate?: Date;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  birthDate?: Date | null;
+  departmentId?: number | null;
+  position?: string | null;
+  hireDate?: Date | null;
   contactDetails?: Record<string, any> | null;
   agency?: Agency | null;
 }
@@ -150,12 +150,12 @@ export interface UpdateEmployeeInterface extends CreateEmployeeInterface {
   vacationDaysBalance?: number;
   annualDaysOff?: number;
   leaveType?: LeaveType;
-  leaveExplanation?: string;
+  leaveExplanation?: string | null;
   employeeType?: EmployeeType;
   workType?: WorkType;
-  endDate?: Date;
+  endDate?: Date | null;
   skills?: string[] | null;
-  notes?: string;
+  notes?: string | null;
   roleId?: number;
   department?: Department;
 }

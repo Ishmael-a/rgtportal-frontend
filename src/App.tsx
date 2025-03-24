@@ -21,8 +21,9 @@ import VerifyEmail from "./pages/auth/VerifyEmail";
 import Events from "./pages/HR/Events/Events";
 import DepartmentPage from "@/pages/HR/Employees/DepartmentPage";
 import Messages from "./pages/common/Messages";
-import FindEmployee from "./pages/common/FindEmployee";
+import FindEmployee from "@/pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
+import AdvancedReports from "@/pages/HR/Reports/AdvancedReports";
 
 function App() {
   const getCookie = (name: string) => {
@@ -123,6 +124,15 @@ function App() {
                 element={<RecruitmentPage type={RecruitmentType.NSS} />}
               />
               <Route path="candidate/:id" element={<CandidateDetailView />} />
+            </Route>
+
+            {/* Report routes - accessible by HR and ADMIN */}
+            <Route path="reports">
+              <Route
+                path="regularreport"
+                element={<RecruitmentPage type={RecruitmentType.NSS} />}
+              />
+              <Route path="advancedreport" element={<AdvancedReports />} />
             </Route>
           </Route>
         </Route>

@@ -34,7 +34,7 @@ const DepartmentDetails = () => {
   );
 
   useEffect(() => {
-    const department = departments.find((item) => item.id === id);
+    const department = departments.find((item) => item.id === Number(id));
 
     if (!department) {
       return;

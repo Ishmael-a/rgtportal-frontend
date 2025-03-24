@@ -9,11 +9,9 @@ const ptoApiClient = createApiClient(
 
 
 
-export const ptoService =  {
-
-
-    getAllPTOS: async (): Promise<ApiResponse<PTO[]>> => {
-        const response = await ptoApiClient.get<ApiResponse<PTO[]>>("/all");
-        return response.data;
-    },
-}
+export const ptoService = {
+  getAllPTOS: async (): Promise<ApiResponse<PtoLeave[]>> => {
+    const response = await ptoApiClient.get<ApiResponse<PtoLeave[]>>("/all");
+    return response.data;
+  },
+};

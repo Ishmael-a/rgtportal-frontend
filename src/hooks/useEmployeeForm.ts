@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { GetCountries, GetState } from "react-country-state-city";
 import { Country, State } from "react-country-state-city/dist/esm/types";
 import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
 import { Employee, LeaveType, EmployeeType, RoleType } from "@/types/employee";
 
-
-interface EmployeeFormInitialValues {
+export interface EmployeeFormInitialValues {
   department: {
     id: number;
     name: string;
@@ -13,7 +12,7 @@ interface EmployeeFormInitialValues {
   personalEmail: string;
   phone: string;
   agencyName: string;
-  skills: string[] | null;
+  skills: string[];
   employeeType: EmployeeType;
   roleId: RoleType;
   leaveType: LeaveType | null;
@@ -23,50 +22,90 @@ interface EmployeeFormInitialValues {
   notes: string;
   homeAddress: string;
   city: string;
-  stateId: string;
+  stateId: number | null;
   countryId: number | null;
   birthDate: Date | null;
 }
-
-
 
 export const useEmployeeForm = (employee: Employee) => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
+  const [selectedState, setSelectedState] = useState<number | null>(null);
 
-
-  // Fetch Countries
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const fetchedCountries = await GetCountries();
-        setCountries(fetchedCountries);
-      } catch (error) {
-        console.error("Failed to fetch countries", error);
-      }
-    };
-    fetchCountries();
+  // Memoized country fetching
+  const fetchCountries = useCallback(async () => {
+    try {
+      const fetchedCountries = await GetCountries();
+      setCountries(fetchedCountries);
+      return fetchedCountries;
+    } catch (error) {
+      console.error("Failed to fetch countries", error);
+      return [];
+    }
   }, []);
 
-  // Fetch States when country changes
+  const fetchStates = useCallback(async (countryId: number) => {
+    try {
+      const fetchedStates = await GetState(countryId);
+      setStates(fetchedStates);
+      return fetchedStates;
+    } catch (error) {
+      console.error("Failed to fetch states", error);
+      setStates([]);
+      return [];
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchStates = async () => {
-      if (selectedCountry) {
-        try {
-          const fetchedStates = await GetState(selectedCountry);
-          setStates(fetchedStates);
-        } catch (error) {
-          console.error("Failed to fetch states", error);
-          setStates([]);
+    fetchCountries();
+  }, [fetchCountries]);
+
+  useEffect(() => {
+    const setupCountryAndState = async () => {
+      if (employee?.contactDetails?.country) {
+        const fetchedCountries = await fetchCountries();
+
+        // Find country by name
+        const matchedCountry = fetchedCountries.find(
+          (country) =>
+            country.name.toLowerCase() ===
+            employee.contactDetails?.country?.toLowerCase()
+        );
+
+        if (matchedCountry) {
+          // Set selected country and fetch its states
+          setSelectedCountry(matchedCountry.id);
+          const fetchedStates = await fetchStates(matchedCountry.id);
+
+          if (employee?.contactDetails?.region && fetchedStates.length > 0) {
+            const matchedState = fetchedStates.find(
+              (state) =>
+                state.name.toLowerCase() ===
+                employee.contactDetails?.region?.toLowerCase()
+            );
+            if (matchedState) {
+              setSelectedState(matchedState.id);
+            }
+          }
         }
+
       }
     };
-    fetchStates();
-  }, [selectedCountry]);
 
-    // Initial form values
-    const initialValues: EmployeeFormInitialValues = {
+    setupCountryAndState();
+  }, [employee, fetchCountries, fetchStates]);
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetchStates(selectedCountry);
+    }
+  }, [selectedCountry, fetchStates]);
+
+  const initialValues = useMemo((): EmployeeFormInitialValues => {
+
+
+    return {
       department: {
         id: employee?.department?.id || 0,
         name: employee?.department?.name || "",
@@ -86,17 +125,18 @@ export const useEmployeeForm = (employee: Employee) => {
       notes: employee?.notes || "",
       homeAddress: employee?.contactDetails?.homeAddress || "",
       city: employee?.contactDetails?.city || "",
-      stateId: employee?.contactDetails?.region || "",
-      countryId: employee?.contactDetails?.country
-        ? Number(employee.contactDetails.country) || null
-        : null,
+      stateId: selectedState,
+      countryId: selectedCountry,
       birthDate: employee?.birthDate || null,
     };
+  }, [employee, countries]);
 
   return {
     countries,
     states,
     initialValues,
+    selectedState,
+    selectedCountry,
     setSelectedCountry,
   };
 };

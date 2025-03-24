@@ -1,6 +1,6 @@
 import { createApiClient } from "../axios";
 import { PaginatedResponse } from "../types";
-import { Employee, UpdateEmployeeInterface } from "@/types/employee";
+import { Agency, Employee, UpdateEmployeeInterface } from "@/types/employee";
 
 const employeeApiClient = createApiClient(
   `${import.meta.env.VITE_API_URL}/employees`
@@ -36,14 +36,14 @@ export const employeeService = {
 
   getEmployeeById: async (id: string): Promise<Employee> => {
     const response = await employeeApiClient.get(`/${id}`);
-    console.log('get emps:', response.data.data)
+    console.log("get emps:", response.data.data);
     return response.data.data;
   },
 
   updateEmployee: async (
     id: number,
     data: UpdateEmployeeInterface
-  ): Promise<{data: Employee, message:string}> => {
+  ): Promise<{ data: Employee; message: string }> => {
     const response = await employeeApiClient.put<{
       data: Employee;
       message: string;
@@ -53,8 +53,8 @@ export const employeeService = {
 
   updateEmployeeAgency: async (
     id: number,
-    data: UpdateEmployeeInterface
-  ): Promise<{data: Employee, message:string}> => {
+    data: Partial<Agency>
+  ): Promise<{ data: Employee; message: string }> => {
     const response = await employeeApiClient.put<{
       data: Employee;
       message: string;
@@ -64,8 +64,10 @@ export const employeeService = {
 
   removeEmployeeFromDepartment: async (
     id: number
-  ): Promise<{message: string}> => {
-    const response = await employeeApiClient.delete<{message: string}>(`/${id}/department`);
+  ): Promise<{ message: string }> => {
+    const response = await employeeApiClient.delete<{ message: string }>(
+      `/${id}/department`
+    );
     return response.data;
   },
 };

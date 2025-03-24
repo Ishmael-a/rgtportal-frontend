@@ -8,12 +8,12 @@ import {EditEmployeeForm} from './EditEmployeeForm';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
-  useAllEmployees,
-  useUpdateEmployee
+  useUpdateEmployeeAgency
 } from "@/api/query-hooks/employee.hooks";
 import { Employee, EmployeeType } from "@/types/employee"; 
 import {Link} from "react-router-dom"
 import {TeamLeadToggle} from "./TeamLeadToggle";
+import {AgencyCheckboxToggle} from "./AgencyCheckboxToggle";
 
 const employeeTypeLabels: Record<EmployeeType, string> = {
    full_time: "FT",
@@ -74,7 +74,6 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
 
 
 
-  // Get unique departments from data
   const departments = useMemo(() => {
     if (!employees) return [];
     return Array.from(
@@ -162,7 +161,6 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
   }, [calculateSeniority, isOnLeave]);
 
 
-  // Filter and paginate data
   useEffect(() => {
     if (!employees) {
       setFilteredEmployees([]);
@@ -365,13 +363,11 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
       header: "Got Invoice",
       render: (row) => (
         <div className="flex justify-center">
-          {row.agency?.invoiceReceived ? (
-            <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
-              <Check className="text-white" size={16} />
-            </div>
-          ) : (
-            <div className="w-6 h-6 rounded-md bg-gray-300"></div>
-          )}
+          <AgencyCheckboxToggle
+            employee={row as Employee}
+            checked={row.agency?.invoiceReceived || false}
+            type="invoiceReceived"
+          />
         </div>
       ),
     },
@@ -380,13 +376,11 @@ const EmployeeManagementTable: React.FC<EmployeeManagementTableProps> = ({
       header: "Paid",
       render: (row) => (
         <div className="flex justify-center">
-          {row.agency?.paid ? (
-            <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
-              <Check className="text-white" size={16} />
-            </div>
-          ) : (
-            <div className="w-6 h-6 rounded-md bg-gray-300"></div>
-          )}
+          <AgencyCheckboxToggle
+            employee={row as Employee}
+            checked={row.agency?.paid || false}
+            type="paid"
+          />
         </div>
       ),
     },

@@ -22,10 +22,7 @@ type ViewMode = "table" | "grid";
 
 export const ManageEmployees: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("table");
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(
-    null
-  );
+
   const [visibleColumns, setVisibleColumns] = useState([
     "name",
     "email",
