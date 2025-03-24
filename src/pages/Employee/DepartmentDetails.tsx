@@ -26,7 +26,7 @@ const DepartmentDetails = () => {
   const [selectStatus, setSelectStatus] = useState<string>("Permanent");
 
   useEffect(() => {
-    const department = departments.find((item) => item.id === id);
+    const department = departments.find((item) => item.id === Number(id));
 
     if (!department) {
       return;
