@@ -37,7 +37,7 @@ const Comments = ({
     setReply(!reply);
   };
 
-  console.log("isliked?:", comment.isLiked)
+  console.log("isliked?:", comment.isLiked);
 
   return (
     <div className="flex items-start gap-2">
@@ -68,8 +68,7 @@ const Comments = ({
               </p>
               <p
                 className="text-rgtpurple cursor-pointer"
-                onClick={handleToggleReply}
-              >
+                onClick={handleToggleReply}>
                 Reply
               </p>
               <div className="" onClick={() => toggleCommentLike(comment.id)}>
@@ -93,8 +92,7 @@ const Comments = ({
                 <div className="flex justify-end">
                   <button
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
-                    onClick={handleCommentReply}
-                  >
+                    onClick={handleCommentReply}>
                     {isCommentReplyLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
                     ) : (
@@ -116,8 +114,7 @@ const Comments = ({
               commentsReplies.length > 0 && (
                 <div
                   className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px] cursor-pointer hover:text-black transition-all duration-300 ease-in"
-                  onClick={() => setViewReplies(!viewReplies)}
-                >
+                  onClick={() => setViewReplies(!viewReplies)}>
                   <div className="w-[31px] border-t-[#8A8A8C] border-1" />
                   <p>View replies ({commentsReplies?.length})</p>
                 </div>

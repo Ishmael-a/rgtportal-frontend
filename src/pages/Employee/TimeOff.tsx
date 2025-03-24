@@ -106,7 +106,6 @@ export default function TimeOff() {
       selectedStatus === "All Statuses" ||
       item.status === statusTextMap[selectedStatus as PtoStatusType];
 
-
     // Filter by date
     const dateMatch =
       !selectedDate ||
@@ -120,7 +119,7 @@ export default function TimeOff() {
     return typeMatch && statusMatch && dateMatch;
   });
 
-  console.log("filtered DAta:", filteredPtoData)
+  console.log("filtered DAta:", filteredPtoData);
 
   const handleResetFilters = () => {
     setSelectedType("All Types");
@@ -170,8 +169,7 @@ export default function TimeOff() {
           </h1>
           <Button
             className="bg-[#6418C3] hover:bg-purple-800 cursor-pointer text-white font-medium text-sm py-6 transition-colors duration-300 ease-in"
-            onClick={() => setIsModalOpen(true)}
-          >
+            onClick={() => setIsModalOpen(true)}>
             <img src="/Add.svg" alt="add" />
             <p className="hidden sm:block">Add New Request</p>
           </Button>
@@ -216,8 +214,7 @@ export default function TimeOff() {
           back={true}
           isSubmitting={isPtoLoading}
           submitBtnText="Create"
-          buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500"
-        >
+          buttonClassName="px-6 py-4 w-1/2 cursor-pointer text-white font-medium bg-rgtpink rounded-md hover:bg-pink-500">
           <Field name="type">
             {({
               field,
@@ -351,8 +348,9 @@ export default function TimeOff() {
         title="Approve or Reject Request"
         onOpenChange={() => setAppRej(false)}
         isOpen={appRej}
-        className="w-1/2 md:w-[30%]"
-      >
+        showCloseButton={false}
+        className="w-1/2 md:w-[4
+        0%] px-4">
         {viewPtoData && (
           <>
             <section className="flex gap-2">

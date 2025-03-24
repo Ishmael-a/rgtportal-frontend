@@ -58,15 +58,13 @@ const Feed = () => {
 
   return (
     <main
-      className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end relative`}
-    >
+      className={`flex flex-col md:flex-row h-full md:space-x-[17px] pb-5 justify-end relative`}>
       <div
         className="space-y-[18px] flex-1 overflow-y-auto"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
-        }}
-      >
+        }}>
         <Recognition
           recognitions={
             Array.isArray(recognitions?.data) ? recognitions?.data : []
@@ -78,8 +76,7 @@ const Feed = () => {
         <section className="space-y-7">
           <WithRole
             roles={["hr", "marketer", "admin"]}
-            userRole={user?.role.name as string}
-          >
+            userRole={user?.role.name as string}>
             <CreatePost />
           </WithRole>
 
@@ -115,8 +112,7 @@ const Feed = () => {
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
-        }}
-      >
+        }}>
         <div className="pt-5 space-y-3 h-fit  bg-white rounded-t-2xl w-full flex flex-col items-center">
           <p className="font-bold text-lg text-[#706D8A] px-4 w-full">
             Upcoming Events

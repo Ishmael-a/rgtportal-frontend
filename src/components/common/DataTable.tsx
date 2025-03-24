@@ -8,10 +8,11 @@ import {
   TableRow,
 } from "../ui/table";
 import { Column, DataTableProps } from "@/types/tables";
-import DeleteCard from "./DeleteCard";
 import { useState } from "react";
 import DataTableSkeleton from "@/pages/Employee/components/DataTableSkeleton";
 import EmployeeManagementTableSkeleton from "../Hr/Employees/EmployeeManagementTableSkeleton";
+import ConfirmCancelModal from "./ConfirmCancelModal";
+import DeleteRippleIcon from "./DeleteRippleIcon";
 
 export function DataTable({
   columns,
@@ -51,8 +52,7 @@ export function DataTable({
                       <button
                         key="view"
                         className="bg-[#FFA6CD] text-white p-1 rounded-md hover:bg-pink-400 duration-300 ease-in transition-colors cursor-pointer"
-                        onClick={() => action.action(row.id)}
-                      >
+                        onClick={() => action.action(row.id)}>
                         <img src="/Show.svg" />
                       </button>
                     );
@@ -61,8 +61,7 @@ export function DataTable({
                       <button
                         key="edit"
                         className="bg-[#C0AFFF] text-white p-1 rounded-md hover:bg-purple-300 duration-300 ease-in transition-colors cursor-pointer"
-                        onClick={() => action.action(row.id, row)}
-                      >
+                        onClick={() => action.action(row.id, row)}>
                         <img src="/Edit 2.svg" alt="edit" />
                       </button>
                     );
@@ -79,8 +78,7 @@ export function DataTable({
                             } else {
                               action.action(row.id, row);
                             }
-                          }}
-                        >
+                          }}>
                           <img src="/Delete.svg" alt="delete" />
                         </button>
                       </>
@@ -112,8 +110,7 @@ export function DataTable({
                   key={column.key}
                   className={
                     "border-none text-nowrap text-[#A3A7AA] text-xs py-4 text-left"
-                  }
-                >
+                  }>
                   {column.header}
                 </TableHead>
               ))}
@@ -124,8 +121,7 @@ export function DataTable({
               data.map((row: { [key: string]: any }, rowIndex) => (
                 <TableRow
                   key={rowIndex}
-                  className={`${dividers ? "" : "border-none"}`}
-                >
+                  className={`${dividers ? "" : "border-none"}`}>
                   {tableColumns.map((column) => (
                     <TableCell
                       key={column.key}
@@ -133,15 +129,13 @@ export function DataTable({
                         dividers
                           ? ""
                           : "border-none text-xs font-semibold text-[#898989] text-nowrap py-4"
-                      }`}
-                    >
+                      }`}>
                       <div
                         className={`${
                           typeof column.cellClassName === "function"
                             ? column.cellClassName(row)
                             : column.cellClassName ?? ""
-                        } ${column.render ? "flex gap-2" : ""}`}
-                      >
+                        } ${column.render ? "flex gap-2" : ""}`}>
                         {column.render ? column.render(row) : row[column.key]}
                       </div>
                     </TableCell>
@@ -152,8 +146,7 @@ export function DataTable({
               <TableRow>
                 <TableCell
                   colSpan={tableColumns.length}
-                  className="text-center py-8 text-slate-500 font-semibold text-sm"
-                >
+                  className="text-center py-8 text-slate-500 font-semibold text-sm">
                   <p>No data available</p>
                 </TableCell>
               </TableRow>
@@ -161,26 +154,29 @@ export function DataTable({
           </TableBody>
         </Table>
       )}
-
-      {/* Delete Card */}
-      {showDelete && (
-        <DeleteCard
-          title="Delete PTO"
-          message="Are you sure you want to delete this PTO?"
-          onDelete={() => {
-            if (cellToDelete !== null) {
-              handleDelete(cellToDelete);
-            }
-          }}
-          onCancel={() => {
-            setCellToDelete(null);
-            if (setShowDelete) {
-              setShowDelete(false);
-            }
-          }}
-          isDeleting={isDeleteLoading}
-        />
-      )}
+      <ConfirmCancelModal
+        isSubmitting={isDeleteLoading}
+        onOpenChange={() => console.log("")}
+        isOpen={showDelete ?? false}
+        onSubmit={() => {
+          if (cellToDelete !== null) {
+            handleDelete(cellToDelete);
+          }
+        }}
+        onCancel={() => {
+          setCellToDelete(null);
+          if (setShowDelete) {
+            setShowDelete(false);
+          }
+        }}>
+        <div className="flex flex-col justify-center items-center space-y-2">
+          <DeleteRippleIcon />
+          <p className="text-lg font-semibold">Delete PTO</p>
+          <p className="font-light text-[#535862] text-sm text-center text-wrap w-[300px]">
+            Are you sure you want to delete this PTO?
+          </p>
+        </div>
+      </ConfirmCancelModal>
     </div>
   );
 }
