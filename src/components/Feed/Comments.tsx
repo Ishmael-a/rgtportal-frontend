@@ -136,7 +136,7 @@ const Comments = ({
                   {commentsReplies?.map((item, index) => (
                     <div className="pt-3">
                       <RecursiveComments
-                        commentsReply={item}
+                        comment={item}
                         parentReplyId={comment.id}
                         key={index}
                       />

@@ -24,11 +24,8 @@ import Messages from "./pages/common/Messages";
 import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
 import EmployeeTimeOffRequests from "./pages/Manager/ManagerEmployeeTimeOff";
-import { useAuthContextProvider } from "./hooks/useAuthContextProvider";
 
 function App() {
-  const { currentUser } = useAuthContextProvider();
-  const role = currentUser?.role.name;
   const getCookie = (name: string) => {
     const cookies = document.cookie.split("; ");
     console.log("cookies", document.cookie);
@@ -63,7 +60,7 @@ function App() {
             />
           }
         >
-          <Route path={role === "HR" ? "/hr" : "/emp"} element={<BaseLayout />}>
+          <Route path="/emp" element={<BaseLayout />}>
             <Route index path="feed" element={<Feed />} />
             <Route path="events-calendar" element={<EventsCalendar />} />
             <Route path="all-departments/" element={<Departments />} />

@@ -8,26 +8,24 @@ import { Loader } from "lucide-react";
 import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 
 const RecursiveComments = ({
-  commentsReply,
+  comment,
   parentReplyId,
 }: {
-  comment: IComment;
-  // replyComment: (commentId: number, content: string) => Promise<void>;
-  commentsReply: IComment | undefined;
+  comment: IComment | undefined;
   parentReplyId: number | undefined;
 }) => {
   const { currentUser } = useAuthContextProvider();
-  const { replyComment, toggleCommentLike } = useInteraction(commentsReply?.id);
+  const { replyComment, toggleCommentLike, isCommentReplyLoading, refetchCommentsReplies } = useInteraction(comment?.id);
 
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
   // const [viewReplies, setViewReplies] = useState(false);
 
   const handleCommentReply = async () => {
-    console.log("comment.id, content:", commentsReply?.id, content);
+    console.log("comment.id, content:", comment?.id, content);
     if (!content) return;
-    if (commentsReply?.id) {
-      await replyComment(commentsReply.id, content, parentReplyId);
+    if (comment?.id) {
+      await replyComment(comment.id, content, parentReplyId);
       setContent("");
     }
   };
@@ -36,15 +34,15 @@ const RecursiveComments = ({
     setReply(!reply);
   };
 
-  const isLiked = commentsReply?.likes?.find(
+  const isLiked = comment?.likes?.find(
     (item) => item.employeeId === currentUser?.employee.id
   );
 
   return (
     <div className="flex items-start gap-2">
       <Avtr
-        url={commentsReply?.author.profileImage ?? ""}
-        name={commentsReply?.author.firstName ?? ""}
+        url={comment?.author.profileImage ?? ""}
+        name={comment?.author.firstName ?? ""}
         avtBg="#94A3B8"
         className="text-sm font-semibold text-slate-500"
       />
@@ -53,19 +51,19 @@ const RecursiveComments = ({
           <div className="w-full pb-[12px] space-y-1">
             <p className="text-sm text-[#1E293B] font-semibold text-wrap w-full line-clamp-3 truncate">
               {
-                commentsReply?.author.firstName
-                // + commentsReply?.author.lastName
+                comment?.author.firstName
+                // + comment?.author.lastName
               }
               <span className="text-[#706D8A] font-[400] text-sm">
-                {commentsReply?.content}
+                {comment?.content}
               </span>
             </p>
 
             <div className="flex w-full items-center font-semibold text-[12px] space-x-2 text-[#8A8A8C]">
-              <p>{formatDateToDaysAgo(String(commentsReply?.createdAt))}</p>
+              <p>{formatDateToDaysAgo(String(comment?.createdAt))}</p>
               <p>
-                {commentsReply?.likes?.length ?? 0}{" "}
-                {commentsReply?.likes && commentsReply?.likes.length == 1
+                {comment?.likes?.length ?? 0}{" "}
+                {comment?.likes && comment?.likes.length == 1
                   ? "like"
                   : "likes"}
               </p>
@@ -75,10 +73,7 @@ const RecursiveComments = ({
               >
                 Reply
               </p>
-              <div
-                className=""
-                onClick={() => toggleCommentLike(commentsReply?.id)}
-              >
+              <div className="" onClick={() => toggleCommentLike(comment?.id)}>
                 <LikeIcon
                   size={15}
                   stroke={`${isLiked ? "" : "#6418C3"}`}
@@ -101,7 +96,7 @@ const RecursiveComments = ({
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
                     onClick={handleCommentReply}
                   >
-                    {commentsReply?.isCommentLoading ? (
+                    {comment?.isCommentLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
                     ) : (
                       "Post"
@@ -112,19 +107,19 @@ const RecursiveComments = ({
             )}
           </div>
           {/* <div className="flex flex-col w-full">
-            {commentsReply && commentsReply.length > 0 && (
+            {comment && comment.length > 0 && (
               <div
                 className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px]"
                 onClick={() => setViewReplies(!viewReplies)}
               >
                 <div className="w-[31px] border-t-[#8A8A8C] border-1" />
-                <p>View replies ({commentsReply?.length})</p>
+                <p>View replies ({comment?.length})</p>
               </div>
             )}
             <div>
               {viewReplies && (
                 <section>
-                  {commentsReply?.map((item, index) => (
+                  {comment?.map((item, index) => (
                     <p key={index}>{item.commentId}</p>
                   ))}
                 </section>
