@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
 import { Employee } from "@/types/employee";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
@@ -53,13 +52,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({employeeData, employeeErro
     status: "All Status",
   });
 
-  // const {
-  //   data: employeeData,
-  //   isLoading: isEmployeesLoading,
-  //   isError: isEmployeesError,
-  //   error: employeeError,
-  //   refetch: refetchEmployees,
-  // } = useAllEmployees({}, {});
+
 
   const [state, setState] = useState<EmployeeTableState>({
     currentPage: 1,

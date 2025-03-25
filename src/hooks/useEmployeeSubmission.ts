@@ -1,15 +1,14 @@
 import {
     useUpdateEmployee,
-    useEmployeeDetails,
 } from "@/api/query-hooks/employee.hooks";
-import { UpdateEmployeeInterface, Employee, EmployeeType, WorkType, Agency } from "@/types/employee";
+import { UpdateEmployeeInterface, Employee, EmployeeType,  Agency } from "@/types/employee";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/state/store";
 import { Country, State } from "react-country-state-city/dist/esm/types";
 import { toast } from "@/hooks/use-toast";
 import { getApiErrorMessage } from "@/api/errorHandler";
-import { EMPLOYEE_TYPES, ROLE_TYPES, LEAVE_TYPES } from "@/constants";
+import { EMPLOYEE_TYPES, LEAVE_TYPES } from "@/constants";
 import { EmployeeFormInitialValues } from "./useEmployeeForm";
 import { FormikHelpers } from "formik";
 
@@ -49,7 +48,7 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
         const updateEmployeeDto: UpdateEmployeeInterface = {
           user: { id: employee?.user?.id || 0 },
           firstName: employee?.firstName,
-          lastName:  employee?.lastName,
+          lastName: employee?.lastName,
           phone: values.phone || employee?.phone,
           departmentId: values.department?.id || employee?.departmentId,
           department: values.department?.id
@@ -68,15 +67,14 @@ export const useEmployeeSubmission = (employeeId: number, employee: Employee, co
           hireDate: values.hireDate || employee?.hireDate,
           endDate: values.endDate || employee?.endDate,
           employeeType: (() => {
-            // Type guard to ensure correct type
             const type = values.employeeType || employee?.employeeType;
             return Object.values(EMPLOYEE_TYPES).includes(type as EmployeeType)
               ? (type as EmployeeType)
               : EMPLOYEE_TYPES.FULL_TIME;
           })(),
-          roleId: employee?.user?.role?.id
-            ? Number(employee.user.role.id)
-            : Number(ROLE_TYPES.EMPLOYEE),
+          roleId: values.roleId
+            ? Number(values.roleId )
+            : Number(employee?.user?.role.id),
           leaveType: (() => {
             // Type guard to ensure correct type
             const type = values.leaveType || employee?.leaveType;

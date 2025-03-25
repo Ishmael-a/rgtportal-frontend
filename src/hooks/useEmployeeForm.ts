@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { GetCountries, GetState } from "react-country-state-city";
 import { Country, State } from "react-country-state-city/dist/esm/types";
-import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
+import {  EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
 import { Employee, LeaveType, EmployeeType, RoleType } from "@/types/employee";
 
 export interface EmployeeFormInitialValues {

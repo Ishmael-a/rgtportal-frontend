@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import {
   EMPLOYEE_TYPES,
-  LEAVE_TYPES,
+  // LEAVE_TYPES,
   ROLE_TYPES,
 } from "@/constants";
 

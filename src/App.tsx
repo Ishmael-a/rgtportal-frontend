@@ -25,6 +25,7 @@ import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
 import EmployeeTimeOffRequests from "./pages/Manager/ManagerEmployeeTimeOff";
 import AdvancedReports from "./pages/HR/Reports/AdvancedReports";
+import RegularReports from "./pages/HR/Reports/RegularReports";
 
 function App() {
   const getCookie = (name: string) => {
@@ -127,7 +128,7 @@ function App() {
             <Route path="reports">
               <Route
                 path="regularreport"
-                element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />}
+                element={<RegularReports />}
               />
               <Route path="advancedreport" element={<AdvancedReports />} />
             </Route>

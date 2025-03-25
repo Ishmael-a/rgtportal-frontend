@@ -818,7 +818,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                         Country
                       </Label>
                       <Field name="countryId">
-                        {({ field, form, meta }: FieldProps) => {
+                        {({ form, meta }: FieldProps) => {
                           
                           return (
                             <div className="space-y-2">
@@ -889,7 +889,7 @@ export const EditEmployeeForm: React.FC<EditEmployeeFormProps> = ({
                         City
                       </Label>
                       <Field name="city">
-                        {({ field, form, meta }: FieldProps) => (
+                        {({ field, meta }: FieldProps) => (
                           <div className="relative">
                             <Input
                               id="city"
