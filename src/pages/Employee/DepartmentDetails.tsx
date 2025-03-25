@@ -26,7 +26,9 @@ const DepartmentDetails = () => {
   const [selectStatus, setSelectStatus] = useState<string>("Permanent");
 
   useEffect(() => {
-    const department = departments.find((item) => item.id === Number(id));
+    const department = departments.find(
+      (item) => Number(item.id) === Number(id)
+    );
 
     if (!department) {
       return;
@@ -183,7 +185,7 @@ const DepartmentDetails = () => {
       selectedWorkType === "Position Status" ||
       employee.positionStatus.toLowerCase() === selectStatus.toLowerCase();
 
-      console.log("position status:", )
+    console.log("position status:");
 
     return workTypes && userTypeMatch && status;
   });

@@ -68,7 +68,7 @@ const EmployeeTimeOffManagementTable: React.FC<timeOffManagementTableProps> = ({
   const { departments } = useSelector((state: RootState) => state.sharedState);
 
   const isManager =
-    departments.find((department) => department.id === String(departmentId))
+    departments.find((department) => department.id === departmentId)
       ?.managerId === currentUser?.employee?.id;
 
   const isHr = currentUser?.role.name === "HR";

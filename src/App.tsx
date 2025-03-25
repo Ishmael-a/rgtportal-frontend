@@ -14,7 +14,7 @@ import TimeOff from "./pages/Employee/TimeOff";
 import EmployeeTimeOff from "./pages/HR/Employees/HrEmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
-import CandidateDetailView from "./pages/HR/Recruitment/CandidateDetailed";
+import CandidateDetailView from "@/pages/HR/Recruitment/CandidateDetailed";
 import { ManageEmployees } from "./pages/HR/Employees/ManageEmployees";
 import CreatePassword from "./pages/auth/CreatePassword";
 import VerifyEmail from "./pages/auth/VerifyEmail";
@@ -24,6 +24,7 @@ import Messages from "./pages/common/Messages";
 import FindEmployee from "./pages/common/FindEmployee";
 import EmployeePage from "@/pages/HR/Employees/EmployeePage";
 import EmployeeTimeOffRequests from "./pages/Manager/ManagerEmployeeTimeOff";
+import AdvancedReports from "./pages/HR/Reports/AdvancedReports";
 
 function App() {
   const getCookie = (name: string) => {
@@ -41,7 +42,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/set-password" element={<CreatePassword />} />
 
@@ -119,7 +120,17 @@ function App() {
             <Route path="feed" element={<Feed />} />
             <Route path="time-off" element={<TimeOff />} />
             <Route path="emp-time-off" element={<EmployeeTimeOff />} />
+            <Route path="messages" element={<Messages />} />
             <Route path="events" element={<Events />} />
+
+            {/* Advanced Report routes - accessible by HR and ADMIN */}
+            <Route path="reports">
+              <Route
+                path="regularreport"
+                element={<RecruitmentPage type={RecruitmentType.EMPLOYEE} />}
+              />
+              <Route path="advancedreport" element={<AdvancedReports />} />
+            </Route>
 
             {/* Recruitment routes - accessible by HR and ADMIN */}
             <Route path="recruitment">
