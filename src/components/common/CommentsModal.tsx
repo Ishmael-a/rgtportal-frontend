@@ -81,7 +81,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             </button>
           </div>
 
-          <div className="flex flex-col justify-between">
+          <div className="flexx   flex-col justify-between">
             <div
               className="space-y-4  py-2 border-b h-[250px] overflow-y-scroll"
               style={{

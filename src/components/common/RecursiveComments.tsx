@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import LikeIcon from "@/assets/icons/LikeIcon";
 import { formatDateToDaysAgo } from "@/lib/helpers";
 import { useState } from "react";
@@ -15,28 +14,32 @@ const RecursiveComments = ({
   parentReplyId: number | undefined;
 }) => {
   const { currentUser } = useAuthContextProvider();
-  const { replyComment, toggleCommentLike, isCommentReplyLoading, refetchCommentsReplies } = useInteraction(comment?.id);
+  const { replyToReply, toggleReplyLike, isReplyReplyLoading, replyReplies } =
+    useInteraction();
 
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
-  // const [viewReplies, setViewReplies] = useState(false);
+  const [viewReplies, setViewReplies] = useState(false);
 
-  const handleCommentReply = async () => {
-    console.log("comment.id, content:", comment?.id, content);
-    if (!content) return;
-    if (comment?.id) {
-      await replyComment(comment.id, content, parentReplyId);
-      setContent("");
-    }
+  console.log("comment.id, content:", comment?.id, content, parentReplyId);
+  const handleReplyToReply = async () => {
+    if (!content || !comment?.id) return;
+    await replyToReply(comment.id, content, parentReplyId);
+    setContent("");
+    setReply(false);
   };
 
-  const handleToggleReply = () => {
-    setReply(!reply);
-  };
+  console.log("replyReplies:", replyReplies);
+
+  // const handleToggleReply = () => {
+  //   setReply(!reply);
+  // };
 
   const isLiked = comment?.likes?.find(
     (item) => item.employeeId === currentUser?.employee.id
   );
+
+  // console.log("Reply reply of comment:", commentsReplies);
 
   return (
     <div className="flex items-start gap-2">
@@ -60,8 +63,10 @@ const RecursiveComments = ({
             </p>
 
             <div className="flex w-full items-center font-semibold text-[12px] space-x-2 text-[#8A8A8C]">
-              <p>{formatDateToDaysAgo(String(comment?.createdAt))}</p>
-              <p>
+              <p className="text-nowrap">
+                {formatDateToDaysAgo(String(comment?.createdAt))}
+              </p>
+              <p className="text-nowrap">
                 {comment?.likes?.length ?? 0}{" "}
                 {comment?.likes && comment?.likes.length == 1
                   ? "like"
@@ -69,11 +74,11 @@ const RecursiveComments = ({
               </p>
               <p
                 className="text-rgtpurple cursor-pointer"
-                onClick={handleToggleReply}
+                onClick={() => setReply(!reply)}
               >
                 Reply
               </p>
-              <div className="" onClick={() => toggleCommentLike(comment?.id)}>
+              <div className="" onClick={() => toggleReplyLike(comment?.id)}>
                 <LikeIcon
                   size={15}
                   stroke={`${isLiked ? "" : "#6418C3"}`}
@@ -84,7 +89,7 @@ const RecursiveComments = ({
               </div>
             </div>
             {reply && (
-              <div className="flex sm:flex-row flex-col items-center gap-4 pt-2">
+              <div className="flex sm:flex-row flex-col items-center gap-4 pt-2 w-64">
                 <input
                   className="w-full border-b-1 shadow-none outline-0 text-sm font-medium text-slate-500"
                   placeholder="Wanna say something?"
@@ -94,9 +99,9 @@ const RecursiveComments = ({
                 <div className="flex justify-end">
                   <button
                     className="text-sm font-semibold text-rgtpink cursor-pointer"
-                    onClick={handleCommentReply}
+                    onClick={handleReplyToReply}
                   >
-                    {comment?.isCommentLoading ? (
+                    {isReplyReplyLoading ? (
                       <Loader className="animate-spin w-4 h-4" />
                     ) : (
                       "Post"
@@ -106,26 +111,30 @@ const RecursiveComments = ({
               </div>
             )}
           </div>
-          {/* <div className="flex flex-col w-full">
-            {comment && comment.length > 0 && (
+          {replyReplies && replyReplies.length > 0 && (
+            <div className="flex flex-col w-full">
               <div
-                className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px]"
+                className="flex items-center gap-2 text-[#8A8A8C] font-semibold text-[12px] cursor-pointer"
                 onClick={() => setViewReplies(!viewReplies)}
               >
                 <div className="w-[31px] border-t-[#8A8A8C] border-1" />
-                <p>View replies ({comment?.length})</p>
+                <p>View replies ({replyReplies.length})</p>
               </div>
-            )}
-            <div>
+
               {viewReplies && (
-                <section>
-                  {comment?.map((item, index) => (
-                    <p key={index}>{item.commentId}</p>
+                <>
+                  {replyReplies.map((reply, index) => (
+                    <div key={index} className="pt-3">
+                      <RecursiveComments
+                        comment={reply}
+                        parentReplyId={comment?.id}
+                      />
+                    </div>
                   ))}
-                </section>
+                </>
               )}
             </div>
-          </div> */}
+          )}
         </div>
       </div>
     </div>

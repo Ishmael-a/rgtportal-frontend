@@ -34,8 +34,12 @@ export class PostInteractionService {
     }
   }
 
-  static async likePost(postId: number, liked: boolean): Promise<void> {
+  static async likePost(
+    postId: number | undefined,
+    liked: boolean
+  ): Promise<void> {
     try {
+      if (!postId) return;
       const response = await axios.post(`${API_URL}/${postId}/likes`, {
         isLike: liked,
       });
@@ -96,7 +100,44 @@ export class PostInteractionService {
     }
   }
 
+  static async likeReply(replyId: number): Promise<any> {
+    try {
+      const response = await axios.post(`${API_URL}/comments/${replyId}/likes`);
+      return response.data;
+    } catch (error) {
+      console.error("Error liking comment:", error);
+      throw error;
+    }
+  }
+
   static async replyToComment(
+    commentId: number,
+    content: string
+  ): Promise<{
+    commentId: number;
+    parentReplyId?: number;
+    authorId: number;
+    content: string;
+    comment: { id: number };
+    parentReply?: { id: number };
+    author: { id: number };
+  }> {
+    try {
+      const response = await axios.post(
+        `${API_URL}/comments/${commentId}/replies`,
+        {
+          content,
+        }
+      );
+      console.log("response Reply Comment:", response.data);
+      return response.data.data;
+    } catch (error) {
+      console.error("Error replying to comment:", error);
+      throw error;
+    }
+  }
+
+  static async replyToReply(
     commentId: number,
     content: string,
     parentReplyId?: number
@@ -110,6 +151,7 @@ export class PostInteractionService {
     author: { id: number };
   }> {
     try {
+      console.log("...hiting reply func.")
       const response = await axios.post(
         `${API_URL}/comments/${commentId}/replies`,
         {
@@ -127,7 +169,7 @@ export class PostInteractionService {
 
   static async fetchReplyReplies(replyId: number): Promise<any[]> {
     try {
-      const response = await axios.get(`${API_URL}/${replyId}/replies`);
+      const response = await axios.get(`${API_URL}/replies/${replyId}/replies`);
       console.log("reply Replies:", response.data);
 
       if (!response.data.success) {
@@ -140,33 +182,4 @@ export class PostInteractionService {
       throw error;
     }
   }
-
-  // static async replyToReplies(
-  //   replyId: number,
-  //   content: string,
-  //   parentReplyId?: number
-  // ): Promise<{
-  //   replyId: number;
-  //   parentReplyId?: number;
-  //   authorId: number;
-  //   content: string;
-  //   comment: { id: number };
-  //   parentReply?: { id: number };
-  //   author: { id: number };
-  // }> {
-  //   try {
-  //     const response = await axios.post(
-  //       `${API_URL}/comments/${replyId}/replies`,
-  //       {
-  //         content,
-  //         parentReplyId,
-  //       }
-  //     );
-  //     console.log("response Reply Comment:", response.data);
-  //     return response.data.data;
-  //   } catch (error) {
-  //     console.error("Error replying to comment:", error);
-  //     throw error;
-  //   }
-  // }
 }

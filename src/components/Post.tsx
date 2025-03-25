@@ -17,7 +17,7 @@ import EditIcon from "@/assets/icons/EditIcon";
 import DeleteIcon2 from "@/assets/icons/DeleteIcon2";
 import ConfirmCancelModal from "./common/ConfirmCancelModal";
 import DeleteRippleIcon from "./common/DeleteRippleIcon";
-import { usePost } from "@/hooks/use-posts";
+// import { usePost } from "@/hooks/use-posts";
 
 const Post: React.FC<IFeed> = ({ post }) => {
   const { currentUser } = useAuthContextProvider();
@@ -30,9 +30,9 @@ const Post: React.FC<IFeed> = ({ post }) => {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { deletePost, isPostDeleting } = post
-    ? usePost(post.id)
-    : { deletePost: () => {} };
+  // const { deletePost, isPostDeleting } = post
+  //   ? usePost(post.id)
+  //   : { deletePost: () => {} };
 
   // clicking outside of update and delete post container
   useEffect(() => {
@@ -133,7 +133,8 @@ const Post: React.FC<IFeed> = ({ post }) => {
             />
             <WithRole
               roles={["hr", "marketer", "manager"]}
-              userRole={currentUser.role.name}>
+              userRole={currentUser.role.name}
+            >
               <MoreVertical
                 className="more-vertical-icon text-[#CBD5E1] hover:text-[#8d949c] transition-colors duration-300 ease-in cursor-pointer"
                 onClick={() => setShowMore(!showMore)}
@@ -143,16 +144,19 @@ const Post: React.FC<IFeed> = ({ post }) => {
               <div
                 ref={menuRef}
                 className="absolute -right-2 top-10 bg-white border rounded flex flex-col items-center transition-all duration-300 ease-in"
-                style={{ zIndex: "30" }}>
+                style={{ zIndex: "30" }}
+              >
                 <p
                   className="flex border-b w-full items-center justify-center py-2 px-3 cursor-pointer hover:bg-slate-100 transition-all duration-300"
-                  onClick={() => console.log("update")}>
+                  onClick={() => console.log("update")}
+                >
                   <EditIcon />
                 </p>
 
                 <p
                   className="flex w-full justify-center cursor-pointer hover:bg-slate-100 transition-all duration-300 py-2"
-                  onClick={() => setShowDeleteModal(true)}>
+                  onClick={() => setShowDeleteModal(true)}
+                >
                   <DeleteIcon2 />
                 </p>
               </div>
@@ -176,10 +180,11 @@ const Post: React.FC<IFeed> = ({ post }) => {
           <ConfirmCancelModal
             isOpen={showDeleteModal}
             onCancel={() => setShowDeleteModal(false)}
-            onSubmit={() => deletePost(post.id)}
-            isSubmitting={isPostDeleting}
+            onSubmit={() => console.log("")}
+            isSubmitting={false}
             submitText="Confirm"
-            onOpenChange={() => console.log("")}>
+            onOpenChange={() => console.log("")}
+          >
             <div className="flex flex-col justify-center items-center space-y-2">
               <DeleteRippleIcon />
               <p className="text-lg font-semibold">Delete post?</p>
@@ -211,7 +216,8 @@ const Post: React.FC<IFeed> = ({ post }) => {
       {isMediaModalOpen && selectedMediaUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
-          onClick={closeMediaModal}>
+          onClick={closeMediaModal}
+        >
           <div className="relative flex justify-center max-w-[80vw] sm:max-w-[50vw] sm:max-h-[70vh]">
             {selectedMediaUrl.endsWith(".mp4") ||
             selectedMediaUrl.endsWith(".mov") ||
@@ -234,7 +240,8 @@ const Post: React.FC<IFeed> = ({ post }) => {
             )}
             <button
               className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-200 transition-colors duration-300 ease-in"
-              onClick={closeMediaModal}>
+              onClick={closeMediaModal}
+            >
               <X size={20} />
             </button>
           </div>
