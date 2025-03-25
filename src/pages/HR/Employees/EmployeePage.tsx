@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Edit, User } from "lucide-react";
 import {
   ReactFlow,
-  MiniMap,
   Controls,
   Background,
   useNodesState,
@@ -11,7 +10,6 @@ import {
   addEdge,
   BackgroundVariant,
   Position,
-  MarkerType,
   Node,
   Edge,
   NodeProps,
@@ -441,7 +439,7 @@ const CustomNode: React.FC<NodeProps<Node<NodeData, string>>> = ({
   );
 };
 
-const JunctionNodeRight = ({ data }: { data: string }) => (
+const JunctionNodeRight = ({ }: { data?: string }) => (
   <div
     style={{
       width: 10,
@@ -455,7 +453,7 @@ const JunctionNodeRight = ({ data }: { data: string }) => (
     <Handle type="source" position={Position.Right} id="right" />
   </div>
 );
-const JunctionNodeLeft = ({ data }: { data: string }) => (
+const JunctionNodeLeft = ({  }: { data?: string }) => (
   <div
     style={{
       width: 10,
@@ -616,13 +614,6 @@ const CurvedEdge: React.FC<CurvedEdgeProps> = ({
     curveOffset = 50, // Default curve offset if not provided
   } = data || {};
 
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    curvature: 0, // Start with a straight line
-  });
 
   // Calculate the midpoint of the line
   const midX = (sourceX + targetX) / 2;
@@ -667,13 +658,7 @@ const CurvedEdgeRight: React.FC<CurvedEdgeProps> = ({
     curveOffset = 50, // Default curve offset if not provided
   } = data || {};
 
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    curvature: 0, // Start with a straight line
-  });
+
 
   // Calculate the midpoint of the line
   const midX = (sourceX + targetX) / 2;
@@ -843,13 +828,7 @@ const ArcEdge: React.FC<ArcEdgeProps> = ({
     radius = 20, // Default radius if not provided
   } = data || {};
 
-  const [edgePath] = getBezierPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    curvature: 0, // Set curvature to 0 for a straight line as a base
-  });
+
 
   // Calculate the midpoint of the line
   const midX = (sourceX + targetX) / 2;
@@ -918,7 +897,7 @@ interface EmployeeData {
 
 const EmployeeProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"details" | "activity">("details");
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, _setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
@@ -955,7 +934,7 @@ const EmployeeProfile: React.FC = () => {
   };
 
   // This will ensure edges follow nodes when moved
-  const onNodeDragStop = (event: React.MouseEvent, node: Node) => {
+  const onNodeDragStop = (_event: React.MouseEvent, node: Node) => {
     // Only allow specific nodes to be moved
     if (node.id === "personal-details" || node.id === "work-details") {
       return;

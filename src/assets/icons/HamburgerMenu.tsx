@@ -1,3 +1,5 @@
+import { IconTypes } from "./types";
+
 const HamburgerMenu: React.FC<IconTypes> = ({ color }) => {
   return (
     <svg

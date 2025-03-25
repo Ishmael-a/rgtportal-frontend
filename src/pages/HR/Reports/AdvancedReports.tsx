@@ -1,7 +1,7 @@
-import { StayOrStrayPredictor } from "@/components/Hr/Reports/StayOrStrayPredictor";
-import { JobGeniusMatcher } from "@/components/Hr/Reports/JobGeniusMatcher";
-import { DepartureDeploymentReport } from "@/components/Hr/Reports/DepartureDeploymentReport";
-import { HirePower } from "@/components/Hr/Reports/HirePower";
+import { StayOrStrayPredictor } from "@/components/Hr/Reports/AdvancedReports/StayOrStrayPredictor";
+import { JobGeniusMatcher } from "@/components/Hr/Reports/AdvancedReports/JobGeniusMatcher";
+import { DepartureDeploymentReport } from "@/components/Hr/Reports/AdvancedReports/DepartureDeploymentReport";
+import { HirePower } from "@/components/Hr/Reports/AdvancedReports/HirePower";
 
 
 const AdvancedReports = () => {

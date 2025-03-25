@@ -60,7 +60,7 @@ export const useUpdateEmployee = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateEmployeeInterface }) =>
       employeeService.updateEmployee(id, data),
-    onSuccess: (result, variables) => {
+    onSuccess: () => {
       // queryClient.setQueryData(["employees",{ id: variables.id}], result.data);
       queryClient.invalidateQueries({ queryKey: ["employees"] });
 
@@ -85,7 +85,7 @@ export const useUpdateEmployeeAgency = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<Agency> }) =>
       employeeService.updateEmployeeAgency(id, data),
-    onSuccess: (result, variables) => {
+    onSuccess: () => {
       // queryClient.setQueryData(["employees",{ id: variables.id}], result.data);
       queryClient.invalidateQueries({ queryKey: ["employees"] });
 
