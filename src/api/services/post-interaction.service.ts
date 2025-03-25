@@ -7,7 +7,7 @@ export class PostInteractionService {
   static async getStats(id: number): Promise<IStats> {
     try {
       const response = await axios.get(`${API_URL}/${id}/stats`);
-      console.log("responseStats:", response.data.data);
+      // console.log("responseStats:", response.data.data);
       if (!response.data.success) {
         throw new Error("Error fetching post stats");
       }
@@ -43,7 +43,7 @@ export class PostInteractionService {
       const response = await axios.post(`${API_URL}/${postId}/likes`, {
         isLike: liked,
       });
-      console.log("responseLikes:", response.data);
+      // console.log("responseLikes:", response.data);
       // return response.data;
     } catch (error) {
       console.error("Error liking post:", error);
@@ -102,8 +102,9 @@ export class PostInteractionService {
 
   static async likeReply(replyId: number): Promise<any> {
     try {
-      const response = await axios.post(`${API_URL}/comments/${replyId}/likes`);
-      return response.data;
+      // console.log("replyId:", replyId);
+      const response = await axios.post(`${API_URL}/replies/${replyId}/likes`);
+      return response.data.data;
     } catch (error) {
       console.error("Error liking comment:", error);
       throw error;
@@ -129,7 +130,7 @@ export class PostInteractionService {
           content,
         }
       );
-      console.log("response Reply Comment:", response.data);
+      // console.log("response Reply Comment:", response.data);
       return response.data.data;
     } catch (error) {
       console.error("Error replying to comment:", error);
@@ -151,7 +152,7 @@ export class PostInteractionService {
     author: { id: number };
   }> {
     try {
-      console.log("...hiting reply func.")
+      // console.log("...hiting reply func.");
       const response = await axios.post(
         `${API_URL}/comments/${commentId}/replies`,
         {
@@ -159,7 +160,7 @@ export class PostInteractionService {
           parentReplyId,
         }
       );
-      console.log("response Reply Comment:", response.data);
+      // console.log("response Reply Comment:", response.data);
       return response.data.data;
     } catch (error) {
       console.error("Error replying to comment:", error);
@@ -167,16 +168,16 @@ export class PostInteractionService {
     }
   }
 
-  static async fetchReplyReplies(replyId: number): Promise<any[]> {
+  static async fetchReplyReplies(replyId: number): Promise<IComment[]> {
     try {
       const response = await axios.get(`${API_URL}/replies/${replyId}/replies`);
-      console.log("reply Replies:", response.data);
+      // console.log("reply Replies:", response.data);
 
       if (!response.data.success) {
         throw new Error("Failed to fetch replies for comments");
       }
 
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error("Error fetching the replies of replies of comment", error);
       throw error;

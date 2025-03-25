@@ -40,7 +40,7 @@ export const useInteraction = (
     isLoading: isReplyRepliesLoading,
   } = useQuery({
     queryKey: ["replyReplies", replyId],
-    queryFn: () => PostInteractionService.fetchReplyReplies(16),
+    queryFn: () => PostInteractionService.fetchReplyReplies(replyId ?? 0),
     enabled: !!replyId,
   });
 

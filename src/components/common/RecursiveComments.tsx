@@ -9,37 +9,34 @@ import { useAuthContextProvider } from "@/hooks/useAuthContextProvider";
 const RecursiveComments = ({
   comment,
   parentReplyId,
+  postId,
 }: {
   comment: IComment | undefined;
   parentReplyId: number | undefined;
+  postId: number;
 }) => {
   const { currentUser } = useAuthContextProvider();
   const { replyToReply, toggleReplyLike, isReplyReplyLoading, replyReplies } =
-    useInteraction();
+    useInteraction(postId, comment?.commentId, comment?.id);
 
   const [reply, setReply] = useState(false);
   const [content, setContent] = useState("");
   const [viewReplies, setViewReplies] = useState(false);
 
-  console.log("comment.id, content:", comment?.id, content, parentReplyId);
   const handleReplyToReply = async () => {
-    if (!content || !comment?.id) return;
-    await replyToReply(comment.id, content, parentReplyId);
+    if (!content || !comment?.commentId) return;
+    await replyToReply(comment.commentId, content, parentReplyId);
     setContent("");
     setReply(false);
   };
 
   console.log("replyReplies:", replyReplies);
-
-  // const handleToggleReply = () => {
-  //   setReply(!reply);
-  // };
+  console.log("comment:", comment)
 
   const isLiked = comment?.likes?.find(
     (item) => item.employeeId === currentUser?.employee.id
   );
 
-  // console.log("Reply reply of comment:", commentsReplies);
 
   return (
     <div className="flex items-start gap-2">
@@ -123,11 +120,13 @@ const RecursiveComments = ({
 
               {viewReplies && (
                 <>
-                  {replyReplies.map((reply, index) => (
+                  {replyReplies.map((item, index) => (
                     <div key={index} className="pt-3">
                       <RecursiveComments
-                        comment={reply}
-                        parentReplyId={comment?.id}
+                        comment={item}
+                        parentReplyId={item.id}
+                        key={index}
+                        postId={postId}
                       />
                     </div>
                   ))}
