@@ -120,7 +120,7 @@ const Feed = () => {
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate}
+            onSelect={setDate} 
             initialFocus
             modifiers={{
               today: new Date(),
