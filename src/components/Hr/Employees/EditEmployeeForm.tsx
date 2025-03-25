@@ -52,7 +52,7 @@ import { useEmployeeValidation } from "@/hooks/useEmployeeValidation";
 import { useEmployeeSubmission } from "@/hooks/useEmployeeSubmission";
 import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES  } from "@/constants";
 import { toast } from "@/hooks/use-toast";
-import {Employee} from "@/types/employee"
+import {Employee, RoleType} from "@/types/employee"
 
 
 

@@ -6,7 +6,7 @@ import {
 } from "../../components/Hr/Dashboard/MetricCard";
 import QuickActions from "../../components/Hr/QuickActions";
 import { useAllEmployees } from "@/api/query-hooks/employee.hooks";
-import { useGetAllPTOS } from "@/api/query-hooks/pto.hooks";
+import { useRequestPto } from "@/hooks/usePtoRequests";
 import { calculateMetrics } from "@/utils/metrics";
 
 export const HRDashboard = () => {
@@ -18,11 +18,12 @@ export const HRDashboard = () => {
     refetch: refetchEmployees,
   } = useAllEmployees({}, {});
 
-  const { data: ptoRequestData, isLoading: isPTOLoading } = useGetAllPTOS();
+  // const { data: ptoRequestData, isLoading: isPTOLoading } = useGetAllPTOS();
+  const { allPtoData: ptoRequestData, isAllPtosLoading: isPTOLoading } = useRequestPto();
 
   const metrics: IMetricCard[] = useMemo(() => {
     const hasEmployeeData = employeeData && employeeData.length > 0;
-    const hasPTOData = ptoRequestData?.data && ptoRequestData.data.length > 0;
+    const hasPTOData = ptoRequestData && ptoRequestData.length > 0;
 
     const shouldShowLoading =
       isEmployeesLoading && !hasEmployeeData && isPTOLoading && !hasPTOData;
@@ -30,7 +31,7 @@ export const HRDashboard = () => {
     return calculateMetrics({
       employees: employeeData,
       isLoading: shouldShowLoading,
-      ptoRequests: ptoRequestData?.data,
+      ptoRequests: ptoRequestData,
     });
   }, [employeeData, isEmployeesLoading, ptoRequestData, isPTOLoading]);
 
