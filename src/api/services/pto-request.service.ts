@@ -1,3 +1,4 @@
+import { PtoStatusType } from "@/components/Hr/Employees/EmployeeTimeOffManagementTable";
 import { PtoLeave } from "@/types/PTOS";
 import axios from "axios";
 
@@ -24,23 +25,29 @@ export class PtoRequestService {
     }
   }
 
-  static async fetchUserPtoRequest(): Promise<PtoLeave[] | undefined> {
+  static async updatePtoRequest(
+    ptoUpdate: {
+      status: PtoStatusType;
+      statusReason?: string;
+      departmentId: number;
+    },
+    ptoId: number
+  ): Promise<PtoLeave | undefined> {
     try {
-      const response = await axios.get(`${API_URL}/my-requests`);
-      console.log("response PtoData:", response.data);
+      const response = await axios.put(`${API_URL}/${ptoId}`, ptoUpdate);
+
       if (!response.data.success) {
         throw new Error(
-          response.data.message || "PTO data fetching unsuccessful."
+          response.data.message || "Failed to update PTO request"
         );
       }
-      return response.data.data.reverse();
+
+      return response.data.data;
     } catch (error) {
-      console.error("Error fetching pto data:", error);
+      console.error("Error updating PTO request", error);
       throw error;
     }
   }
-
-
 
   static async deletePtoRequest(id: number) {
     try {
@@ -63,6 +70,61 @@ export class PtoRequestService {
       } else {
         throw new Error("Failed to delete PTO request");
       }
+    }
+  }
+
+  static async fetchUserPtoRequest(): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(`${API_URL}/my-requests`);
+      console.log("response PtoData:", response.data);
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message || "PTO data fetching unsuccessful."
+        );
+      }
+      return response.data.data.reverse();
+    } catch (error) {
+      console.error("Error fetching pto data:", error);
+      throw error;
+    }
+  }
+
+  static async fetchAllPtoRequests(): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(`${API_URL}/all`);
+      console.log("response AllPto:", response.data);
+      if (!response.data.success) {
+        throw new Error(response.data.message || "All PTO fetch unsuccessful");
+      }
+      return response.data.data.reverse();
+    } catch (error) {
+      console.log("Error fetching all ptos:", error);
+      throw error;
+    }
+  }
+
+  static async fetchDepartmentPtos(
+    departmentId: string
+  ): Promise<PtoLeave[] | undefined> {
+    try {
+      const response = await axios.get(
+        `${API_URL}/department/${departmentId}`,
+        {
+          params: {
+            departmentId,
+          },
+        }
+      );
+      console.log("response departement:", response.data);
+      if (!response.data.success) {
+        throw new Error(
+          response.data.message || "Department Pto failed to fetch"
+        );
+      }
+      return response.data.data.reverse();
+    } catch (error) {
+      console.log("Error fetching department ptos:", error);
+      throw error;
     }
   }
 }

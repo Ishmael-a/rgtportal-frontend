@@ -4,6 +4,7 @@ import { Poll } from "./polls";
 import { User } from "./authUser";
 import { Department } from "./department";
 import { LEAVE_TYPES, WORK_TYPES, EMPLOYEE_TYPES, ROLE_TYPES } from "@/constants";
+import { PTORequest } from "./PTOS";
 
 interface IDepartmentCard {
   id: string | number;
@@ -86,7 +87,7 @@ export interface Employee {
   isJuniorTeamLead?: boolean;
   isSeniorTeamLead?: boolean;
   position: string | null;
-  agency?: Agency | null;
+  agency: Agency | null;
   hireDate: Date | null;
   endDate?: Date | null;
   sickDaysBalance: number;
@@ -103,7 +104,7 @@ export interface Employee {
   departmentId: number | null;
   notes?: string| null;
 
-  ptoRequests?: PtoRequest[];
+  ptoRequests?: PTORequest[];
   projectAssignments?: ProjectAssignment[];
   posts?: Post[];
   organizedEvents?: Event[];
@@ -132,15 +133,15 @@ export interface UserReference {
 
 export interface CreateEmployeeInterface {
   user: UserReference;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  birthDate?: Date;
-  departmentId?: number;
-  position?: string;
-  hireDate?: Date;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  birthDate?: Date | null;
+  departmentId?: number | null;
+  position?: string | null;
+  hireDate?: Date | null;
   contactDetails?: Record<string, any> | null;
-  agency?: Agency;
+  agency?: Agency | null;
 }
 
 export interface UpdateEmployeeInterface extends CreateEmployeeInterface {
@@ -150,12 +151,12 @@ export interface UpdateEmployeeInterface extends CreateEmployeeInterface {
   vacationDaysBalance?: number;
   annualDaysOff?: number;
   leaveType?: LeaveType;
-  leaveExplanation?: string;
+  leaveExplanation?: string | null;
   employeeType?: EmployeeType;
   workType?: WorkType;
-  endDate?: Date;
+  endDate?: Date | null;
   skills?: string[] | null;
-  notes?: string;
+  notes?: string | null;
   roleId?: number;
   department?: Department;
 }
