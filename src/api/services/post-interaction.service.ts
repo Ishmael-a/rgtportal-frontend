@@ -90,6 +90,7 @@ export class PostInteractionService {
 
   static async likeComment(commentId: number): Promise<any> {
     try {
+      
       const response = await axios.post(
         `${API_URL}/comments/${commentId}/likes`
       );
@@ -102,8 +103,9 @@ export class PostInteractionService {
 
   static async likeReply(replyId: number): Promise<any> {
     try {
-      // console.log("replyId:", replyId);
+      console.log("replyId:", replyId);
       const response = await axios.post(`${API_URL}/replies/${replyId}/likes`);
+      console.log("response Reply Like:", response.data)
       return response.data.data;
     } catch (error) {
       console.error("Error liking comment:", error);

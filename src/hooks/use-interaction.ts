@@ -253,12 +253,12 @@ export const useInteraction = (
     mutationFn: (replyId: number) => PostInteractionService.likeReply(replyId),
     onMutate: async (replyId) => {
       // Cancel any ongoing refetches
-      await queryClient.cancelQueries({ queryKey: ["postStats", postId] });
+      await queryClient.cancelQueries({ queryKey: ["replyReplies", replyId] });
 
       // Snapshot the current stats
-      const previousStats = queryClient.getQueryData<IStats>([
-        "postStats",
-        postId,
+      const previousStats = queryClient.getQueryData<IComment>([
+        "replyReplies",
+        replyId,
       ]);
 
       // Optimistically update the reply likes
@@ -296,7 +296,10 @@ export const useInteraction = (
     },
     onError: (_err, _replyId, context) => {
       // If the mutation fails, restore the previous stats
-      queryClient.setQueryData(["postStats", postId], context?.previousStats);
+      queryClient.setQueryData(
+        ["replyReplies", replyId],
+        context?.previousStats
+      );
 
       toast({
         title: "Error",
