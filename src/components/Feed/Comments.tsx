@@ -31,10 +31,10 @@ const Comments = ({
     (item) => item.employeeId === currentUser?.employee.id
   );
 
-  console.log("commentReplies:", commentsReplies);
+  // console.log("commentReplies:", commentsReplies);
 
   const handleCommentReply = async () => {
-    console.log("comment.id, content:", comment.id, content);
+    // console.log("comment.id, content:", comment.id, content);
     if (!content) return;
     if (comment.id) {
       await replyComment(comment.id, content);
@@ -137,8 +137,9 @@ const Comments = ({
                     <div className="pt-3">
                       <RecursiveComments
                         comment={item}
-                        parentReplyId={comment.id}
+                        parentReplyId={item.id}
                         key={index}
+                        postId={postId}
                       />
                     </div>
                   ))}

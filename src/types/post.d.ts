@@ -39,6 +39,7 @@ interface CommentLike {
 
 interface IComment {
   id?: number;
+  commentId?: number;
   content: string;
   createdAt: Date;
   author: {
