@@ -5,7 +5,6 @@ import {
   FieldInputProps,
   Formik,
   Form as FormikForm,
-  FormikProps as formikProps,
 } from "formik";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,7 +52,7 @@ import { useEmployeeValidation } from "@/hooks/useEmployeeValidation";
 import { useEmployeeSubmission } from "@/hooks/useEmployeeSubmission";
 import { LEAVE_TYPES, EMPLOYEE_TYPES, ROLE_TYPES  } from "@/constants";
 import { toast } from "@/hooks/use-toast";
-import {Employee, LeaveType, EmployeeType, RoleType} from "@/types/employee"
+import {Employee} from "@/types/employee"
 
 
 

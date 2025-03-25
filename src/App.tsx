@@ -11,7 +11,7 @@ import EventsCalendar from "./pages/Employee/EventsCalendar";
 import Departments from "./pages/Employee/Departments";
 import DepartmentDetails from "./pages/Employee/DepartmentDetails";
 import TimeOff from "./pages/Employee/TimeOff";
-import EmployeeTimeOff from "./pages/HR/Employees/EmployeeTimeOff";
+import EmployeeTimeOff from "./pages/HR/Employees/HrEmployeeTimeOff";
 import RecruitmentPage from "./pages/HR/Recruitment/Recruitment";
 import { RecruitmentType } from "./lib/enums";
 import CandidateDetailView from "./pages/HR/Recruitment/CandidateDetailed";
@@ -26,10 +26,12 @@ import EmployeePage from "@/pages/HR/Employees/EmployeePage";
 import AdvancedReports from "@/pages/HR/Reports/AdvancedReports";
 
 function App() {
+  const { currentUser } = useAuthContextProvider();
+  const role = currentUser?.role.name;
   const getCookie = (name: string) => {
     const cookies = document.cookie.split("; ");
     console.log("cookies", document.cookie);
-    
+
     const cookie = cookies.find((row) => row.startsWith(name + "="));
     return cookie ? cookie.split("=")[1] : null;
   };
@@ -60,7 +62,7 @@ function App() {
             />
           }
         >
-          <Route path="/emp" element={<BaseLayout />}>
+          <Route path={role === "HR" ? "/hr" : "/emp"} element={<BaseLayout />}>
             <Route index path="feed" element={<Feed />} />
             <Route path="events-calendar" element={<EventsCalendar />} />
             <Route path="all-departments/" element={<Departments />} />
@@ -68,6 +70,14 @@ function App() {
             <Route path="time-off" element={<TimeOff />} />
             <Route path="messages" element={<Messages />} />
             <Route path=":id" element={<FindEmployee />} />
+
+            {/* Manager-specific sub-routes */}
+            <Route element={<ProtectedRoute allowedRoles={["MANAGER"]} />}>
+              <Route
+                path="time-off/employee-requests"
+                element={<EmployeeTimeOffRequests />}
+              />
+            </Route>
           </Route>
         </Route>
 

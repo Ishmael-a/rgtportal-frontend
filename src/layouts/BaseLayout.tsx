@@ -31,7 +31,6 @@ export const BaseLayout = () => {
   const { unreadCount } = useNotifications();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
